@@ -58,8 +58,20 @@ module.exports = gql`
     key: String!
   }
 
+  input TableInput {
+    title: String!
+    description: String
+    team: [RoleInput]
+  }
+
+  input RoleInput{
+    id: ID!
+    role: Int!
+  }
+
   type Mutation {
     login(username: String!, password: String!): User!
     register(registerInput: RegisterInput): User!
+    createTable(tableInput: TableInput): Table!
   }
 `;
