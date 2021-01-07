@@ -10,4 +10,8 @@ module.exports = {
   USERNAME_ALREADY_EXISTS: "Username already exists",
   EMAIL_ALREADY_EXISTS: "Email already exists",
   REGISTER_KEY_NOT_VALID: "Register key not valid",
+  AUTHORIZATION_ERROR: "Authorization error",
+
+  TABLE_NOT_FOUND: "Table(s) not found",
+  TABLE_TITLE_EMPTY: "Table title can not be empty",
 };
