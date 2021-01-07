@@ -7,22 +7,26 @@ module.exports = (context) => {
   //get header from request context
   const authHeader = context.req.headers.authorization;
 
-  if (authHeader) {
-    const errors = {};
-    let user = null;
-    const token = authHeader.split("Bearer ")[1];
+  const errors = {};
+  let user = null;
 
-    if (token) {
-      try {
-        user = jwt.verify(token, JWT_SECRET);
-      } catch (error) {
-        errors.authorization = AUTHORIZATION_ERROR;
-      }
-      return {
-        user: user ? user : null,
-        errors,
-        valid: !Object.keys(errors).length,
-      };
+  if (!authHeader) {
+    errors.authorization = AUTHORIZATION_ERROR;
+  }
+
+  const token = authHeader.split("Bearer ")[1];
+
+  if (token) {
+    try {
+      user = jwt.verify(token, JWT_SECRET);
+    } catch (error) {
+      errors.authorization = AUTHORIZATION_ERROR;
     }
   }
+  
+  return {
+    user: user ? user : null,
+    errors,
+    valid: !Object.keys(errors).length,
+  };
 };
