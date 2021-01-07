@@ -65,7 +65,7 @@ module.exports = gql`
   }
 
   input RoleInput{
-    id: ID!
+    user: ID!
     role: Int!
   }
 
