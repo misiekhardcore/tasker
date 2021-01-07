@@ -56,7 +56,10 @@ module.exports = {
       }
 
       //check password
-      const matchPasswords = await bcrypt.compare(password, user.password);
+      const matchPasswords = await bcrypt.compare(
+        password,
+        user.password
+      );
 
       if (!matchPasswords) {
         errors.general = USER_WRONG_CREDENTIALS;
@@ -74,7 +77,15 @@ module.exports = {
     },
     register: async (
       _,
-      { registerInput: { username, email, password, confirmPassword, key } }
+      {
+        registerInput: {
+          username,
+          email,
+          password,
+          confirmPassword,
+          key,
+        },
+      }
     ) => {
       //valisate inputs
       const { errors, valid } = validateRegisterInput(
@@ -125,8 +136,8 @@ module.exports = {
         username,
         email,
         password,
-        role: 0,
-        key: matchLicence ? key : "",
+        role: matchLicence ? 1 : 0,
+        key,
       });
 
       //save user
