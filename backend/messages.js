@@ -14,4 +14,5 @@ module.exports = {
 
   TABLE_NOT_FOUND: "Table(s) not found",
   TABLE_TITLE_EMPTY: "Table title can not be empty",
+  TABLE_TITLE_EXISTS: "Table with this title already exixsts",
 };
