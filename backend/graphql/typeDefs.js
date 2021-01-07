@@ -5,34 +5,41 @@ module.exports = gql`
     id: ID!
     username: String!
     email: String!
+    token: String!
     password: String!
-    role: [Int!]!
+    role: Int!
   }
   type Table {
     id: ID!
     title: String!
     description: String
     creator: User!
+    team: [Role!]!
     tasks: [Task]!
     createdAt: String!
     updatedAt: String!
   }
 
+  type Role {
+    user: User!
+    role: Int!
+  }
+
   type Task {
     id: ID!
-    creator: User!
     title: String!
     description: String
+    creator: User!
     status: Int!
-    comments: [Comment!]
+    comments: [Comment]!
     createdAt: String!
     updatedAt: String!
   }
 
   type Comment {
     id: ID!
-    creator: User!
     body: String!
+    creator: User!
     createdAt: String!
     updatedAt: String!
   }
@@ -43,8 +50,8 @@ module.exports = gql`
     getTask(taskId: ID!): Task!
   }
 
-  input RegisterInput{
-    username:String!
+  input RegisterInput {
+    username: String!
     password: String!
     confirmPassword: String!
     email: String!
@@ -53,6 +60,6 @@ module.exports = gql`
 
   type Mutation {
     login(username: String!, password: String!): User!
-    register(registerInput: RegisterInput):User!
+    register(registerInput: RegisterInput): User!
   }
 `;
