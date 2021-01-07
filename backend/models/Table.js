@@ -10,8 +10,8 @@ const tableSchema = new Schema(
     },
     team: [
       {
-        type: Schema.Types.ObjectId,
-        ref: "Role",
+        role: { type: Number },
+        user: { type: Schema.Types.ObjectId, ref: "User" },
       },
     ],
     tasks: [
