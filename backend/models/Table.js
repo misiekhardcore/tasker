@@ -3,7 +3,7 @@ const { model, Schema } = require("mongoose");
 const tableSchema = new Schema(
   {
     title: String,
-    descrition: String,
+    description: String,
     creator: {
       type: Schema.Types.ObjectId,
       ref: "User",
