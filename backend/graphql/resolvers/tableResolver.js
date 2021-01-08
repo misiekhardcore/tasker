@@ -3,10 +3,12 @@ const {
   TABLE_NOT_FOUND,
   AUTHORIZATION_ERROR,
   TABLE_TITLE_EXISTS,
+  NOT_VALID_ID,
 } = require("../../messages");
 const authCheck = require("../utils/authCheck");
 const { AuthenticationError, UserInputError } = require("apollo-server");
 const { transformTable } = require("./merge");
+var ObjectId = require("mongoose").Types.ObjectId;
 
 module.exports = {
   Query: {
@@ -18,20 +20,25 @@ module.exports = {
         throw new AuthenticationError(AUTHORIZATION_ERROR, errors);
       }
 
-      const tables = await Table.find().sort({
+      //get all tables where user is in team and where
+      //he can at least read and sort it
+      const tables = await Table.find({
+        "team.user": { _id: user.id },
+        "team.role": { $gte: 1 },
+      }).sort({
         createdAt: -1,
       });
 
+      //check if there are any
       if (!tables) {
         errors.general = TABLE_NOT_FOUND;
         throw new Error(TABLE_NOT_FOUND, errors);
       }
 
+      //prepare and return data
       return tables.map(async (table) => {
         return transformTable(table);
       });
-
-      return tables2;
     },
     getTable: async (_, { tableId }, context) => {
       //check if user sent auth token and it is valid
@@ -41,12 +48,26 @@ module.exports = {
         throw new AuthenticationError(AUTHORIZATION_ERROR, errors);
       }
 
-      try {
-        const table = await Table.findById(tableId);
-        return transformTable(table);
-      } catch (error) {
-        throw new Error(error);
+      //check ids
+      if (!ObjectId.isValid(tableId)) {
+        errors.general = NOT_VALID_ID;
+        throw new UserInputError(NOT_VALID_ID, errors);
       }
+
+      //check if table exists, user is in team and have
+      //permissions to at least read
+      const table = await Table.findOne({
+        _id: tableId,
+        "team.user": { _id: user.id },
+        "team.role": { $gte: 1 },
+      });
+
+      if (!table) {
+        errors.general = TABLE_NOT_FOUND;
+        throw new Error(TABLE_NOT_FOUND, errors);
+      }
+
+      return transformTable(table);
     },
   },
   Mutation: {
