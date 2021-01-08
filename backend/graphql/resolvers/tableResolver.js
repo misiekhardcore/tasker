@@ -5,11 +5,8 @@ const {
   TABLE_TITLE_EXISTS,
 } = require("../../messages");
 const authCheck = require("../utils/authCheck");
-const {
-  AuthenticationError,
-  UserInputError,
-} = require("apollo-server");
-const Mongoose = require("mongoose");
+const { AuthenticationError, UserInputError } = require("apollo-server");
+const { transformTable } = require("./merge");
 
 module.exports = {
   Query: {
@@ -30,14 +27,8 @@ module.exports = {
         throw new Error(TABLE_NOT_FOUND, errors);
       }
 
-      console.log(tables);
-      const tables2 = tables.map(async (table) => {
-        await table
-          .populate("creator")
-          .populate("team.user")
-          .execPopulate();
-        table.creator.token = "";
-        return table;
+      return tables.map(async (table) => {
+        return transformTable(table);
       });
 
       return tables2;
@@ -50,20 +41,12 @@ module.exports = {
         throw new AuthenticationError(AUTHORIZATION_ERROR, errors);
       }
 
-      const table = await Table.findById(tableId);
-
-      if (!table) {
-        errors.general = TABLE_NOT_FOUND;
-        throw new Error(TABLE_NOT_FOUND, errors);
+      try {
+        const table = await Table.findById(tableId);
+        return transformTable(table);
+      } catch (error) {
+        throw new Error(error);
       }
-
-      await table
-        .populate("creator")
-        .populate("team.user")
-        .execPopulate();
-      table.creator.token = "";
-
-      return table;
     },
   },
   Mutation: {
@@ -86,7 +69,10 @@ module.exports = {
       }
 
       //check if user doenst have table with same title
-      const sameTable = Table.find({ creator: user.id, title });
+      const sameTable = await Table.findOne({
+        $and: [{ creator: user.id }, { title: title }],
+      });
+
       if (sameTable) {
         errors.title = TABLE_TITLE_EXISTS;
         throw new UserInputError(TABLE_TITLE_EXISTS, errors);
@@ -103,12 +89,7 @@ module.exports = {
 
       //prepare data to send query
       const table = await newTable.save();
-      await table
-        .populate("creator")
-        .populate("team.user")
-        .execPopulate();
-      table.creator.token = "";
-      return table;
+      return transformTable(table);
     },
   },
 };
