@@ -1,3 +1,10 @@
+## User
+
+### Mutations
+
+- login(username,password) - checks for a user in database and returs user data and auth token
+- register(username,email,password,confirmPassword,key) - register new user checking if there is no other with the same name and email. Given key is either license key and it creates admin account or it is user key from admin to register new users within a team
+
 ## Tables
 
 ### Queries
