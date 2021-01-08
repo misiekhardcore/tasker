@@ -5,10 +5,15 @@ module.exports = gql`
     id: ID!
     username: String!
     email: String!
-    token: String!
     password: String!
     role: Int!
   }
+
+  type UserPayload {
+    user: User!
+    token: String!
+  }
+
   type Table {
     id: ID!
     title: String!
@@ -64,13 +69,13 @@ module.exports = gql`
     team: [RoleInput]
   }
 
-  input RoleInput{
+  input RoleInput {
     user: ID!
     role: Int!
   }
 
   type Mutation {
-    login(username: String!, password: String!): User!
+    login(username: String!, password: String!): UserPayload!
     register(registerInput: RegisterInput): User!
     createTable(tableInput: TableInput): Table!
   }
