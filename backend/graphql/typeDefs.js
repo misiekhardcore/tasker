@@ -52,7 +52,7 @@ module.exports = gql`
   type Query {
     getTables: [Table]!
     getTable(tableId: ID!): Table!
-    getTask(taskId: ID!, tableId: ID!): Task!
+    getTask(taskId: ID!): Task!
   }
 
   input RegisterInput {

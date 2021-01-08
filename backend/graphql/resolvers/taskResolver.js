@@ -15,7 +15,7 @@ var ObjectId = require("mongoose").Types.ObjectId;
 
 module.exports = {
   Query: {
-    getTask: async (_, { taskId, tableId }, context) => {
+    getTask: async (_, { taskId }, context) => {
       //check if user sent auth token and it is valid
       const { user, errors, valid } = authCheck(context);
 
@@ -24,7 +24,7 @@ module.exports = {
       }
 
       //check ids
-      if (!ObjectId.isValid(taskId) || !ObjectId.isValid(tableId)) {
+      if (!ObjectId.isValid(taskId)) {
         errors.general = NOT_VALID_ID;
         throw new UserInputError(NOT_VALID_ID, errors);
       }
@@ -37,22 +37,16 @@ module.exports = {
         throw new UserInputError(TASK_NOT_FOUND, errors);
       }
 
-      //check if table exists
-      const table = await Table.findById(tableId);
-      console.log(table);
+      //check if table with this id, user in team and role exists
+      const table = await Table.findOne({
+        tasks: taskId,
+        "team.user": { _id: user.id },
+        "team.role": { $gte: 1 },
+      });
+
       if (!table) {
         errors.general = TABLE_NOT_FOUND;
         throw new UserInputError(TABLE_NOT_FOUND, errors);
-      }
-
-      //check permissions
-      const permCheck = table._doc.team.filter((t) => {
-        return t.user.id === user.id && t.role > 1;
-      });
-
-      if (!permCheck) {
-        errors.authorization = OERATION_NOT_ALLOWED;
-        throw new AuthenticationError(OERATION_NOT_ALLOWED, errors);
       }
 
       return transformTask(task);
@@ -83,22 +77,16 @@ module.exports = {
         throw new UserInputError(TASK_TITLE_EMPTY, errors);
       }
 
-      //check if table exists
-      const table = await Table.findById(tableId);
+      //check if table with this id, user in team and role exists
+      const table = await Table.findOne({
+        _id: tableId,
+        "team.user": { _id: user.id },
+        "team.role": { $gte: 1 },
+      });
 
       if (!table) {
         errors.general = TABLE_NOT_FOUND;
         throw new UserInputError(TABLE_NOT_FOUND, errors);
-      }
-
-      //check permissions
-      const permCheck = table._doc.team.filter((t) => {
-        return t.user.id === user.id && t.role > 1;
-      });
-
-      if (!permCheck) {
-        errors.authorization = OERATION_NOT_ALLOWED;
-        throw new AuthenticationError(OERATION_NOT_ALLOWED, errors);
       }
 
       const newTask = new Task({
@@ -114,7 +102,8 @@ module.exports = {
       //add task to table tasks
       await Table.findOneAndUpdate(
         { _id: tableId },
-        { $push: { tasks: task._id } }
+        { $push: { tasks: task._id } },
+        { useFindAndModify: false }
       );
 
       return transformTask(task);
