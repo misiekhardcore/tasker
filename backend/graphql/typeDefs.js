@@ -52,7 +52,7 @@ module.exports = gql`
   type Query {
     getTables: [Table]!
     getTable(tableId: ID!): Table!
-    getTask(taskId: ID!): Task!
+    getTask(taskId: ID!, tableId: ID!): Task!
   }
 
   input RegisterInput {
@@ -74,9 +74,16 @@ module.exports = gql`
     role: Int!
   }
 
+  input TaskInput {
+    tableId: ID!
+    title: String!
+    description: String
+  }
+
   type Mutation {
     login(username: String!, password: String!): UserPayload!
     register(registerInput: RegisterInput): User!
     createTable(tableInput: TableInput): Table!
+    createTask(taskInput: TaskInput): Task!
   }
 `;
