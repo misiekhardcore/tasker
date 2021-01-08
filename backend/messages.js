@@ -11,8 +11,14 @@ module.exports = {
   EMAIL_ALREADY_EXISTS: "Email already exists",
   REGISTER_KEY_NOT_VALID: "Register key not valid",
   AUTHORIZATION_ERROR: "Authorization error",
+  OERATION_NOT_ALLOWED: "You are not allowed to do this",
+  NOT_VALID_ID: "ID is not valid",
 
   TABLE_NOT_FOUND: "Table(s) not found",
   TABLE_TITLE_EMPTY: "Table title can not be empty",
   TABLE_TITLE_EXISTS: "Table with this title already exixsts",
+
+  TASK_NOT_FOUND: "Task(s) not found",
+  TASK_TITLE_EMPTY: "Task title can not be empty",
+  TASK_TITLE_EXISTS: "Task with this title already exixsts",
 };
