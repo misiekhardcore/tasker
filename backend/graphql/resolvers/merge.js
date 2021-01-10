@@ -1,20 +1,7 @@
-const { TABLE_TITLE_EMPTY } = require("../../messages");
 const User = require("../../models/User");
 const Task = require("../../models/Task");
 
 module.exports = {
-  transformTable: (table) => {
-    return {
-      id: table._id,
-      ...table._doc,
-      creator: () => user(table._doc.creator),
-      team: table._doc.team.map((t) => ({
-        ...t._doc,
-        user: () => user(t._doc.user),
-      })),
-      tasks: table._doc.tasks.map((t) => task(t._id)),
-    };
-  },
   transformTask: (task) => {
     return {
       id: task._id,
