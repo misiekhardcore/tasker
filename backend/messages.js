@@ -11,8 +11,10 @@ module.exports = {
   EMAIL_ALREADY_EXISTS: "Email already exists",
   REGISTER_KEY_NOT_VALID: "Register key not valid",
   AUTHORIZATION_ERROR: "Authorization error",
-  OERATION_NOT_ALLOWED: "You are not allowed to do this",
+  OPERATION_NOT_ALLOWED: "You are not allowed to do this",
   NOT_VALID_ID: "ID is not valid",
+
+  NOT_A_TEAM_MEMBER: "You are not a member of this team",
 
   TABLE_NOT_FOUND: "Table(s) not found",
   TABLE_TITLE_EMPTY: "Table title can not be empty",
