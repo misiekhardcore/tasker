@@ -5,7 +5,9 @@ const userSchema = new Schema(
     username: String,
     email: String,
     password: String,
-    role: Number,
+    avatar: String,
+    team: { type: Schema.Types.ObjectId, ref: "Team" },
+    role: String,
     key: String,
   },
   {
