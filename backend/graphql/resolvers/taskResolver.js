@@ -3,31 +3,23 @@ const Table = require("../../models/Table");
 const {
   TABLE_NOT_FOUND,
   TASK_TITLE_EMPTY,
-  OERATION_NOT_ALLOWED,
+  OPERATION_NOT_ALLOWED,
   TASK_NOT_FOUND,
-  NOT_VALID_ID,
-  AUTHORIZATION_ERROR,
 } = require("../../messages");
 const authCheck = require("../utils/authCheck");
-const { AuthenticationError, UserInputError } = require("apollo-server");
+const {
+  UserInputError,
+} = require("apollo-server");
 const { transformTask } = require("./merge");
-var ObjectId = require("mongoose").Types.ObjectId;
+const { checkId } = require("../utils/validators");
 
 module.exports = {
   Query: {
     getTask: async (_, { taskId }, context) => {
       //check if user sent auth token and it is valid
-      const { user, errors, valid } = authCheck(context);
+      const {id} = authCheck(context);
 
-      if (!valid) {
-        throw new AuthenticationError(AUTHORIZATION_ERROR, errors);
-      }
-
-      //check ids
-      if (!ObjectId.isValid(taskId)) {
-        errors.general = NOT_VALID_ID;
-        throw new UserInputError(NOT_VALID_ID, errors);
-      }
+      checkId(taskId);
 
       //check if task exists
       const task = await Task.findById(taskId);
@@ -40,7 +32,7 @@ module.exports = {
       //check if table with this id, user in team and role exists
       const table = await Table.findOne({
         tasks: taskId,
-        "team.user": { _id: user.id },
+        "team.user": { _id: id },
         "team.role": { $gte: 1 },
       });
 
@@ -55,49 +47,40 @@ module.exports = {
   Mutation: {
     createTask: async (
       _,
-      { taskInput: { tableId, title, description } },
+      { taskInput: { tableId, name, description } },
       context
     ) => {
       //check if user sent auth token and it is valid
-      const { user, errors, valid } = authCheck(context);
-
-      if (!valid) {
-        throw new AuthenticationError(AUTHORIZATION_ERROR, errors);
-      }
+      const {id} = authCheck(context);
 
       //check ids
-      if (!ObjectId.isValid(tableId)) {
-        errors.general = NOT_VALID_ID;
-        throw new UserInputError(NOT_VALID_ID, errors);
-      }
+      checkId(tableId);
 
-      //check title
-      if (title.trim() === "") {
-        errors.title = TASK_TITLE_EMPTY;
+      //check name
+      if (nema.trim() === "") {
+        errors.name = TASK_TITLE_EMPTY;
         throw new UserInputError(TASK_TITLE_EMPTY, errors);
       }
 
       //check if table with this id, user in team and role exists
       const table = await Table.findOne({
         _id: tableId,
-        "team.user": { _id: user.id },
+        "team.user": { _id: id },
         "team.role": { $gte: 1 },
       });
 
       if (!table) {
-        errors.general = TABLE_NOT_FOUND;
-        throw new UserInputError(TABLE_NOT_FOUND, errors);
+        errors.general = OPERATION_NOT_ALLOWED;
+        throw new UserInputError(OPERATION_NOT_ALLOWED, errors);
       }
 
-      const newTask = new Task({
-        title,
+      const task = await Task.create({
+        name,
         description,
-        creator: user.id,
+        creator: id,
         status: 0,
         comments: [],
       });
-
-      const task = await newTask.save();
 
       //add task to table tasks
       await Table.findOneAndUpdate(
