@@ -4,22 +4,52 @@ const { UserInputError } = require("apollo-server");
 
 //messages
 const {
-  USER_VALIDATION_ERROR,
   USER_NOT_FOUND,
-  USER_WRONG_CREDENTIALS,
   USERNAME_ALREADY_EXISTS,
   EMAIL_ALREADY_EXISTS,
   REGISTER_KEY_NOT_VALID,
 } = require("../../messages");
 
-//input checkers
+//avatars
+const avatarColors = [
+  "D81B60",
+  "F06292",
+  "F48FB1",
+  "FFB74D",
+  "FF9800",
+  "F57C00",
+  "00897B",
+  "4DB6AC",
+  "80CBC4",
+  "80DEEA",
+  "4DD0E1",
+  "00ACC1",
+  "9FA8DA",
+  "7986CB",
+  "3949AB",
+  "8E24AA",
+  "BA68C8",
+  "CE93D8",
+];
+
+//random picker
+function randomChoice(arr) {
+  return arr[Math.floor(arr.length * Math.random())];
+}
+
+//checkers
 const {
   validateRegisterInput,
   validateLoginInput,
+  checkPassword,
+  checkUser,
+  checkId,
 } = require("../utils/validators");
 
 //get User model
 const User = require("../../models/User");
+const Team = require("../../models/Team");
+const Table = require("../../models/Table");
 
 //JWT secret
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -33,50 +63,47 @@ function generateToken(user) {
       username: user.username,
     },
     JWT_SECRET,
-    { expiresIn: "1h" }
+    { expiresIn: "8h" }
   );
 }
 
+const errors = {};
+
 module.exports = {
   Mutation: {
-    login: async (_, { username, password }) => {
+    login: async (_, { email, password }) => {
       //validate inputs
-      const { errors, valid } = validateLoginInput(username, password);
-
-      if (!valid) {
-        throw new UserInputError(USER_VALIDATION_ERROR, errors);
-      }
+      validateLoginInput(email, password);
 
       //find user
-      const user = await User.findOne({ username });
-
-      if (!user) {
-        errors.username = USER_NOT_FOUND;
-        throw new UserInputError(USER_NOT_FOUND, errors);
-      }
+      const user = await checkUser({ email }, "email", USER_NOT_FOUND);
 
       //check password
-      const matchPasswords = await bcrypt.compare(password, user.password);
-
-      if (!matchPasswords) {
-        errors.general = USER_WRONG_CREDENTIALS;
-        throw new UserInputError(USER_WRONG_CREDENTIALS, errors);
-      }
+      await checkPassword(password, user.password);
 
       //everything is ok, generate token
       const token = generateToken(user);
 
       return {
-        user: { ...user, id: user._id },
+        user,
         token,
       };
     },
+
     register: async (
       _,
-      { registerInput: { username, email, password, confirmPassword, key } }
+      {
+        registerInput: {
+          username,
+          email,
+          password,
+          confirmPassword,
+          key,
+        },
+      }
     ) => {
-      //valisate inputs
-      const { errors, valid } = validateRegisterInput(
+      //validate inputs
+      validateRegisterInput(
         username,
         email,
         password,
@@ -84,58 +111,67 @@ module.exports = {
         key
       );
 
-      if (!valid) {
-        throw new UserInputError(USER_VALIDATION_ERROR, errors);
-      }
-
-      //check key
-      let matchLicence = false;
-      const keyCheck = await User.findOne({ key });
-
-      if (!keyCheck) {
-        matchLicence = await bcrypt.compare(username + email, key);
-        if (!matchLicence) {
+      const matchLicence = await bcrypt.compare(username + email, key);
+      if (!matchLicence) {
+        //check key
+        const keyCheck = await User.find({ key });
+        if (!keyCheck) {
           errors.key = REGISTER_KEY_NOT_VALID;
           throw new UserInputError(REGISTER_KEY_NOT_VALID, errors);
         }
       }
 
       //check if username is not already taken
-      let user = await User.findOne({ username });
-
-      if (user) {
-        errors.username = USERNAME_ALREADY_EXISTS;
-        throw new UserInputError(USERNAME_ALREADY_EXISTS, errors);
-      }
+      await checkUser(
+        { username },
+        "username",
+        USERNAME_ALREADY_EXISTS,
+        false
+      );
 
       //check if email is not already taken
-      user = await User.findOne({ email });
+      checkUser({ email }, "email", EMAIL_ALREADY_EXISTS, false);
 
-      if (user) {
-        errors.email = EMAIL_ALREADY_EXISTS;
-        throw new UserInputError(EMAIL_ALREADY_EXISTS, errors);
-      }
-
-      //hash password
-      password = await bcrypt.hash(password, 12);
-
-      //create new User
-      const newUser = new User({
+      //common data
+      const common = {
         username,
         email,
-        password,
-        role: matchLicence ? 1 : 0,
+        password: await bcrypt.hash(password, 2),
+        avatar: randomChoice(avatarColors),
         key,
-      });
+      };
 
-      //save user
-      user = await newUser.save();
+      let user;
+
+      //check if key creates Admin
+      if (matchLicence) {
+        try {
+          const team = await Team.create({
+            name: `${common.username}'s team`,
+          });
+
+          //create Admin
+          user = await User.create({
+            ...common,
+            team: team.id,
+            role: "Admin",
+          });
+        } catch (error) {
+          throw new Error(error);
+        }
+      } else {
+        //create normal User
+        user = await User.create({
+          ...common,
+          role: "User",
+        });
+      }
 
       //generate token
       const token = generateToken(user);
 
       return {
-        user: { ...user._doc, id: user._id },
+        user,
         token,
       };
     },
