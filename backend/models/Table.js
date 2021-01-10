@@ -2,24 +2,22 @@ const { model, Schema } = require("mongoose");
 
 const tableSchema = new Schema(
   {
-    title: String,
+    name: String,
     description: String,
     creator: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    team: [
+    shareWith: [
       {
-        role: { type: Number },
-        user: { type: Schema.Types.ObjectId, ref: "User" },
+        kind: String,
+        item: {
+          type: Schema.Types.ObjectId,
+          refPath: "shareWith.kind",
+        },
       },
     ],
-    tasks: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Task",
-      },
-    ],
+    parent: { type: Schema.Types.ObjectId, ref: "Table" },
   },
   {
     timestamps: true,
