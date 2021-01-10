@@ -1,40 +1,44 @@
 const { gql } = require("apollo-server");
 
 module.exports = gql`
+  scalar JSON
+
   type User {
     id: ID!
     username: String!
     email: String!
-    password: String!
-    role: Int!
+    role: String!
+    createdAt: String!
+    updatedAt: String!
   }
 
-  type UserPayload {
+  type AuthPayload {
     user: User!
     token: String!
   }
 
   type Table {
     id: ID!
-    title: String!
+    name: String!
     description: String
     creator: User!
-    team: [Role!]!
-    tasks: [Task]!
+    parent: ID!
+    shareWith: [JSON]
     createdAt: String!
     updatedAt: String!
   }
 
-  type Role {
-    user: User!
-    role: Int!
+  type Team {
+    id: ID!
+    name: String!
   }
 
   type Task {
     id: ID!
-    title: String!
+    name: String!
     description: String
     creator: User!
+    parent: ID!
     status: Int!
     comments: [Comment]!
     createdAt: String!
@@ -49,12 +53,6 @@ module.exports = gql`
     updatedAt: String!
   }
 
-  type Query {
-    getTables: [Table]!
-    getTable(tableId: ID!): Table!
-    getTask(taskId: ID!): Task!
-  }
-
   input RegisterInput {
     username: String!
     password: String!
@@ -64,26 +62,39 @@ module.exports = gql`
   }
 
   input TableInput {
-    title: String!
+    name: String!
     description: String
-    team: [RoleInput]
-  }
-
-  input RoleInput {
-    user: ID!
-    role: Int!
+    parent: ID
+    shareWith: [ShareInput]
   }
 
   input TaskInput {
     tableId: ID!
-    title: String!
+    name: String!
     description: String
   }
 
+  input ShareInput {
+    kind: String
+    item: ID
+  }
+
+  type Query {
+    getTeam: Team
+    getTables(parent: ID): [Table]!
+    getTable(tableId: ID!): Table
+    getTasks(parent: ID): [Task]!
+    getTask(taskId: ID!): Task
+  }
+
   type Mutation {
-    login(username: String!, password: String!): UserPayload!
-    register(registerInput: RegisterInput): User!
-    createTable(tableInput: TableInput): Table!
-    createTask(taskInput: TaskInput): Task!
+    login(email: String!, password: String!): AuthPayload!
+    register(registerInput: RegisterInput): AuthPayload!
+
+    createTable(parent: ID!, name: String!): Table!
+    updateTable(id: ID!, input: TableInput): Table!
+    deleteTable(id: ID!): Boolean
+
+    createTask(taskInput: TaskInput): Task
   }
 `;
