@@ -1,116 +1,118 @@
 const Table = require("../../models/Table");
 const {
-  TABLE_NOT_FOUND,
-  AUTHORIZATION_ERROR,
+  TABLE_TITLE_EMPTY,
   TABLE_TITLE_EXISTS,
-  NOT_VALID_ID,
 } = require("../../messages");
+
 const authCheck = require("../utils/authCheck");
-const { AuthenticationError, UserInputError } = require("apollo-server");
-const { transformTable } = require("./merge");
+const { checkId, checkUser } = require("../utils/validators");
+
 var ObjectId = require("mongoose").Types.ObjectId;
+const User = require("../../models/User");
+const Group = require("../../models/Group");
+
+const {
+  AuthenticationError,
+  UserInputError,
+} = require("apollo-server");
 
 module.exports = {
   Query: {
-    getTables: async (_, args, context) => {
+    getTables: async (_, { parent }, context) => {
       //check if user sent auth token and it is valid
-      const { user, errors, valid } = authCheck(context);
+      const { id } = authCheck(context);
+      if (parent) {
+        checkId(parent);
 
-      if (!valid) {
-        throw new AuthenticationError(AUTHORIZATION_ERROR, errors);
+        return await Table.find({ parent });
+      } else {
+        const user = await checkUser({ _id: id });
+        const groups = await Group.find({ users: ObjectId(id) }, "_id");
+
+        const ids = groups
+          .map((g) => g.id)
+          .concat(
+            ["External User", "Collaborator"].includes(user.role)
+              ? [ObjectId(id)]
+              : [ObjectId(id), user.team]
+          );
+        return await Table.find({ "shareWith.item": ids })
+          .populate("shareWith")
+          .populate("creator");
       }
-
-      //get all tables where user is in team and where
-      //he can at least read and sort it
-      const tables = await Table.find({
-        "team.user": { _id: user.id },
-        "team.role": { $gte: 1 },
-      }).sort({
-        createdAt: -1,
-      });
-
-      //check if there are any
-      if (!tables) {
-        errors.general = TABLE_NOT_FOUND;
-        throw new Error(TABLE_NOT_FOUND, errors);
-      }
-
-      //prepare and return data
-      return tables.map(async (table) => {
-        return transformTable(table);
-      });
     },
     getTable: async (_, { tableId }, context) => {
       //check if user sent auth token and it is valid
-      const { user, errors, valid } = authCheck(context);
-
-      if (!valid) {
-        throw new AuthenticationError(AUTHORIZATION_ERROR, errors);
-      }
+      authCheck(context);
 
       //check ids
-      if (!ObjectId.isValid(tableId)) {
-        errors.general = NOT_VALID_ID;
-        throw new UserInputError(NOT_VALID_ID, errors);
-      }
+      checkId(tableId);
 
-      //check if table exists, user is in team and have
-      //permissions to at least read
-      const table = await Table.findOne({
-        _id: tableId,
-        "team.user": { _id: user.id },
-        "team.role": { $gte: 1 },
-      });
-
-      if (!table) {
-        errors.general = TABLE_NOT_FOUND;
-        throw new Error(TABLE_NOT_FOUND, errors);
-      }
-
-      return transformTable(table);
+      return await Table.findById(tableId).populate("shareWith");
     },
   },
   Mutation: {
-    createTable: async (
-      _,
-      { tableInput: { title, description, team } },
-      context
-    ) => {
+    createTable: async (_, { parent, name }, context) => {
       //check if user sent auth token and it is valid
-      const { user, errors, valid } = authCheck(context);
+      const { id } = authCheck(context);
 
-      if (!valid) {
-        throw new AuthenticationError(AUTHORIZATION_ERROR, errors);
-      }
-
-      //check title
-      if (title.trim() === "") {
-        errors.title = TABLE_TITLE_EMPTY;
+      //check name
+      if (name.trim() === "") {
+        errors.nema = TABLE_TITLE_EMPTY;
         throw new UserInputError(TABLE_TITLE_EMPTY, errors);
       }
 
-      //check if user doenst have table with same title
+      //check if user doenst have table with same name
       const sameTable = await Table.findOne({
-        $and: [{ creator: user.id }, { title: title }],
+        $and: [{ creator: id }, { name }],
       });
 
       if (sameTable) {
-        errors.title = TABLE_TITLE_EXISTS;
+        errors.name = TABLE_TITLE_EXISTS;
         throw new UserInputError(TABLE_TITLE_EXISTS, errors);
       }
 
       //create new Table in database
-      const newTable = new Table({
-        title,
-        description,
-        creator: user.id,
-        team,
-        tasks: [],
+      const table = await Table.create({
+        name,
+        parent: parent || undefined,
+        creator: id,
+        shareWith: parent
+          ? []
+          : [
+              {
+                kind: "Team",
+                item: (await User.findById(id)).team,
+              },
+            ],
       });
 
       //prepare data to send query
-      const table = await newTable.save();
-      return transformTable(table);
+      return await Table.findById(table.id)
+        .populate("shareWith.item")
+        .populate("creator");
+    },
+    updateTable: async (_, { id, input }, context) => {
+      authCheck(context);
+      return await Table.findOneAndUpdate(
+        {
+          _id: id,
+        },
+        { $set: input },
+        { new: true }
+      )
+        .populate("shareWith")
+        .populate("creator");
+    },
+    deleteTable: async (_, { id }, context) => {
+      authCheck(context);
+      await Table.deleteOne({ _id: id });
+      await deleteSubtables(id);
+      delete true;
     },
   },
+};
+
+const deleteSubtables = async (id) => {
+  await Table.deleteMany({ parent: id });
 };
