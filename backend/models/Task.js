@@ -2,7 +2,7 @@ const { model, Schema } = require("mongoose");
 
 const taskSchema = new Schema(
   {
-    title: String,
+    name: String,
     descrition: String,
     creator: {
       type: Schema.Types.ObjectId,
