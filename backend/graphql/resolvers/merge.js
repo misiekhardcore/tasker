@@ -10,31 +10,12 @@ module.exports = {
       comments: () => task._doc.comments.map((c) => comment(c._id)),
     };
   },
-  transformComment: (comment) => {},
 };
 
 const user = async (userId) => {
   try {
     const user = await User.findById(userId);
     return { ...user._doc, id: user._id };
-  } catch (error) {
-    throw new Error(error);
-  }
-};
-
-const task = async (taskId) => {
-  try {
-    const task = await Task.findById(taskId);
-    return { ...task._doc, id: task.id };
-  } catch (error) {
-    throw new Error(error);
-  }
-};
-
-const comment = async (commentId) => {
-  try {
-    const comment = await Comment.findById(commentId);
-    return { ...comment._doc, id: comment._id };
   } catch (error) {
     throw new Error(error);
   }

@@ -8,15 +8,6 @@ const tableSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    shareWith: [
-      {
-        kind: String,
-        item: {
-          type: Schema.Types.ObjectId,
-          refPath: "shareWith.kind",
-        },
-      },
-    ],
     parent: { type: Schema.Types.ObjectId, ref: "Table" },
   },
   {

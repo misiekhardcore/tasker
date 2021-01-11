@@ -1,12 +1,42 @@
-const Task = require("../../models/Task");
-const Table = require("../../models/Table");
 const Comment = require("../../models/Comment");
-const {} = require("../../messages");
+const Task = require("../../models/Task");
 const authCheck = require("../utils/authCheck");
-const { AuthenticationError, UserInputError } = require("apollo-server");
-const { transformComment } = require("./merge");
-var ObjectId = require("mongoose").Types.ObjectId;
+const { checkId } = require("../utils/validators");
 
-module.exports ={
-  
-}
+module.exports = {
+  Query: {
+    getComments: async (_, { parent }, context) => {
+      const { id } = authCheck(context);
+
+      checkId(parent);
+
+      return await Comment.find({ parent }).populate("creator");
+    },
+    getComment: async (_, { commentId }, context) => {
+      const { id } = authCheck(context);
+
+      checkId(commentId);
+
+      return await Comment.findById(commentId).populate("creator");
+    },
+  },
+  Mutation: {
+    createComment: async (_, { parent, body }, context) => {
+      const { id } = authCheck(context);
+
+      checkId(parent);
+
+      if (body.trim() == "") {
+        throw new UserInputError("Comment body can not be empty");
+      }
+
+      const comment = await Comment.create({
+        body,
+        creator: id,
+        parent,
+      });
+
+      return await Comment.findById(comment.id).populate("creator");
+    },
+  },
+};

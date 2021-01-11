@@ -92,15 +92,7 @@ module.exports = {
 
     register: async (
       _,
-      {
-        registerInput: {
-          username,
-          email,
-          password,
-          confirmPassword,
-          key,
-        },
-      }
+      { username, email, password, confirmPassword, key }
     ) => {
       //validate inputs
       validateRegisterInput(
@@ -130,7 +122,7 @@ module.exports = {
       );
 
       //check if email is not already taken
-      checkUser({ email }, "email", EMAIL_ALREADY_EXISTS, false);
+      await checkUser({ email }, "email", EMAIL_ALREADY_EXISTS, false);
 
       //common data
       const common = {
@@ -143,29 +135,11 @@ module.exports = {
 
       let user;
 
-      //check if key creates Admin
-      if (matchLicence) {
-        try {
-          const team = await Team.create({
-            name: `${common.username}'s team`,
-          });
-
-          //create Admin
-          user = await User.create({
-            ...common,
-            team: team.id,
-            role: "Admin",
-          });
-        } catch (error) {
-          throw new Error(error);
-        }
-      } else {
-        //create normal User
-        user = await User.create({
-          ...common,
-          role: "User",
-        });
-      }
+      //create User
+      user = await User.create({
+        ...common,
+        role: matchLicence ? "Admin" : "User",
+      });
 
       //generate token
       const token = generateToken(user);

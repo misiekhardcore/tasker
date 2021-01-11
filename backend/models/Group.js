@@ -4,7 +4,6 @@ const groupSchema = new Schema(
   {
     team: { type: Schema.Types.ObjectId, ref: "Team" },
     name: String,
-    initials: String,
     avatar: String,
     users: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
@@ -13,4 +12,4 @@ const groupSchema = new Schema(
   }
 );
 
-module.exports = model("Role", groupSchema);
+module.exports = model("Group", groupSchema);

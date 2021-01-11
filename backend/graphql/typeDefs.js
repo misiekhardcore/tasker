@@ -1,8 +1,6 @@
 const { gql } = require("apollo-server");
 
 module.exports = gql`
-  scalar JSON
-
   type User {
     id: ID!
     username: String!
@@ -22,15 +20,9 @@ module.exports = gql`
     name: String!
     description: String
     creator: User!
-    parent: ID!
-    shareWith: [JSON]
+    parent: Table
     createdAt: String!
     updatedAt: String!
-  }
-
-  type Team {
-    id: ID!
-    name: String!
   }
 
   type Task {
@@ -38,9 +30,8 @@ module.exports = gql`
     name: String!
     description: String
     creator: User!
-    parent: ID!
+    parent: Table
     status: Int!
-    comments: [Comment]!
     createdAt: String!
     updatedAt: String!
   }
@@ -49,6 +40,7 @@ module.exports = gql`
     id: ID!
     body: String!
     creator: User!
+    parent: ID!
     createdAt: String!
     updatedAt: String!
   }
@@ -65,36 +57,46 @@ module.exports = gql`
     name: String!
     description: String
     parent: ID
-    shareWith: [ShareInput]
-  }
-
-  input TaskInput {
-    tableId: ID!
-    name: String!
-    description: String
-  }
-
-  input ShareInput {
-    kind: String
-    item: ID
   }
 
   type Query {
-    getTeam: Team
     getTables(parent: ID): [Table]!
     getTable(tableId: ID!): Table
-    getTasks(parent: ID): [Task]!
+    getTasks(parent: ID!): [Task]!
     getTask(taskId: ID!): Task
+    getComments(parent: ID!): [Comment]
+    getComment(commentId: ID!): Comment
   }
 
   type Mutation {
     login(email: String!, password: String!): AuthPayload!
-    register(registerInput: RegisterInput): AuthPayload!
+    register(
+      username: String!
+      password: String!
+      confirmPassword: String!
+      email: String!
+      key: String!
+    ): AuthPayload!
 
-    createTable(parent: ID!, name: String!): Table!
-    updateTable(id: ID!, input: TableInput): Table!
-    deleteTable(id: ID!): Boolean
+    createTable(parent: ID, name: String!, description: String): Table
+    updateTable(
+      tableId: ID!
+      name: String!
+      description: String
+      parent: ID!
+    ): Table
+    deleteTable(tableId: ID!): Boolean
 
-    createTask(taskInput: TaskInput): Task
+    createTask(parent: ID!, name: String!, description: String): Task
+    updateTask(
+      taskId: ID!
+      name: String!
+      description: String
+      parent: ID!
+      status: Int!
+    ): Task
+    deleteTask(taskId: ID!): Boolean
+
+    createComment(parent: ID!, body: String!): Comment
   }
 `;

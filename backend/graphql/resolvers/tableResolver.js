@@ -1,20 +1,10 @@
 const Table = require("../../models/Table");
-const {
-  TABLE_TITLE_EMPTY,
-  TABLE_TITLE_EXISTS,
-} = require("../../messages");
+const { TABLE_TITLE_EMPTY } = require("../../messages");
 
 const authCheck = require("../utils/authCheck");
-const { checkId, checkUser } = require("../utils/validators");
+const { checkId } = require("../utils/validators");
 
-var ObjectId = require("mongoose").Types.ObjectId;
-const User = require("../../models/User");
-const Group = require("../../models/Group");
-
-const {
-  AuthenticationError,
-  UserInputError,
-} = require("apollo-server");
+const { UserInputError } = require("apollo-server");
 
 module.exports = {
   Query: {
@@ -24,22 +14,18 @@ module.exports = {
       if (parent) {
         checkId(parent);
 
-        return await Table.find({ parent });
-      } else {
-        const user = await checkUser({ _id: id });
-        const groups = await Group.find({ users: ObjectId(id) }, "_id");
+        const table = await Table.find({
+          parent,
+        })
+          .populate("creator")
+          .populate("parent");
 
-        const ids = groups
-          .map((g) => g.id)
-          .concat(
-            ["External User", "Collaborator"].includes(user.role)
-              ? [ObjectId(id)]
-              : [ObjectId(id), user.team]
-          );
-        return await Table.find({ "shareWith.item": ids })
-          .populate("shareWith")
-          .populate("creator");
+        return table;
       }
+
+      return await Table.find({ parent: null })
+        .populate("creator")
+        .populate("parent");
     },
     getTable: async (_, { tableId }, context) => {
       //check if user sent auth token and it is valid
@@ -52,63 +38,61 @@ module.exports = {
     },
   },
   Mutation: {
-    createTable: async (_, { parent, name }, context) => {
+    createTable: async (_, { parent, name, description }, context) => {
       //check if user sent auth token and it is valid
       const { id } = authCheck(context);
 
+      //check id
+      checkId(parent);
+
       //check name
       if (name.trim() === "") {
-        errors.nema = TABLE_TITLE_EMPTY;
+        errors.name = TABLE_TITLE_EMPTY;
         throw new UserInputError(TABLE_TITLE_EMPTY, errors);
-      }
-
-      //check if user doenst have table with same name
-      const sameTable = await Table.findOne({
-        $and: [{ creator: id }, { name }],
-      });
-
-      if (sameTable) {
-        errors.name = TABLE_TITLE_EXISTS;
-        throw new UserInputError(TABLE_TITLE_EXISTS, errors);
       }
 
       //create new Table in database
       const table = await Table.create({
         name,
-        parent: parent || undefined,
+        description: description || "",
         creator: id,
-        shareWith: parent
-          ? []
-          : [
-              {
-                kind: "Team",
-                item: (await User.findById(id)).team,
-              },
-            ],
+        parent: parent || undefined,
       });
 
       //prepare data to send query
       return await Table.findById(table.id)
-        .populate("shareWith.item")
-        .populate("creator");
+        .populate("creator")
+        .populate("parent");
     },
-    updateTable: async (_, { id, input }, context) => {
-      authCheck(context);
+    updateTable: async (
+      _,
+      { tableId, name, description, parent },
+      context
+    ) => {
+      const { id } = authCheck(context);
+
+      checkId(tableId);
+      checkId(parent);
+
+      if (name.trim() == "") {
+        throw new UserInputError("Name can not be empty");
+      }
+
       return await Table.findOneAndUpdate(
         {
-          _id: id,
+          _id: tableId,
         },
-        { $set: input },
-        { new: true }
+        { $set: { name, description, parent } },
+        { new: true, useFindAndModify: false }
       )
-        .populate("shareWith")
-        .populate("creator");
+        .populate("creator")
+        .populate("parent");
     },
-    deleteTable: async (_, { id }, context) => {
+    deleteTable: async (_, { tableId }, context) => {
       authCheck(context);
-      await Table.deleteOne({ _id: id });
-      await deleteSubtables(id);
-      delete true;
+      await Table.deleteOne({ _id: tableId });
+      await deleteSubtables(tableId);
+      return true;
     },
   },
 };

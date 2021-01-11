@@ -10,6 +10,7 @@ const {
   USER_WRONG_CREDENTIALS,
   EMAIL_INPUT_EMPTY,
   EMAIL_INPUT_INVALID,
+  NOT_VALID_ID,
 } = require("../../messages");
 
 const bcrypt = require("bcrypt");
@@ -117,7 +118,7 @@ module.exports.checkUser = async (
 module.exports.checkId = (id) => {
   const errors = {};
 
-  if (!ObjectId.isValid(tableId)) {
+  if (id && !ObjectId.isValid(id)) {
     errors.general = NOT_VALID_ID;
     throw new UserInputError(NOT_VALID_ID, errors);
   }

@@ -3,16 +3,13 @@ const { model, Schema } = require("mongoose");
 const taskSchema = new Schema(
   {
     name: String,
-    descrition: String,
+    description: String,
     creator: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    parent: { type: Schema.Types.ObjectId, ref: "Table" },
     status: Number,
-    comments: [{
-      type: Schema.Types.ObjectId,
-      ref: "Comment",
-    }],
   },
   {
     timestamps: true,

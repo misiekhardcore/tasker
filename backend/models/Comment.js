@@ -7,6 +7,7 @@ const commentSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    parent: { type: Schema.Types.ObjectId, ref: "Task" },
   },
   {
     timestamps: true,
