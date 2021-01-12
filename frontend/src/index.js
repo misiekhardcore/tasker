@@ -1,16 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import "./index.scss";
 
 import {
   ApolloClient,
-  ApolloProvider,
   createHttpLink,
   InMemoryCache,
-  setContext,
+  ApolloProvider,
 } from "@apollo/client";
+
+import { setContext } from "@apollo/client/link/context";
 
 const link = createHttpLink({
   uri: "http://localhost:5000",
