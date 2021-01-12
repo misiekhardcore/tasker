@@ -1,47 +1,20 @@
-import { gql, useMutation } from "@apollo/client";
-import "./App.css";
+import React from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import { AuthProvider } from "./context/auth";
+import Login from "./pages/Login";
+import Main from "./pages/Main";
+import AuthRoute from "./utils/AuthRoute";
+import "./App.scss";
 
 function App() {
-  const [login, { error, loading, data }] = useMutation(LOGIN);
-
-  // if (loading) return <p>Loading...</p>;
-  // if (error) return <p>Error :(</p>;
-
   return (
-    <>
-      {loading && <p>loading</p>}
-      {error && <p>error</p>}
-      {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
-      <button
-        onClick={() =>
-          login({
-            variables: {
-              email: "misiek@misiek.com",
-              password: "misiek",
-            },
-          })
-        }
-      >
-        login
-      </button>
-    </>
+    <AuthProvider>
+      <Router>
+        <AuthRoute exact path="/" component={Main} />
+        <Route exact path="/login" component={Login} />
+      </Router>
+    </AuthProvider>
   );
 }
-
-const LOGIN = gql`
-  mutation login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      user {
-        id
-        username
-        role
-        createdAt
-        updatedAt
-        email
-      }
-      token
-    }
-  }
-`;
 
 export default App;
