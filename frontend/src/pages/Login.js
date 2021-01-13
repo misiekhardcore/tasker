@@ -32,10 +32,7 @@ function Login(props) {
   return (
     <div className="container--center">
       <div className="form__container">
-        <form
-          onSubmit={handleSubmit}
-          className={loading ? "loading" : ""}
-        >
+        <form onSubmit={handleSubmit} className={loading ? "loading" : ""}>
           <h1>Login</h1>
           <div className="form__group">
             <label htmlFor="email" className="form__label">
@@ -44,7 +41,9 @@ function Login(props) {
             <input
               name="email"
               type="text"
-              className="form__input"
+              className={`form__input ${
+                errors.email || errors.general ? "error" : ""
+              }`}
               placeholder="Enter your email..."
               value={state.email}
               onChange={handleChange}
@@ -57,13 +56,18 @@ function Login(props) {
             <input
               name="password"
               type="password"
-              className="form__input"
+              className={`form__input ${
+                errors.password || errors.general ? "error" : ""
+              }`}
               placeholder="Enter your password..."
               value={state.password}
               onChange={handleChange}
             />
           </div>
-          <button className="button button--block" type="submit">
+          <button
+            className="button button--primary button--block"
+            type="submit"
+          >
             submit
           </button>
         </form>
