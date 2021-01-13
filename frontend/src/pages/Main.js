@@ -1,5 +1,7 @@
 import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import React, { useState } from "react";
+import { IoMdAdd } from "react-icons/io";
+import MenuBar from "../components/MenuBar";
 
 const Main = () => {
   const [parentId, setParentId] = useState("");
@@ -17,53 +19,70 @@ const Main = () => {
 
   const sidebar = useQuery(GET_FOLDERS);
   return (
-    <div className="main__container">
-      <div className="sidebar">
-        {sidebar.data && (
+    <>
+      <MenuBar />
+      <div className="main__container">
+        <div className="sidebar">
           <ul>
-            {sidebar.data.getTables.map((table) => (
-              <li
-                key={table.id}
-                onClick={() => {
-                  setParentId(table.id);
-                  getFolder();
-                  getTasks();
-                }}
-              >
-                {table.name}
-              </li>
-            ))}
+            <li>
+              <input type="text" />
+              <button onClick={() => {}}>
+                <IoMdAdd />
+              </button>
+            </li>
+            {sidebar.data &&
+              sidebar.data.getTables.map((table) => (
+                <li
+                  className="sidebar__folder"
+                  data-tooltip={table.name}
+                  key={table.id}
+                  onClick={(e) => {
+                    e.target.focus();
+                    setParentId(table.id);
+                    getFolder();
+                    getTasks();
+                  }}
+                >
+                  <p>{table.name}</p>
+                </li>
+              ))}
           </ul>
-        )}
+        </div>
+        <div className="column1">
+          {folder && (
+            <ul>
+              {folder.getTables.map((table) => (
+                <li
+                  data-tooltip={table.name}
+                  key={table.id}
+                  onClick={() => {
+                    setParentId(table.id);
+                    getFolder();
+                    getTasks();
+                  }}
+                >
+                  {table.name}
+                </li>
+              ))}
+            </ul>
+          )}
+          {tasks && (
+            <ul>
+              {tasks.getTasks.map((task) => (
+                <li
+                  data-tooltip={task.name}
+                  key={task.id}
+                  onClick={() => {}}
+                >
+                  <p>{task.name}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div className="column2"></div>
       </div>
-      <div className="column1">
-        {folder && (
-          <ul>
-            {folder.getTables.map((table) => (
-              <li
-                key={table.id}
-                onClick={() => {
-                  setParentId(table.id);
-                  getFolder();
-                  getTasks();
-                }}
-              >
-                {table.name}
-              </li>
-            ))}
-          </ul>
-        )}
-        {tasks && (
-          <ul>
-            {tasks.getTasks.map((task) => (
-              <li key={task.id} onClick={() => {}}>
-                {task.name}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
+    </>
   );
 };
 
