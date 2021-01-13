@@ -3,22 +3,24 @@ $white: #fff;
 $gray: #999;
 $gray-light: lighten(
   $color: $gray,
-  $amount: 10%,
+  $amount: 5%,
 );
 $gray-dark: darken(
   $color: $gray,
-  $amount: 10%,
+  $amount: 5%,
 );
 
-$primary: #40d189;
+//ff7c7c ce6c6c
+$primary: #ce6c6c;
+$primary-lightest: lighten($primary, 10%);
 $primary-light: lighten(
   $color: $primary,
-  $amount: 10%,
+  $amount: 2%,
 );
 $primary-dark: darken(
   $color: $primary,
-  $amount: 10%,
+  $amount: 2%,
 );
 
 $light-shadow: 0 1px 3px 5px rgba(192, 255, 239, 0.2);
-$error-shadow: 0 1px 3px 5px rgba(255, 53, 53, 0.363)
+$error-shadow: 0 1px 3px 5px rgba(255, 53, 53, 0.363);
