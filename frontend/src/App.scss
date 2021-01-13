@@ -1,20 +1,24 @@
+@import "./colors";
+
 .container--center {
   width: 100vw;
   height: 100vh;
   display: flex;
-  align-items: center;
+  padding-top: 10%;
   justify-content: center;
 
-  background-color: rgb(255, 82, 82);
+  background-color: rgb(255, 124, 124);
 }
 
 .form__container {
   max-width: 600px;
-  box-shadow: 0 0 4px rbga(0, 0, 0, 0.3);
   padding: 1.5rem;
 
+  background-color: rgba($white, 0.2);
+  border-radius: 1rem 1rem 0 0;
+
   h1 {
-    color: white;
+    color: $white;
     margin-bottom: 1rem;
   }
 
@@ -30,19 +34,31 @@
 
     .form__label {
       margin-bottom: 0.5rem;
-      color: rgb(230, 230, 230);
+      color: $white;
     }
   }
 }
 
-.error-list{
+.main__container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  min-height: 100vh;
+
+  .sidebar{
+    grid-column: 1;
+    background-color: $primary;
+  }
+}
+
+.error-list {
   margin-top: 1rem;
-  padding: .8rem;
-  background-color: rgba(255,255,255,0.8);
+  padding: 0.5rem 0.8rem;
+  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 0.5rem;
   color: rgb(255, 106, 106);
-  ul{
-    list-style: none;
+  ul {
+    padding-left: 1rem;
+    list-style: disc;
     line-height: 2;
   }
 }
