@@ -1,23 +1,17 @@
-import { gql, useLazyQuery, useQuery } from "@apollo/client";
-import React, { useState } from "react";
-import { IoMdAdd } from "react-icons/io";
+import { gql, useQuery } from "@apollo/client";
+import React, { useEffect, useState } from "react";
+import AddFolder from "../components/AddFolder";
+import FoldersList from "../components/FoldersList";
 import MenuBar from "../components/MenuBar";
 
 const Main = () => {
-  const [parentId, setParentId] = useState("");
-  const [getFolder, { data: folder }] = useLazyQuery(GET_FOLDERS, {
-    variables: {
-      parent: parentId,
-    },
-  });
+  const [column1, setColumn1] = useState({});
+  const { data: sidebar } = useQuery(GET_FOLDERS, {});
 
-  const [getTasks, { data: tasks }] = useLazyQuery(GET_TASKS, {
-    variables: {
-      parent: parentId,
-    },
-  });
+  const handleSetColumn1 = (data) => {
+    setColumn1(data);
+  };
 
-  const sidebar = useQuery(GET_FOLDERS);
   return (
     <>
       <MenuBar />
@@ -25,58 +19,25 @@ const Main = () => {
         <div className="sidebar">
           <ul>
             <li>
-              <input type="text" />
-              <button onClick={() => {}}>
-                <IoMdAdd />
-              </button>
+              <AddFolder />
             </li>
-            {sidebar.data &&
-              sidebar.data.getTables.map((table) => (
-                <li
-                  className="sidebar__folder"
-                  data-tooltip={table.name}
-                  key={table.id}
-                  onClick={(e) => {
-                    e.target.focus();
-                    setParentId(table.id);
-                    getFolder();
-                    getTasks();
-                  }}
-                >
-                  <p>{table.name}</p>
-                </li>
-              ))}
+            {sidebar && (
+              <FoldersList
+                folders={sidebar.getTables}
+                setData={handleSetColumn1}
+              />
+            )}
           </ul>
         </div>
         <div className="column1">
-          {folder && (
+          {column1 && column1.ready && (
             <ul>
-              {folder.getTables.map((table) => (
-                <li
-                  data-tooltip={table.name}
-                  key={table.id}
-                  onClick={() => {
-                    setParentId(table.id);
-                    getFolder();
-                    getTasks();
-                  }}
-                >
-                  {table.name}
-                </li>
-              ))}
+              <FoldersList folders={column1.folders} />
             </ul>
           )}
-          {tasks && (
+          {column1 && column1.tasks && (
             <ul>
-              {tasks.getTasks.map((task) => (
-                <li
-                  data-tooltip={task.name}
-                  key={task.id}
-                  onClick={() => {}}
-                >
-                  <p>{task.name}</p>
-                </li>
-              ))}
+              <FoldersList folders={column1.tasks} />
             </ul>
           )}
         </div>
@@ -99,16 +60,6 @@ const GET_FOLDERS = gql`
         id
       }
       updatedAt
-    }
-  }
-`;
-
-const GET_TASKS = gql`
-  query getTasks($parent: ID!) {
-    getTasks(parent: $parent) {
-      id
-      name
-      description
     }
   }
 `;
