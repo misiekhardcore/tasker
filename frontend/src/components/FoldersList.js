@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 const FoldersList = ({
   folders = [],
   setData = () => {},
-  getData = [],
 }) => {
   const [parent, setParent] = useState("");
   const [tables, setTables] = useState({});
