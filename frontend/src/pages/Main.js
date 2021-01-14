@@ -1,5 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import AddFolder from "../components/AddFolder";
 import FoldersList from "../components/FoldersList";
 import MenuBar from "../components/MenuBar";
@@ -7,10 +7,6 @@ import MenuBar from "../components/MenuBar";
 const Main = () => {
   const [column1, setColumn1] = useState({});
   const { data: sidebar } = useQuery(GET_FOLDERS, {});
-
-  const handleSetColumn1 = (data) => {
-    setColumn1(data);
-  };
 
   return (
     <>
@@ -24,14 +20,17 @@ const Main = () => {
             {sidebar && (
               <FoldersList
                 folders={sidebar.getTables}
-                setData={handleSetColumn1}
+                setData={setColumn1}
               />
             )}
           </ul>
         </div>
         <div className="column1">
-          {column1 && column1.ready && (
+          {column1 && column1.folders && (
             <ul>
+              <li>
+                <AddFolder parent={column1.parent} />
+              </li>
               <FoldersList folders={column1.folders} />
             </ul>
           )}
