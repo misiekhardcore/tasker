@@ -10,8 +10,8 @@ $gray-dark: darken(
   $amount: 5%,
 );
 
-//ff7c7c ce6c6c
-$primary: #c26222;
+//ff7c7c ce6c6c c26222
+$primary: #ff7c7c;
 $primary-lightest: lighten($primary, 10%);
 $primary-light: lighten(
   $color: $primary,
