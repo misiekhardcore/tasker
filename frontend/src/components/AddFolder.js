@@ -2,12 +2,11 @@ import { gql, useMutation } from "@apollo/client";
 import React, { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 
-const AddFolder = ({ id }) => {
+const AddFolder = ({ parent }) => {
   const [name, setName] = useState("");
-  const parentId = id || "";
+  const parentId = parent || "";
 
   const [addFolder] = useMutation(ADD_FOLDER, {
-    
     update(cache, { data: { createTable } }) {
       cache.modify({
         fields: {
@@ -36,10 +35,12 @@ const AddFolder = ({ id }) => {
   return (
     <>
       <input
+        id={parentId}
         name="name"
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
+        placeholder="Add new table..."
       />
       <button
         onClick={() => {
@@ -54,8 +55,16 @@ const AddFolder = ({ id }) => {
 };
 
 const ADD_FOLDER = gql`
-  mutation createTable($name: String!, $description: String, $parent: ID) {
-    createTable(name: $name, description: $description, parent: $parent) {
+  mutation createTable(
+    $name: String!
+    $description: String
+    $parent: ID
+  ) {
+    createTable(
+      name: $name
+      description: $description
+      parent: $parent
+    ) {
       id
       name
       description
