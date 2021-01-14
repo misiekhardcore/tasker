@@ -63,7 +63,7 @@
     li {
       padding: 0.5rem 0.8rem;
       width: 100%;
-      background-color: rgba($white, 0.2);
+      background-color: rgba($white, 0.1);
       border-radius: 0.25rem;
       display: flex;
       align-items: center;
@@ -72,6 +72,7 @@
       input {
         width: 80%;
         background-color: rgba($color: $white, $alpha: 0.2);
+        color: $white;
 
         &:focus {
           box-shadow: none;
@@ -108,7 +109,7 @@
         margin-top: 0.5rem;
       }
 
-      &.sidebar__folder:hover {
+      &.list__item:hover {
         cursor: pointer;
         background-color: rgba($white, 0.3);
         transform: scale(1.05);
@@ -162,8 +163,9 @@
   transition: all 0.4s ease;
   padding: 0.5rem 0.8rem;
   color: $white;
+  font-size: 0.75rem;
   border-radius: 0.5rem;
-  box-shadow: $light-shadow;
+  box-shadow: 0 1px 3px 5px rgba($color: $primary-light, $alpha: 0.3 );
 }
 
 [data-tooltip]:hover:before {
@@ -173,8 +175,8 @@
   margin-left: 1rem;
 
   /* customizable */
-  background: $primary-light;
-  transition: all 0.4s ease 0.5s;
+  background: $primary-dark;
+  transition: all 0.4s ease 0.6s;
 }
 
 [data-tooltip]:not([data-tooltip-persistent]):before {
