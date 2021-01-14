@@ -1,23 +1,29 @@
 import { useLazyQuery, gql } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 
-const FoldersList = ({ folders, setData }) => {
+const FoldersList = ({
+  folders = [],
+  setData = () => {},
+  getData = [],
+}) => {
   const [parent, setParent] = useState("");
-  const [fetchedTables, setfetchedTables] = useState(false);
-  const [fetchedTasks, setFetchedTasks] = useState(false);
+  const [tables, setTables] = useState({});
+  const [tasks, setTasks] = useState({});
 
-  const [getFolder, { data: getTables }] = useLazyQuery(GET_FOLDERS, {
+  const [getFolder, { data }] = useLazyQuery(GET_FOLDERS, {
     onCompleted() {
-      setfetchedTables(true);
+      const { getTables } = data;
+      setTables({ folders: getTables });
     },
     variables: {
       parent,
     },
   });
 
-  const [getTask, { data: getTasks }] = useLazyQuery(GET_TASKS, {
+  const [getTask, { data: data2 }] = useLazyQuery(GET_TASKS, {
     onCompleted() {
-      setFetchedTasks(true);
+      const { getTasks } = data2;
+      setTasks({ tasks: getTasks });
     },
     variables: {
       parent,
@@ -25,33 +31,27 @@ const FoldersList = ({ folders, setData }) => {
   });
 
   useEffect(() => {
-    if (fetchedTables && fetchedTasks && setData)
-      setData({
-        folders: getTables.getTables,
-        tasks: getTasks.getTasks,
-        ready: true,
-      });
-    setfetchedTables(false);
-    setFetchedTasks(false);
-  }, [fetchedTables, fetchedTasks]);
+    setData({ folders: tables.folders, tasks: tasks.tasks, parent });
+  }, [tables, tasks]);
 
   return (
     <>
       {folders &&
         folders.map((folder) => (
-          <li
-            className="list__item"
-            data-tooltip={folder.name}
-            key={folder.id}
-            onClick={() => {
-              setParent(folder.id);
-              getFolder();
-              getTask();
-              // setData({ folders: [...childFolders], tasks: [...tasks] });
-            }}
-          >
-            <p>{folder.name}</p>
-          </li>
+          <>
+            <li
+              className="list__item"
+              data-tooltip={folder.name}
+              key={folder.id}
+              onClick={() => {
+                setParent(folder.id);
+                getFolder();
+                getTask();
+              }}
+            >
+              <p>{folder.name}</p>
+            </li>
+          </>
         ))}
     </>
   );
