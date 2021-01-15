@@ -1,18 +1,18 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import React, { useState } from "react";
 import FoldersList from "../components/FoldersList";
 import MenuBar from "../components/MenuBar";
+import { GET_FOLDERS } from "../queries";
 
 const Main = () => {
-  const { data: column1 } = useQuery(GET_FOLDERS, {});
-  const [column2, setColumn1] = useState({});
+  const [column2, setColumn2] = useState({});
 
   return (
     <>
       <MenuBar />
       <div className="main__container">
         <div className="column1">
-          {column1 && <FoldersList setData={setColumn1} />}
+          <FoldersList setData={setColumn2} />
         </div>
         <div className="column2">
           {column2 && column2.parent && <FoldersList parent={column2.parent} />}
@@ -22,22 +22,5 @@ const Main = () => {
     </>
   );
 };
-
-const GET_FOLDERS = gql`
-  query getTables($parent: ID) {
-    getTables(parent: $parent) {
-      id
-      name
-      description
-      creator {
-        username
-      }
-      parent {
-        id
-      }
-      updatedAt
-    }
-  }
-`;
 
 export default Main;
