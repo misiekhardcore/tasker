@@ -55,10 +55,14 @@
   min-height: 100vh;
   width: 100vw;
 
-  ul {
+  .list__items {
     list-style: none;
     padding: 0.5rem;
     padding-bottom: 0;
+
+    .list__form {
+      display: flex;
+    }
 
     li {
       padding: 0.5rem 0.8rem;
@@ -121,20 +125,20 @@
     }
   }
 
-  .sidebar {
+  .column1 {
     // max-width: 20rem;
     grid-column: 1/2;
     background-color: $primary;
     color: $white;
   }
 
-  .column1 {
+  .column2 {
     background-color: $primary-light;
     grid-column: 2/3;
     color: $white;
   }
 
-  .column2 {
+  .column3 {
     background-color: $primary-lightest;
     grid-column: 3/-1;
   }
@@ -165,7 +169,7 @@
   color: $white;
   font-size: 0.75rem;
   border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 5px rgba($color: $primary-light, $alpha: 0.3 );
+  box-shadow: 0 1px 3px 5px rgba($color: $primary-light, $alpha: 0.3);
 }
 
 [data-tooltip]:hover:before {
