@@ -18,7 +18,7 @@ export const GET_FOLDERS = gql`
 `;
 
 export const GET_TASKS = gql`
-  query getTasks($parent: ID!) {
+  query getTasks($parent: ID) {
     getTasks(parent: $parent) {
       id
       name
