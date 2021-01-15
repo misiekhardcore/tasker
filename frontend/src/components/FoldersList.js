@@ -1,7 +1,12 @@
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
-import { ADD_FOLDER, ADD_TASK, GET_FOLDERS, GET_TASKS } from "../queries";
+import {
+  ADD_FOLDER,
+  ADD_TASK,
+  GET_FOLDERS,
+  GET_TASKS,
+} from "../queries";
 
 const FoldersList = ({ setData = () => {}, parent }) => {
   const [newParent, setNewParent] = useState("");
@@ -23,28 +28,9 @@ const FoldersList = ({ setData = () => {}, parent }) => {
   useEffect(() => {
     getFolder();
     getTasks();
-  });
+  }, []);
 
   const [addFolder] = useMutation(ADD_FOLDER, {
-    // update(cache, { data: { createTable } }) {
-    //   cache.modify({
-    //     fields: {
-    //       getTables(existing = []) {
-    //         const newTable = cache.writeFragment({
-    //           data: createTable,
-    //           fragment: gql`
-    //             fragment NewTable on getTables {
-    //               id
-    //               name
-    //               description
-    //             }
-    //           `,
-    //         });
-    //         return [...existing, newTable];
-    //       },
-    //     },
-    //   });
-    // },
     variables: {
       name: tableName,
       parent,
@@ -55,26 +41,7 @@ const FoldersList = ({ setData = () => {}, parent }) => {
     ],
   });
 
-  const [addtask] = useMutation(ADD_TASK, {
-    // update(cache, { data: { createTable } }) {
-    //   cache.modify({
-    //     fields: {
-    //       getTables(existing = []) {
-    //         const newTable = cache.writeFragment({
-    //           data: createTable,
-    //           fragment: gql`
-    //             fragment NewTable on getTables {
-    //               id
-    //               name
-    //               description
-    //             }
-    //           `,
-    //         });
-    //         return [...existing, newTable];
-    //       },
-    //     },
-    //   });
-    // },
+  const [addTask] = useMutation(ADD_TASK, {
     variables: {
       name: taskName,
       parent,
@@ -112,27 +79,29 @@ const FoldersList = ({ setData = () => {}, parent }) => {
           </button>
         </form>
       </li>
-      <li className="list__item">
-        <form
-          className="list__form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            addtask();
-            setTaskName("");
-          }}
-        >
-          <input
-            name="name"
-            type="text"
-            value={taskName}
-            onChange={(e) => setTaskName(e.target.value)}
-            placeholder="Add new task..."
-          />
-          <button type="submit">
-            <IoMdAdd />
-          </button>
-        </form>
-      </li>
+      {parent && (
+        <li className="list__item">
+          <form
+            className="list__form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              addTask();
+              setTaskName("");
+            }}
+          >
+            <input
+              name="name"
+              type="text"
+              value={taskName}
+              onChange={(e) => setTaskName(e.target.value)}
+              placeholder="Add new task..."
+            />
+            <button type="submit">
+              <IoMdAdd />
+            </button>
+          </form>
+        </li>
+      )}
       {data &&
         data.getTables.map((folder) => (
           <>
