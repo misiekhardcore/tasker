@@ -1,86 +1,170 @@
-import { useLazyQuery, gql } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import React, { useEffect, useState } from "react";
+import { IoMdAdd } from "react-icons/io";
+import { ADD_FOLDER, ADD_TASK, GET_FOLDERS, GET_TASKS } from "../queries";
 
-const FoldersList = ({
-  folders = [],
-  setData = () => {},
-}) => {
-  const [parent, setParent] = useState("");
-  const [tables, setTables] = useState({});
-  const [tasks, setTasks] = useState({});
+const FoldersList = ({ setData = () => {}, parent }) => {
+  const [newParent, setNewParent] = useState("");
+  const [tableName, setTableName] = useState("");
+  const [taskName, setTaskName] = useState("");
 
   const [getFolder, { data }] = useLazyQuery(GET_FOLDERS, {
-    onCompleted() {
-      const { getTables } = data;
-      setTables({ folders: getTables });
-    },
     variables: {
       parent,
     },
   });
 
-  const [getTask, { data: data2 }] = useLazyQuery(GET_TASKS, {
-    onCompleted() {
-      const { getTasks } = data2;
-      setTasks({ tasks: getTasks });
-    },
+  const [getTasks, { data: data2 }] = useLazyQuery(GET_TASKS, {
     variables: {
       parent,
     },
   });
 
   useEffect(() => {
-    setData({ folders: tables.folders, tasks: tasks.tasks, parent });
-  }, [tables, tasks]);
+    getFolder();
+    getTasks();
+  });
+
+  const [addFolder] = useMutation(ADD_FOLDER, {
+    // update(cache, { data: { createTable } }) {
+    //   cache.modify({
+    //     fields: {
+    //       getTables(existing = []) {
+    //         const newTable = cache.writeFragment({
+    //           data: createTable,
+    //           fragment: gql`
+    //             fragment NewTable on getTables {
+    //               id
+    //               name
+    //               description
+    //             }
+    //           `,
+    //         });
+    //         return [...existing, newTable];
+    //       },
+    //     },
+    //   });
+    // },
+    variables: {
+      name: tableName,
+      parent,
+    },
+    refetchQueries: [
+      { query: GET_TASKS, variables: { parent } },
+      { query: GET_FOLDERS, variables: { parent } },
+    ],
+  });
+
+  const [addtask] = useMutation(ADD_TASK, {
+    // update(cache, { data: { createTable } }) {
+    //   cache.modify({
+    //     fields: {
+    //       getTables(existing = []) {
+    //         const newTable = cache.writeFragment({
+    //           data: createTable,
+    //           fragment: gql`
+    //             fragment NewTable on getTables {
+    //               id
+    //               name
+    //               description
+    //             }
+    //           `,
+    //         });
+    //         return [...existing, newTable];
+    //       },
+    //     },
+    //   });
+    // },
+    variables: {
+      name: taskName,
+      parent,
+    },
+    refetchQueries: [
+      { query: GET_TASKS, variables: { parent } },
+      { query: GET_FOLDERS, variables: { parent } },
+    ],
+  });
+
+  useEffect(() => {
+    setData({ parent: newParent });
+  }, [newParent]);
 
   return (
-    <>
-      {folders &&
-        folders.map((folder) => (
+    <ul className="list__items">
+      <li className="list__item">
+        <form
+          className="list__form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            addFolder();
+            setTableName("");
+          }}
+        >
+          <input
+            name="name"
+            type="text"
+            value={tableName}
+            onChange={(e) => setTableName(e.target.value)}
+            placeholder="Add new table..."
+          />
+          <button type="submit">
+            <IoMdAdd />
+          </button>
+        </form>
+      </li>
+      <li className="list__item">
+        <form
+          className="list__form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            addtask();
+            setTaskName("");
+          }}
+        >
+          <input
+            name="name"
+            type="text"
+            value={taskName}
+            onChange={(e) => setTaskName(e.target.value)}
+            placeholder="Add new task..."
+          />
+          <button type="submit">
+            <IoMdAdd />
+          </button>
+        </form>
+      </li>
+      {data &&
+        data.getTables.map((folder) => (
           <>
             <li
               className="list__item"
               data-tooltip={folder.name}
               key={folder.id}
               onClick={() => {
-                setParent(folder.id);
-                getFolder();
-                getTask();
+                setNewParent(folder.id);
               }}
             >
               <p>{folder.name}</p>
             </li>
           </>
         ))}
-    </>
+      {data2 &&
+        data2.getTasks.map((folder) => (
+          <>
+            <li
+              className="list__item"
+              data-tooltip={folder.name}
+              key={folder.id}
+              onClick={() => {
+                setNewParent(folder.id);
+              }}
+            >
+              <p>{folder.name}</p>
+            </li>
+          </>
+        ))}
+    </ul>
   );
 };
-
-const GET_FOLDERS = gql`
-  query getTables($parent: ID) {
-    getTables(parent: $parent) {
-      id
-      name
-      description
-      creator {
-        username
-      }
-      parent {
-        id
-      }
-      updatedAt
-    }
-  }
-`;
-
-const GET_TASKS = gql`
-  query getTasks($parent: ID!) {
-    getTasks(parent: $parent) {
-      id
-      name
-      description
-    }
-  }
-`;
 
 export default FoldersList;
