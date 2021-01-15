@@ -62,7 +62,7 @@ module.exports = gql`
   type Query {
     getTables(parent: ID): [Table]!
     getTable(tableId: ID!): Table
-    getTasks(parent: ID!): [Task]!
+    getTasks(parent: ID): [Task]!
     getTask(taskId: ID!): Task
     getComments(parent: ID!): [Comment]
     getComment(commentId: ID!): Comment
