@@ -1,10 +1,16 @@
 const Table = require("../../models/Table");
-const { TABLE_TITLE_EMPTY } = require("../../messages");
+const Task = require("../../models/Task");
+const {
+  TABLE_TITLE_EMPTY,
+  TABLE_DELETE_ERROR,
+} = require("../../messages");
 
 const authCheck = require("../utils/authCheck");
 const { checkId } = require("../utils/validators");
 
 const { UserInputError } = require("apollo-server");
+
+const errors = {};
 
 module.exports = {
   Query: {
@@ -90,13 +96,32 @@ module.exports = {
     },
     deleteTable: async (_, { tableId }, context) => {
       authCheck(context);
-      await Table.deleteOne({ _id: tableId });
-      await deleteSubtables(tableId);
+      try {
+        await deleteSubtables(tableId);
+        await Table.deleteOne({ _id: tableId });
+      } catch (error) {
+        errors.general = TABLE_DELETE_ERROR;
+        console.log(error);
+        throw new Error(TABLE_DELETE_ERROR, errors);
+      }
+
       return true;
     },
   },
 };
 
-const deleteSubtables = async (id) => {
-  await Table.deleteMany({ parent: id });
-};
+async function deleteSubtables(id) {
+  const tables = await Table.find({ parent: id });
+  await deleteSubtasks(id);
+  for (const table of tables) {
+    await Table.deleteOne({ _id: table._id });
+    await deleteSubtables(table._id);
+  }
+}
+
+async function deleteSubtasks(id) {
+  const tasks = await Task.find({ parent: id });
+  for (const task of tasks) {
+    await Task.deleteOne({ _id: task._id });
+  }
+}
