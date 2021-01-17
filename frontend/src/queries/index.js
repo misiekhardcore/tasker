@@ -35,8 +35,16 @@ export const GET_TASKS = gql`
 `;
 
 export const ADD_FOLDER = gql`
-  mutation createTable($name: String!, $description: String, $parent: ID) {
-    createTable(name: $name, description: $description, parent: $parent) {
+  mutation createTable(
+    $name: String!
+    $description: String
+    $parent: ID
+  ) {
+    createTable(
+      name: $name
+      description: $description
+      parent: $parent
+    ) {
       id
       name
       description
@@ -65,5 +73,11 @@ export const ADD_TASK = gql`
       }
       updatedAt
     }
+  }
+`;
+
+export const DELETE_FOLDER = gql`
+  mutation deleteTable($parent: ID!) {
+    deleteTable(tableId: $parent)
   }
 `;
