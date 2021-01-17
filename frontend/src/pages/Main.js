@@ -4,19 +4,23 @@ import MenuBar from "../components/MenuBar";
 
 const Main = () => {
   const [column2, setColumn2] = useState([]);
-  const [back, setBack] = useState([])
-  console.log(column2)
+  const [back, setBack] = useState([]);
 
   return (
     <>
       <MenuBar />
       <div className="main__container">
         <div className="column1">
-          <FoldersList setData={setColumn2}/>
+          <FoldersList setData={setColumn2} />
         </div>
         <div className="column2">
-          {column2.length>0 && (
-            <FoldersList parents={column2} setData={setColumn2} back={back} setBack={setBack}/>
+          {column2.length > 0 && (
+            <FoldersList
+              parents={column2}
+              setData={setColumn2}
+              back={back}
+              setBack={setBack}
+            />
           )}
         </div>
         <div className="column3"></div>
