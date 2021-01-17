@@ -19,6 +19,7 @@ module.exports = {
   TABLE_NOT_FOUND: "Table(s) not found",
   TABLE_TITLE_EMPTY: "Table title can not be empty",
   TABLE_TITLE_EXISTS: "Table with this title already exixsts",
+  TABLE_DELETE_ERROR: "Error ocurred during deteleTable",
 
   TASK_NOT_FOUND: "Task(s) not found",
   TASK_TITLE_EMPTY: "Task title can not be empty",
