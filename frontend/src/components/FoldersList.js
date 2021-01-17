@@ -1,15 +1,27 @@
-import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
+import { BiArrowBack } from "react-icons/bi";
+import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import {
   ADD_FOLDER,
   ADD_TASK,
+  DELETE_FOLDER,
   GET_FOLDERS,
   GET_TASKS,
 } from "../queries";
 
-const FoldersList = ({ setData = () => {}, parent }) => {
-  const [newParent, setNewParent] = useState("");
+const FoldersList = ({
+  setData = () => {},
+  parents = [],
+  setBack = () => {},
+  back = [],
+}) => {
+  const back2 = [...back];
+  const parents2 = [...parents];
+  const parent = parents2[parents.length - 1] || undefined;
+  const prev = parents2[parents.length - 2] || undefined;
+
   const [tableName, setTableName] = useState("");
   const [taskName, setTaskName] = useState("");
 
@@ -52,12 +64,36 @@ const FoldersList = ({ setData = () => {}, parent }) => {
     ],
   });
 
-  useEffect(() => {
-    setData({ parent: newParent });
-  }, [newParent]);
+  const [deleteFolder] = useMutation(DELETE_FOLDER, {
+    refetchQueries: [
+      { query: GET_TASKS, variables: { parent } },
+      { query: GET_FOLDERS, variables: { parent } },
+    ],
+  });
+
+  function handleParent(id, name) {
+    parents2.push(id);
+    back2.push(name);
+    setData(parents2);
+    setBack(back2);
+  }
 
   return (
     <ul className="list__items">
+      {prev && (
+        <li
+          className="list__item"
+          onClick={() => {
+            parents2.pop();
+            back2.pop();
+            setData(parents2);
+            setBack(back2);
+          }}
+        >
+          <BiArrowBack />
+          <parent>{back[back.length - 1] || ""}</parent>
+        </li>
+      )}
       <li className="list__item">
         <form
           className="list__form"
@@ -74,9 +110,11 @@ const FoldersList = ({ setData = () => {}, parent }) => {
             onChange={(e) => setTableName(e.target.value)}
             placeholder="Add new table..."
           />
-          <button type="submit">
-            <IoMdAdd />
-          </button>
+          <div className="buttons">
+            <button type="submit">
+              <IoMdAdd />
+            </button>
+          </div>
         </form>
       </li>
       {parent && (
@@ -96,9 +134,11 @@ const FoldersList = ({ setData = () => {}, parent }) => {
               onChange={(e) => setTaskName(e.target.value)}
               placeholder="Add new task..."
             />
-            <button type="submit">
-              <IoMdAdd />
-            </button>
+            <div className="buttons">
+              <button type="submit">
+                <IoMdAdd />
+              </button>
+            </div>
           </form>
         </li>
       )}
@@ -110,10 +150,29 @@ const FoldersList = ({ setData = () => {}, parent }) => {
               data-tooltip={folder.name}
               key={folder.id}
               onClick={() => {
-                setNewParent(folder.id);
+                handleParent(folder.id, folder.name);
               }}
             >
               <p>{folder.name}</p>
+              <div className="buttons">
+                <button
+                  onClick={() => {
+                    console.log("asdasdasdasd");
+                  }}
+                >
+                  <AiFillEdit />
+                </button>
+                <button
+                  onClick={() => {
+                    deleteFolder({
+                      variables: { parent: folder.id },
+                    });
+                    setData({ parent: null });
+                  }}
+                >
+                  <AiFillDelete />
+                </button>
+              </div>
             </li>
           </>
         ))}
@@ -125,7 +184,7 @@ const FoldersList = ({ setData = () => {}, parent }) => {
               data-tooltip={folder.name}
               key={folder.id}
               onClick={() => {
-                setNewParent(folder.id);
+                setData({ parent: folder.id });
               }}
             >
               <p>{folder.name}</p>
