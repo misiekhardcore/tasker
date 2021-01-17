@@ -106,10 +106,10 @@ module.exports = {
       const matchLicence = await bcrypt.compare(username + email, key);
       if (!matchLicence) {
         //check key
-        const keyCheck = await User.find({ key });
+        const keyCheck = await User.findOne({ key });
         if (!keyCheck) {
           errors.key = REGISTER_KEY_NOT_VALID;
-          throw new UserInputError(REGISTER_KEY_NOT_VALID, errors);
+          throw new UserInputError(REGISTER_KEY_NOT_VALID, { errors });
         }
       }
 

@@ -12,6 +12,7 @@ const {
   EMAIL_INPUT_EMPTY,
   EMAIL_INPUT_INVALID,
   NOT_VALID_ID,
+  REGISTER_KEY_NOT_VALID,
 } = require("../../messages");
 
 const bcrypt = require("bcrypt");
@@ -48,6 +49,10 @@ module.exports.validateRegisterInput = (
   //password empty
   if (password === "") {
     errors.password = PASSWORD_INPUT_EMPTY;
+  }
+
+  if (key.trim() === "") {
+    errors.key = REGISTER_KEY_NOT_VALID;
   }
 
   //passwords match
