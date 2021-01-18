@@ -16,6 +16,7 @@ const FoldersList = ({
   parents = [],
   setBack = () => {},
   back = [],
+  setFolder = () => {},
 }) => {
   const back2 = [...back];
   const parents2 = [...parents];
@@ -24,6 +25,7 @@ const FoldersList = ({
 
   const [tableName, setTableName] = useState("");
   const [taskName, setTaskName] = useState("");
+  const [errors, setErrors] = useState({});
 
   const [getFolder, { data }] = useLazyQuery(GET_FOLDERS, {
     variables: {
@@ -47,6 +49,13 @@ const FoldersList = ({
       name: tableName,
       parent,
     },
+    onCompleted() {
+      setErrors({});
+    },
+    onError(err) {
+      console.log(err.graphQLErrors[0].extensions.exception);
+      setErrors(err.graphQLErrors[0].extensions.exception.errors);
+    },
     refetchQueries: [
       { query: GET_TASKS, variables: { parent } },
       { query: GET_FOLDERS, variables: { parent } },
@@ -58,6 +67,13 @@ const FoldersList = ({
       name: taskName,
       parent,
     },
+    onCompleted() {
+      setErrors({});
+    },
+    onError(err) {
+      console.log(err.graphQLErrors[0].extensions.exception);
+      setErrors(err.graphQLErrors[0].extensions.exception.errors);
+    },
     refetchQueries: [
       { query: GET_TASKS, variables: { parent } },
       { query: GET_FOLDERS, variables: { parent } },
@@ -65,6 +81,13 @@ const FoldersList = ({
   });
 
   const [deleteFolder] = useMutation(DELETE_FOLDER, {
+    onCompleted() {
+      setErrors({});
+    },
+    onError(err) {
+      console.log(err.graphQLErrors[0].extensions.exception);
+      setErrors(err.graphQLErrors[0].extensions.exception.errors);
+    },
     refetchQueries: [
       { query: GET_TASKS, variables: { parent } },
       { query: GET_FOLDERS, variables: { parent } },
@@ -82,6 +105,7 @@ const FoldersList = ({
     <ul className="list__items">
       {prev && (
         <li
+          key="1"
           className="list__item"
           onClick={() => {
             parents2.pop();
@@ -91,10 +115,10 @@ const FoldersList = ({
           }}
         >
           <BiArrowBack />
-          <parent>{back[back.length - 1] || ""}</parent>
+          <p>{back[back.length - 1] || ""}</p>
         </li>
       )}
-      <li className="list__item">
+      <li className="list__item" key="2">
         <form
           className="list__form"
           onSubmit={(e) => {
@@ -110,7 +134,7 @@ const FoldersList = ({
             onChange={(e) => setTableName(e.target.value)}
             placeholder="Add new table..."
           />
-          <div className="buttons">
+          <div className="button--add">
             <button type="submit">
               <IoMdAdd />
             </button>
@@ -118,7 +142,7 @@ const FoldersList = ({
         </form>
       </li>
       {parent && (
-        <li className="list__item">
+        <li className="list__item" key="3">
           <form
             className="list__form"
             onSubmit={(e) => {
@@ -142,6 +166,15 @@ const FoldersList = ({
           </form>
         </li>
       )}
+      {Object.keys(errors).length > 0 && (
+        <div className="error-list">
+          <ul className="list">
+            {Object.values(errors).map((value) => (
+              <li key={value}>{value}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       {data &&
         data.getTables.map((folder) => (
           <>
@@ -149,15 +182,18 @@ const FoldersList = ({
               className="list__item"
               data-tooltip={folder.name}
               key={folder.id}
-              onClick={() => {
-                handleParent(folder.id, folder.name);
-              }}
             >
-              <p>{folder.name}</p>
+              <p
+                onClick={() => {
+                  handleParent(folder.id, folder.name);
+                }}
+              >
+                {folder.name}
+              </p>
               <div className="buttons">
                 <button
                   onClick={() => {
-                    console.log("asdasdasdasd");
+                    setFolder(folder.id);
                   }}
                 >
                   <AiFillEdit />
@@ -167,7 +203,8 @@ const FoldersList = ({
                     deleteFolder({
                       variables: { parent: folder.id },
                     });
-                    setData({ parent: null });
+                    setData(parents2);
+                    setBack(back2);
                   }}
                 >
                   <AiFillDelete />
