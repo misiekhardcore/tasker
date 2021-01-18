@@ -1,9 +1,6 @@
 const Table = require("../../models/Table");
 const Task = require("../../models/Task");
-const {
-  TABLE_TITLE_EMPTY,
-  TABLE_DELETE_ERROR,
-} = require("../../messages");
+const { TABLE_TITLE_EMPTY, TABLE_DELETE_ERROR } = require("../../messages");
 
 const authCheck = require("../utils/authCheck");
 const { checkId } = require("../utils/validators");
@@ -35,12 +32,14 @@ module.exports = {
     },
     getTable: async (_, { tableId }, context) => {
       //check if user sent auth token and it is valid
-      authCheck(context);
+      const { id } = authCheck(context);
 
       //check ids
       checkId(tableId);
 
-      return await Table.findById(tableId).populate("shareWith");
+      return await Table.findById(tableId)
+        .populate("creator")
+        .populate("parent");
     },
   },
   Mutation: {
@@ -54,7 +53,7 @@ module.exports = {
       //check name
       if (name.trim() === "") {
         errors.name = TABLE_TITLE_EMPTY;
-        throw new UserInputError(TABLE_TITLE_EMPTY, errors);
+        throw new UserInputError(TABLE_TITLE_EMPTY, { errors });
       }
 
       //create new Table in database
@@ -70,18 +69,15 @@ module.exports = {
         .populate("creator")
         .populate("parent");
     },
-    updateTable: async (
-      _,
-      { tableId, name, description, parent },
-      context
-    ) => {
+    updateTable: async (_, { tableId, name, description, parent }, context) => {
       const { id } = authCheck(context);
 
       checkId(tableId);
       checkId(parent);
 
       if (name.trim() == "") {
-        throw new UserInputError("Name can not be empty");
+        errors.name = TABLE_TITLE_EMPTY;
+        throw new UserInputError(TABLE_TITLE_EMPTY, { errors });
       }
 
       return await Table.findOneAndUpdate(
