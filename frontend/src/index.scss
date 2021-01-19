@@ -10,7 +10,8 @@
   font-family: "Noto Sans JP", sans-serif;
 }
 
-input {
+input,
+textarea {
   padding: 0.5rem 0.8rem;
   border-radius: 0.5rem;
   border: none;
@@ -43,6 +44,7 @@ input {
 
   &:hover {
     background-color: $primary-lightest;
+    box-shadow: $soft-shadow;
   }
 }
 
