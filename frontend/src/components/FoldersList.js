@@ -53,7 +53,6 @@ const FoldersList = ({
       setErrors({});
     },
     onError(err) {
-      console.log(err.graphQLErrors[0].extensions.exception);
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
     },
     refetchQueries: [
@@ -71,7 +70,6 @@ const FoldersList = ({
       setErrors({});
     },
     onError(err) {
-      console.log(err.graphQLErrors[0].extensions.exception);
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
     },
     refetchQueries: [
@@ -85,7 +83,6 @@ const FoldersList = ({
       setErrors({});
     },
     onError(err) {
-      console.log(err.graphQLErrors[0].extensions.exception);
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
     },
     refetchQueries: [
@@ -158,7 +155,7 @@ const FoldersList = ({
               onChange={(e) => setTaskName(e.target.value)}
               placeholder="Add new task..."
             />
-            <div className="buttons">
+            <div className="button--add">
               <button type="submit">
                 <IoMdAdd />
               </button>
@@ -205,6 +202,7 @@ const FoldersList = ({
                     });
                     setData(parents2);
                     setBack(back2);
+                    setFolder();
                   }}
                 >
                   <AiFillDelete />
