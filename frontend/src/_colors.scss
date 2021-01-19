@@ -1,6 +1,14 @@
 $white: #fff;
+$white-dark: darken(
+  $color: $white,
+  $amount: 5%,
+);
 
 $gray: #999;
+$gray-lightest: lighten(
+  $color: $gray,
+  $amount: 10%,
+);
 $gray-light: lighten(
   $color: $gray,
   $amount: 5%,
@@ -11,8 +19,11 @@ $gray-dark: darken(
 );
 
 //ff7c7c ce6c6c c26222
-$primary: #ff7c7c;
-$primary-lightest: lighten($primary, 10%);
+$primary: #c26222;
+$primary-lightest: lighten(
+  $color: $primary,
+  $amount: 10%,
+);
 $primary-light: lighten(
   $color: $primary,
   $amount: 2%,
@@ -22,5 +33,6 @@ $primary-dark: darken(
   $amount: 2%,
 );
 
+$soft-shadow: 0 1px 3px 5px rgba($primary,0.3);
 $light-shadow: 0 1px 3px 5px rgba(192, 255, 239, 0.2);
 $error-shadow: 0 1px 3px 5px rgba(255, 53, 53, 0.3);
