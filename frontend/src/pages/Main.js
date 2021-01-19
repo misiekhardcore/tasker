@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import FoldersList from "../components/FoldersList";
 import MenuBar from "../components/MenuBar";
-import TableModify from "../components/TableModify";
+import CreateModifyTable from "../components/CreateModifyTable";
 
 const Main = () => {
   const [column2, setColumn2] = useState([]);
   const [back, setBack] = useState([]);
   const [folder, setFolder] = useState();
+
+  console.log(folder)
 
   return (
     <>
@@ -27,7 +29,7 @@ const Main = () => {
           )}
         </div>
         <div className="column3">
-          {folder && <TableModify folder={folder} setFolder={setFolder} />}
+          {folder && <CreateModifyTable folder={folder} setFolder={setFolder} />}
         </div>
       </div>
     </>
