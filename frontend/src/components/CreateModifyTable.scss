@@ -1,0 +1,38 @@
+@import "./../colors";
+
+.folder__info {
+  margin-bottom: 1rem;
+
+  .folder__header {
+    color: $white;
+  }
+
+  .folder__name {
+    color: $gray-lightest;
+    font-size: 1rem;
+
+    & span {
+      color: $white;
+      font-size: 1.5rem;
+    }
+  }
+
+  .folder__description,
+  .folder__creator {
+    color: $gray-lightest;
+    font-size: 0.625rem;
+
+    & span {
+      color: $white-dark;
+      font-size: 1rem;
+    }
+  }
+
+  & .form__container{
+    background-color: transparent;
+
+    button{
+      background-color: $primary;
+    }
+  }
+}
