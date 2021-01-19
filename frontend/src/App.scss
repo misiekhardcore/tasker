@@ -111,7 +111,7 @@
         transform: scale(1);
       }
 
-      .button--add{
+      .button--add {
         margin-left: auto;
       }
 
@@ -120,10 +120,9 @@
         justify-content: center;
         align-items: center;
         padding: 0;
-        width: 2rem;
-        height: 2rem;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
-        // background: $primary-dark;
         background-color: transparent;
         border: none;
         color: $white;
@@ -131,7 +130,7 @@
         cursor: pointer;
 
         &:active {
-          background-color: $primary-lightest;
+          color: $white-dark;
         }
       }
 
@@ -141,7 +140,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
 
-        &:hover{
+        &:hover {
           cursor: pointer;
         }
       }
@@ -180,6 +179,30 @@
   }
 }
 
+.table-details {
+  overflow-y: scroll;
+  color: white;
+  position: relative;
+  padding: 1rem;
+
+  .button--close {
+    position: absolute;
+    right: 1.5rem;
+    top: 0.5rem;
+    font-size: 1.5rem;
+  }
+
+  button {
+    color: white;
+    background-color: transparent;
+    border: none;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
 .error-list {
   margin: 1rem 0;
   padding: 0.5rem 0.8rem;
@@ -193,4 +216,3 @@
     font-size: 0.8rem;
   }
 }
-
