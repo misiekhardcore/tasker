@@ -83,7 +83,7 @@ module.exports = gql`
       tableId: ID!
       name: String!
       description: String
-      parent: ID!
+      parent: ID
     ): Table
     deleteTable(tableId: ID!): Boolean
 
