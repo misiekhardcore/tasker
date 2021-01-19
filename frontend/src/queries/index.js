@@ -33,6 +33,35 @@ export const GET_FOLDER = gql`
   }
 `;
 
+export const UPDATE_FOLDER = gql`
+  mutation updateTable(
+    $tableId: ID!
+    $name: String!
+    $description: String
+    $parent: ID
+  ) {
+    updateTable(
+      tableId: $tableId
+      name: $name
+      description: $description
+      parent: $parent
+    ) {
+      id
+      name
+      description
+      creator {
+        username
+      }
+      parent {
+        id
+        name
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const GET_TASKS = gql`
   query getTasks($parent: ID) {
     getTasks(parent: $parent) {
