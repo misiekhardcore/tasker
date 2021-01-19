@@ -8,7 +8,7 @@ const MenuBar = () => {
 
   return (
     <div className="menu__container">
-      <Link to='/'><h1 className="menu__logo">Tasker</h1></Link>
+      <Link to='/' onClick={() => window.location.reload()}><h1 className="menu__logo">Tasker</h1></Link>
       <nav className="nav">
         <ul className="nav__links">
           <li className="nav__link" onClick={context.logout}>
