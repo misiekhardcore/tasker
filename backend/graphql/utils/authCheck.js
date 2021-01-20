@@ -12,14 +12,14 @@ module.exports = (context) => {
 
   if (!authHeader) {
     errors.authorization = AUTHORIZATION_ERROR;
-    throw new AuthenticationError(AUTHORIZATION_ERROR, errors);
+    throw new AuthenticationError(AUTHORIZATION_ERROR, {errors});
   }
 
   const token = authHeader.split("Bearer ")[1];
   
   if (!token) {
     errors.authorization = AUTHORIZATION_ERROR;
-    throw new AuthenticationError(AUTHORIZATION_ERROR, errors);
+    throw new AuthenticationError(AUTHORIZATION_ERROR, {errors});
   }
 
   const user = jwt.verify(token, JWT_SECRET);
