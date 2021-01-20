@@ -7,6 +7,7 @@ import {
   ADD_FOLDER,
   ADD_TASK,
   DELETE_FOLDER,
+  DELETE_TASK,
   GET_FOLDERS,
   GET_TASKS,
 } from "../queries";
@@ -87,12 +88,26 @@ const FoldersList = ({
     ],
   });
 
+  const [deleteTask] = useMutation(DELETE_TASK, {
+    onCompleted() {
+      setErrors({});
+    },
+    onError(err) {
+      setErrors(err.graphQLErrors[0].extensions.exception.errors);
+    },
+    refetchQueries: [
+      { query: GET_TASKS, variables: { parent } },
+      { query: GET_FOLDERS, variables: { parent } },
+    ],
+  });
+
   function handleParent(id, name) {
     parents2.push(id);
     back2.push(name);
     setFolder(id);
     setData(parents2);
     setBack(back2);
+    setTask();
   }
 
   return (
@@ -172,7 +187,11 @@ const FoldersList = ({
       {data &&
         data.getTables.map((table) => (
           <>
-            <li className="list__item" data-tooltip={table.name} key={table.id}>
+            <li
+              className="list__item"
+              data-tooltip={table.name}
+              key={table.id}
+            >
               <p
                 onClick={() => {
                   handleParent(table.id, table.name);
@@ -206,10 +225,22 @@ const FoldersList = ({
               key={task.id}
               onClick={() => {
                 setTask(task.id);
-                setFolder()
+                setFolder();
               }}
             >
               <p>{task.name}</p>
+              <div className="buttons">
+                <button
+                  onClick={() => {setTask();
+                    deleteTask({
+                      variables: { taskId: task.id },
+                    });
+                    
+                  }}
+                >
+                  <AiFillDelete />
+                </button>
+              </div>
             </li>
           </>
         ))}
