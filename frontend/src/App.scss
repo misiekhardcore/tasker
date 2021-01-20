@@ -174,7 +174,7 @@
   }
 
   .column3 {
-    background-color: $primary-lightest;
+    background-color: $white-dark;
     grid-column: 3/-1;
   }
 }
@@ -186,18 +186,18 @@
   padding: 1rem;
 
   .button--close {
+    border-radius: 50%;
+    padding: 0.5rem;
     position: absolute;
-    right: 1.5rem;
+    right: 0.5rem;
     top: 0.5rem;
     font-size: 1.5rem;
-  }
-
-  button {
-    color: white;
+    color: $gray-dark;
     background-color: transparent;
     border: none;
 
     &:hover {
+      color: $white-dark;
       cursor: pointer;
     }
   }
