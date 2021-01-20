@@ -5,7 +5,10 @@ import { GET_FOLDER, UPDATE_FOLDER } from "../queries";
 import moment from "moment";
 import "./CreateModifyTable.scss";
 
-const CreateModifyTable = ({ folder = undefined, setFolder = () => {} }) => {
+const CreateModifyTable = ({
+  folder = undefined,
+  setFolder = () => {},
+}) => {
   const [table, setTable] = useState({});
 
   //get folder info
@@ -20,7 +23,11 @@ const CreateModifyTable = ({ folder = undefined, setFolder = () => {} }) => {
   });
 
   const { id, name, description, parent, creator, createdAt } = table;
-  const [state, setState] = useState({ name: "", description: "" });
+  const [state, setState] = useState({
+    name: "",
+    description: "",
+    state: 1,
+  });
   const [errors, setErrors] = useState({});
 
   const [update] = useMutation(UPDATE_FOLDER, {
@@ -37,7 +44,7 @@ const CreateModifyTable = ({ folder = undefined, setFolder = () => {} }) => {
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
     },
-    refetchQueries: [{ query: GET_FOLDER, variables: { tableId: folder } }],
+    refetchQueries: [{ query: GET_FOLDER, variables: { tableId: id } }],
   });
 
   function handleChange(e) {
@@ -57,7 +64,10 @@ const CreateModifyTable = ({ folder = undefined, setFolder = () => {} }) => {
     <>
       {table && (
         <div className="table-details">
-          <button className="button button--close" onClick={() => setFolder()}>
+          <button
+            className="button button--close"
+            onClick={() => setFolder()}
+          >
             <AiOutlineCloseCircle />
           </button>
           <div className="folder__info">
@@ -77,13 +87,17 @@ const CreateModifyTable = ({ folder = undefined, setFolder = () => {} }) => {
             </p>
             <p className="folder__creator">
               Created by:
-              <span>{(creator && creator.username) || "no creator"}</span>
+              <span>
+                {(creator && creator.username) || "no creator"}
+              </span>
             </p>
             <p className="folder__date">
               Created At:
               <span>
                 {(createdAt &&
-                  moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
+                  moment(+createdAt).format(
+                    "YYYY-MM-DD, dddd hh:mm"
+                  )) ||
                   ""}
               </span>
             </p>
@@ -115,7 +129,9 @@ const CreateModifyTable = ({ folder = undefined, setFolder = () => {} }) => {
                     name="description"
                     type="text"
                     className={`form__input ${
-                      errors.description || errors.general ? "error" : ""
+                      errors.description || errors.general
+                        ? "error"
+                        : ""
                     }`}
                   />
                 </div>
