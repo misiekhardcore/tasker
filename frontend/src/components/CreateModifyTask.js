@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-import { GET_FOLDER, GET_TASK, UPDATE_FOLDER } from "../queries";
+import { GET_TASK, UPDATE_TASK } from "../queries";
 import moment from "moment";
 import "./CreateModifyTable.scss";
 
@@ -19,26 +19,35 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
     },
   });
 
-  const { id, name, description, parent, creator, status, createdAt } = task2;
+  const {
+    id,
+    name,
+    description,
+    parent,
+    creator,
+    status,
+    createdAt,
+  } = task2;
   const [state, setState] = useState({ name: "", description: "" });
   const [errors, setErrors] = useState({});
 
-  // const [update] = useMutation(UPDATE_TASK, {
-  //   variables: {
-  //     taskId: id,
-  //     name: state.name,
-  //     description: state.description,
-  //     parent: parent && parent.id,
-  //   },
-  //   onCompleted({ updateTask }) {
-  //     setTask(updateTask);
-  //     setErrors({});
-  //   },
-  //   onError(err) {
-  //     setErrors(err.graphQLErrors[0].extensions.exception.errors);
-  //   },
-  //   refetchQueries: [{ query: GET_TASK, variables: { taskId: task } }],
-  // });
+  const [update] = useMutation(UPDATE_TASK, {
+    variables: {
+      taskId: id,
+      name: state.name,
+      description: state.description,
+      parent: parent && parent.id,
+      status,
+    },
+    onCompleted({ updateTask }) {
+      setTask2(updateTask);
+      setErrors({});
+    },
+    onError(err) {
+      setErrors(err.graphQLErrors[0].extensions.exception.errors);
+    },
+    refetchQueries: [{ query: GET_TASK, variables: { taskId: id } }],
+  });
 
   function handleChange(e) {
     setState({ ...state, [e.target.name]: e.target.value });
@@ -50,14 +59,17 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
 
   function handleSubmit(e) {
     e.preventDefault();
-    // update();
+    update();
   }
 
   return (
     <>
-      {task && (
+      {task2 && (
         <div className="table-details">
-          <button className="button button--close" onClick={() => setTask()}>
+          <button
+            className="button button--close"
+            onClick={() => setTask()}
+          >
             <AiOutlineCloseCircle />
           </button>
           <div className="folder__info">
@@ -77,13 +89,17 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
             </p>
             <p className="folder__creator">
               Created by:
-              <span>{(creator && creator.username) || "no creator"}</span>
+              <span>
+                {(creator && creator.username) || "no creator"}
+              </span>
             </p>
             <p className="folder__date">
               Created At:
               <span>
                 {(createdAt &&
-                  moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
+                  moment(+createdAt).format(
+                    "YYYY-MM-DD, dddd hh:mm"
+                  )) ||
                   ""}
               </span>
             </p>
@@ -115,7 +131,9 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
                     name="description"
                     type="text"
                     className={`form__input ${
-                      errors.description || errors.general ? "error" : ""
+                      errors.description || errors.general
+                        ? "error"
+                        : ""
                     }`}
                   />
                 </div>
