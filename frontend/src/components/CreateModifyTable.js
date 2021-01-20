@@ -1,12 +1,15 @@
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { GET_FOLDER, UPDATE_FOLDER } from "../queries";
+import moment from "moment";
 import "./CreateModifyTable.scss";
 
-const TableModify = ({ folder, setFolder }) => {
+const CreateModifyTable = ({ folder = undefined, setFolder = () => {} }) => {
   const [table, setTable] = useState({});
-  const [getTable, { data }] = useLazyQuery(GET_FOLDER, {
+
+  //get folder info
+  const { data } = useQuery(GET_FOLDER, {
     variables: { tableId: folder },
     onCompleted() {
       setTable(data.getTable);
@@ -16,15 +19,23 @@ const TableModify = ({ folder, setFolder }) => {
     },
   });
 
-  const { id, name, description, parent, creator } = table;
+  const { id, name, description, parent, creator, createdAt } = table;
   const [state, setState] = useState({ name: "", description: "" });
   const [errors, setErrors] = useState({});
 
-  const [update, { data: data2 }] = useMutation(UPDATE_FOLDER, {
+  const [update] = useMutation(UPDATE_FOLDER, {
     variables: {
       tableId: id,
       name: state.name,
       description: state.description,
+      parent: (parent && parent.id) || undefined,
+    },
+    onCompleted({ updateTable }) {
+      setTable(updateTable);
+      setErrors({});
+    },
+    onError(err) {
+      setErrors(err.graphQLErrors[0].extensions.exception.errors);
     },
     refetchQueries: [{ query: GET_FOLDER, variables: { tableId: folder } }],
   });
@@ -34,9 +45,8 @@ const TableModify = ({ folder, setFolder }) => {
   }
 
   useEffect(() => {
-    getTable();
     setState({ name: name || "", description: description || "" });
-  }, [folder, table, data2]);
+  }, [name, description]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -47,7 +57,7 @@ const TableModify = ({ folder, setFolder }) => {
     <>
       {table && (
         <div className="table-details">
-          <button className="button--close" onClick={() => setFolder()}>
+          <button className="button button--close" onClick={() => setFolder()}>
             <AiOutlineCloseCircle />
           </button>
           <div className="folder__info">
@@ -63,11 +73,19 @@ const TableModify = ({ folder, setFolder }) => {
               <span>{name}</span>
             </h2>
             <p className="folder__description">
-              Description: <span>{description || "empty"}</span>
+              Description:<span>{description || "empty"}</span>
             </p>
             <p className="folder__creator">
-              Created by:{" "}
+              Created by:
               <span>{(creator && creator.username) || "no creator"}</span>
+            </p>
+            <p className="folder__date">
+              Created At:
+              <span>
+                {(createdAt &&
+                  moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
+                  ""}
+              </span>
             </p>
 
             <div className="form__container">
@@ -101,10 +119,16 @@ const TableModify = ({ folder, setFolder }) => {
                     }`}
                   />
                 </div>
-                <button
-                  type="submit"
-                  className="button button--primary button--block"
-                >
+                {Object.keys(errors).length > 0 && (
+                  <div className="error-list">
+                    <ul className="list">
+                      {Object.values(errors).map((value) => (
+                        <li key={value}>{value}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <button type="submit" className="button button--block">
                   Save
                 </button>
               </form>
@@ -116,4 +140,4 @@ const TableModify = ({ folder, setFolder }) => {
   );
 };
 
-export default TableModify;
+export default CreateModifyTable;
