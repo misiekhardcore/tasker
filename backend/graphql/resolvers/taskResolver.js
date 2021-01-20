@@ -1,10 +1,15 @@
 const Task = require("../../models/Task");
-const { TASK_TITLE_EMPTY } = require("../../messages");
+const {
+  TASK_TITLE_EMPTY,
+  TASK_DELETE_ERROR,
+} = require("../../messages");
+
 const authCheck = require("../utils/authCheck");
-const { UserInputError } = require("apollo-server");
 const { checkId } = require("../utils/validators");
 
-const ObjectId = require("mongoose").Types.ObjectId;
+const { UserInputError } = require("apollo-server");
+
+const errors = {};
 
 module.exports = {
   Query: {
@@ -71,10 +76,11 @@ module.exports = {
       checkId(parent);
 
       if (name.trim() == "") {
-        throw new UserInputError("Name can not be empty");
+        errors.name = TASK_TITLE_EMPTY;
+        throw new UserInputError(TASK_TITLE_EMPTY, { errors });
       }
 
-      const task = await Task.findOneAndUpdate(
+      return await Task.findOneAndUpdate(
         {
           _id: taskId,
         },
@@ -85,12 +91,17 @@ module.exports = {
       )
         .populate("creator")
         .populate("parent");
-
-      return task;
     },
     deleteTask: async (_, { taskId }, context) => {
       authCheck(context);
-      await Task.deleteOne({ _id: taskId });
+
+      try {
+        await Task.deleteOne({ _id: taskId });
+      } catch (error) {
+        errors.general = TASK_DELETE_ERROR;
+        throw new Error(TASK_DELETE_ERROR, { errors });
+      }
+
       return true;
     },
   },
