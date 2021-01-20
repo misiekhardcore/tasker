@@ -24,4 +24,5 @@ module.exports = {
   TASK_NOT_FOUND: "Task(s) not found",
   TASK_TITLE_EMPTY: "Task title can not be empty",
   TASK_TITLE_EXISTS: "Task with this title already exixsts",
+  TASK_DELETE_ERROR: "Error ocurred during deteleTask",
 };
