@@ -9,6 +9,7 @@ export const GET_FOLDERS = gql`
         id
         name
       }
+      createdAt
       updatedAt
     }
   }
@@ -25,6 +26,7 @@ export const GET_FOLDER = gql`
         role
       }
       parent {
+        id
         name
       }
       createdAt
@@ -62,23 +64,6 @@ export const UPDATE_FOLDER = gql`
   }
 `;
 
-export const GET_TASKS = gql`
-  query getTasks($parent: ID) {
-    getTasks(parent: $parent) {
-      id
-      name
-      description
-      creator {
-        username
-      }
-      parent {
-        id
-      }
-      updatedAt
-    }
-  }
-`;
-
 export const ADD_FOLDER = gql`
   mutation createTable($name: String!, $description: String, $parent: ID) {
     createTable(name: $name, description: $description, parent: $parent) {
@@ -96,6 +81,44 @@ export const ADD_FOLDER = gql`
   }
 `;
 
+export const GET_TASKS = gql`
+  query getTasks($parent: ID) {
+    getTasks(parent: $parent) {
+      id
+      name
+      description
+      creator {
+        username
+      }
+      parent {
+        id
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_TASK = gql`
+  query getTask($taskId: ID!) {
+    getTask(taskId: $taskId) {
+      id
+      name
+      description
+      creator {
+        username
+      }
+      parent {
+        id
+        name
+      }
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const ADD_TASK = gql`
   mutation createTask($parent: ID!, $name: String!) {
     createTask(parent: $parent, name: $name) {
@@ -108,6 +131,7 @@ export const ADD_TASK = gql`
       parent {
         id
       }
+      createdAt
       updatedAt
     }
   }
