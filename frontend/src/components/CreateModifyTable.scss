@@ -4,35 +4,37 @@
   margin-bottom: 1rem;
 
   .folder__header {
-    color: $white;
+    color: $black;
   }
 
   .folder__name {
-    color: $gray-lightest;
+    color: $gray;
     font-size: 1rem;
 
     & span {
-      color: $white;
+      color: $black;
       font-size: 1.5rem;
     }
   }
 
   .folder__description,
-  .folder__creator {
-    color: $gray-lightest;
+  .folder__creator,
+  .folder__date {
+    color: $gray;
     font-size: 0.625rem;
 
     & span {
-      color: $white-dark;
+      margin-left: 0.5rem;
+      color: $black-light;
       font-size: 1rem;
     }
   }
 
-  & .form__container{
-    background-color: transparent;
+  & .form__container {
+    background-color: $white-dark;
 
-    button{
-      background-color: $primary;
+    .form__group .form__label {
+      color: $black-light;
     }
   }
 }
