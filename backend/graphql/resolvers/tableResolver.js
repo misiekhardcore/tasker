@@ -1,6 +1,9 @@
 const Table = require("../../models/Table");
 const Task = require("../../models/Task");
-const { TABLE_TITLE_EMPTY, TABLE_DELETE_ERROR } = require("../../messages");
+const {
+  TABLE_TITLE_EMPTY,
+  TABLE_DELETE_ERROR,
+} = require("../../messages");
 
 const authCheck = require("../utils/authCheck");
 const { checkId } = require("../utils/validators");
@@ -69,7 +72,11 @@ module.exports = {
         .populate("creator")
         .populate("parent");
     },
-    updateTable: async (_, { tableId, name, description, parent }, context) => {
+    updateTable: async (
+      _,
+      { tableId, name, description, parent },
+      context
+    ) => {
       const { id } = authCheck(context);
 
       checkId(tableId);
@@ -97,8 +104,7 @@ module.exports = {
         await Table.deleteOne({ _id: tableId });
       } catch (error) {
         errors.general = TABLE_DELETE_ERROR;
-        console.log(error);
-        throw new Error(TABLE_DELETE_ERROR, errors);
+        throw new Error(TABLE_DELETE_ERROR, { errors });
       }
 
       return true;
