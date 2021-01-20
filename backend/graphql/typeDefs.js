@@ -92,8 +92,8 @@ module.exports = gql`
       taskId: ID!
       name: String!
       description: String
-      parent: ID!
-      status: Int!
+      parent: ID
+      status: Int
     ): Task
     deleteTask(taskId: ID!): Boolean
 
