@@ -24,6 +24,9 @@ textarea {
 }
 
 .button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: $white;
   padding: 0.5rem 1rem;
   text-transform: uppercase;
