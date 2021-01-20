@@ -1,8 +1,8 @@
-import { useLazyQuery, useMutation } from "@apollo/client";
-import React, { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import React, { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { BiArrowBack } from "react-icons/bi";
-import { AiFillDelete, AiFillEdit } from "react-icons/ai";
+import { AiFillDelete } from "react-icons/ai";
 import {
   ADD_FOLDER,
   ADD_TASK,
@@ -17,6 +17,7 @@ const FoldersList = ({
   setBack = () => {},
   back = [],
   setFolder = () => {},
+  setTask = () => {},
 }) => {
   const back2 = [...back];
   const parents2 = [...parents];
@@ -27,22 +28,17 @@ const FoldersList = ({
   const [taskName, setTaskName] = useState("");
   const [errors, setErrors] = useState({});
 
-  const [getFolder, { data }] = useLazyQuery(GET_FOLDERS, {
+  const { data } = useQuery(GET_FOLDERS, {
     variables: {
       parent,
     },
   });
 
-  const [getTasks, { data: data2 }] = useLazyQuery(GET_TASKS, {
+  const { data: data2 } = useQuery(GET_TASKS, {
     variables: {
       parent,
     },
   });
-
-  useEffect(() => {
-    getFolder();
-    getTasks();
-  }, []);
 
   const [addFolder] = useMutation(ADD_FOLDER, {
     variables: {
@@ -94,6 +90,7 @@ const FoldersList = ({
   function handleParent(id, name) {
     parents2.push(id);
     back2.push(name);
+    setFolder(id);
     setData(parents2);
     setBack(back2);
   }
@@ -173,32 +170,21 @@ const FoldersList = ({
         </div>
       )}
       {data &&
-        data.getTables.map((folder) => (
+        data.getTables.map((table) => (
           <>
-            <li
-              className="list__item"
-              data-tooltip={folder.name}
-              key={folder.id}
-            >
+            <li className="list__item" data-tooltip={table.name} key={table.id}>
               <p
                 onClick={() => {
-                  handleParent(folder.id, folder.name);
+                  handleParent(table.id, table.name);
                 }}
               >
-                {folder.name}
+                {table.name}
               </p>
               <div className="buttons">
                 <button
                   onClick={() => {
-                    setFolder(folder.id);
-                  }}
-                >
-                  <AiFillEdit />
-                </button>
-                <button
-                  onClick={() => {
                     deleteFolder({
-                      variables: { parent: folder.id },
+                      variables: { parent: table.id },
                     });
                     setData(parents2);
                     setBack(back2);
@@ -212,17 +198,18 @@ const FoldersList = ({
           </>
         ))}
       {data2 &&
-        data2.getTasks.map((folder) => (
+        data2.getTasks.map((task) => (
           <>
             <li
               className="list__item"
-              data-tooltip={folder.name}
-              key={folder.id}
+              data-tooltip={task.name}
+              key={task.id}
               onClick={() => {
-                setData({ parent: folder.id });
+                setTask(task.id);
+                setFolder()
               }}
             >
-              <p>{folder.name}</p>
+              <p>{task.name}</p>
             </li>
           </>
         ))}
