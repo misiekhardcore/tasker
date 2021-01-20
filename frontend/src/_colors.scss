@@ -4,6 +4,12 @@ $white-dark: darken(
   $amount: 5%,
 );
 
+$black: rgb(5, 0, 20);
+$black-light: lighten(
+  $color: $black,
+  $amount: 5%,
+);
+
 $gray: #999;
 $gray-lightest: lighten(
   $color: $gray,
@@ -33,6 +39,6 @@ $primary-dark: darken(
   $amount: 2%,
 );
 
-$soft-shadow: 0 1px 3px 5px rgba($primary,0.3);
+$soft-shadow: 0 1px 3px 5px rgba($primary, 0.3);
 $light-shadow: 0 1px 3px 5px rgba(192, 255, 239, 0.2);
 $error-shadow: 0 1px 3px 5px rgba(255, 53, 53, 0.3);
