@@ -1,14 +1,11 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { useEffect, useState } from "react";
-import { AiOutlineCloseCircle } from "react-icons/ai";
+import { AiFillFolder, AiOutlineCloseCircle } from "react-icons/ai";
 import { GET_FOLDER, UPDATE_FOLDER } from "../queries";
 import moment from "moment";
-import "./CreateModifyTable.scss";
+import "./CreateModify.scss";
 
-const CreateModifyTable = ({
-  folder = undefined,
-  setFolder = () => {},
-}) => {
+const CreateModifyTable = ({ folder = undefined, setFolder = () => {} }) => {
   const [table, setTable] = useState({});
 
   //get folder info
@@ -64,16 +61,20 @@ const CreateModifyTable = ({
     <>
       {table && (
         <div className="table-details">
-          <button
-            className="button button--close"
-            onClick={() => setFolder()}
-          >
+          <button className="button button--close" onClick={() => setFolder()}>
             <AiOutlineCloseCircle />
           </button>
           <div className="folder__info">
-            <h1 className="folder__header">Update Folder</h1>
+            <div className="icon">
+              <AiFillFolder className="icon" />
+            </div>
+
+            <span className="folder__date">
+              {(createdAt &&
+                moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
+                ""}
+            </span>
             <h2 className="folder__name">
-              {"Name: "}
               {parent && (
                 <>
                   {parent.name}
@@ -82,24 +83,13 @@ const CreateModifyTable = ({
               )}
               <span>{name}</span>
             </h2>
-            <p className="folder__description">
-              Description:<span>{description || "empty"}</span>
-            </p>
             <p className="folder__creator">
               Created by:
-              <span>
-                {(creator && creator.username) || "no creator"}
-              </span>
-            </p>
-            <p className="folder__date">
-              Created At:
-              <span>
-                {(createdAt &&
-                  moment(+createdAt).format(
-                    "YYYY-MM-DD, dddd hh:mm"
-                  )) ||
-                  ""}
-              </span>
+              <span
+                className="avatar"
+                style={{ backgroundColor: `#${creator && creator.avatar}` }}
+              ></span>
+              <span>{(creator && creator.username) || "no creator"}</span>
             </p>
 
             <div className="form__container">
@@ -129,9 +119,7 @@ const CreateModifyTable = ({
                     name="description"
                     type="text"
                     className={`form__input ${
-                      errors.description || errors.general
-                        ? "error"
-                        : ""
+                      errors.description || errors.general ? "error" : ""
                     }`}
                   />
                 </div>

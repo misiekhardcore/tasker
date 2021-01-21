@@ -1,9 +1,9 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { useEffect, useState } from "react";
-import { AiOutlineCloseCircle } from "react-icons/ai";
+import { AiFillSchedule, AiOutlineCloseCircle } from "react-icons/ai";
 import { GET_TASK, UPDATE_TASK } from "../queries";
 import moment from "moment";
-import "./CreateModifyTable.scss";
+import "./CreateModify.scss";
 
 const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
   const [task2, setTask2] = useState({});
@@ -19,15 +19,7 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
     },
   });
 
-  const {
-    id,
-    name,
-    description,
-    parent,
-    creator,
-    status,
-    createdAt,
-  } = task2;
+  const { id, name, description, parent, creator, status, createdAt } = task2;
   const [state, setState] = useState({ name: "", description: "" });
   const [errors, setErrors] = useState({});
 
@@ -66,16 +58,20 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
     <>
       {task2 && (
         <div className="table-details">
-          <button
-            className="button button--close"
-            onClick={() => setTask()}
-          >
+          <button className="button button--close" onClick={() => setTask()}>
             <AiOutlineCloseCircle />
           </button>
           <div className="folder__info">
-            <h1 className="folder__header">Update Task</h1>
+            <div className="icon">
+              <AiFillSchedule className="icon" />
+            </div>
+
+            <span className="folder__date">
+              {(createdAt &&
+                moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
+                ""}
+            </span>
             <h2 className="folder__name">
-              {"Name: "}
               {parent && (
                 <>
                   {parent.name}
@@ -84,24 +80,13 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
               )}
               <span>{name}</span>
             </h2>
-            <p className="folder__description">
-              Description:<span>{description || "empty"}</span>
-            </p>
             <p className="folder__creator">
               Created by:
-              <span>
-                {(creator && creator.username) || "no creator"}
-              </span>
-            </p>
-            <p className="folder__date">
-              Created At:
-              <span>
-                {(createdAt &&
-                  moment(+createdAt).format(
-                    "YYYY-MM-DD, dddd hh:mm"
-                  )) ||
-                  ""}
-              </span>
+              <span
+                className="avatar"
+                style={{ backgroundColor: `#${creator && creator.avatar}` }}
+              ></span>
+              <span>{(creator && creator.username) || "no creator"}</span>
             </p>
 
             <div className="form__container">
@@ -131,9 +116,7 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
                     name="description"
                     type="text"
                     className={`form__input ${
-                      errors.description || errors.general
-                        ? "error"
-                        : ""
+                      errors.description || errors.general ? "error" : ""
                     }`}
                   />
                 </div>
