@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import React, { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { BiArrowBack } from "react-icons/bi";
-import { AiFillDelete } from "react-icons/ai";
+import { AiFillDelete, AiFillFolder, AiFillSchedule } from "react-icons/ai";
 import {
   ADD_FOLDER,
   ADD_TASK,
@@ -188,7 +188,8 @@ const FoldersList = ({
       {data &&
         data.getTables.map((table) => (
           <>
-            <li className="list__item" data-tooltip={table.name} key={table.id}>
+            <li className="list__item table" data-tooltip={table.name} key={table.id}>
+              <AiFillFolder />
               <p
                 onClick={() => {
                   handleParent(table.id, table.name);
@@ -217,7 +218,7 @@ const FoldersList = ({
         data2.getTasks.map((task) => (
           <>
             <li
-              className="list__item"
+              className="list__item task"
               data-tooltip={task.name}
               key={task.id}
               onClick={() => {
@@ -225,6 +226,7 @@ const FoldersList = ({
                 setFolder();
               }}
             >
+              <AiFillSchedule />
               <p>{task.name}</p>
               <div className="buttons">
                 <button
