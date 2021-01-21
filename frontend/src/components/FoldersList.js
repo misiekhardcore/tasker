@@ -91,6 +91,7 @@ const FoldersList = ({
   const [deleteTask] = useMutation(DELETE_TASK, {
     onCompleted() {
       setErrors({});
+      setTask();
     },
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
@@ -187,11 +188,7 @@ const FoldersList = ({
       {data &&
         data.getTables.map((table) => (
           <>
-            <li
-              className="list__item"
-              data-tooltip={table.name}
-              key={table.id}
-            >
+            <li className="list__item" data-tooltip={table.name} key={table.id}>
               <p
                 onClick={() => {
                   handleParent(table.id, table.name);
@@ -231,11 +228,10 @@ const FoldersList = ({
               <p>{task.name}</p>
               <div className="buttons">
                 <button
-                  onClick={() => {setTask();
+                  onClick={() => {
                     deleteTask({
                       variables: { taskId: task.id },
                     });
-                    
                   }}
                 >
                   <AiFillDelete />
