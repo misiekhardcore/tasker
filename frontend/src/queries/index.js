@@ -24,6 +24,7 @@ export const GET_FOLDER = gql`
       creator {
         username
         role
+        avatar
       }
       parent {
         id
@@ -53,6 +54,7 @@ export const UPDATE_FOLDER = gql`
       description
       creator {
         username
+        avatar
       }
       parent {
         id
@@ -80,6 +82,7 @@ export const ADD_FOLDER = gql`
       description
       creator {
         username
+        avatar
       }
       parent {
         id
@@ -97,6 +100,7 @@ export const GET_TASKS = gql`
       description
       creator {
         username
+        avatar
       }
       parent {
         id
@@ -115,6 +119,7 @@ export const GET_TASK = gql`
       description
       creator {
         username
+        avatar
       }
       parent {
         id
@@ -148,6 +153,7 @@ export const UPDATE_TASK = gql`
       creator {
         username
         id
+        avatar
       }
       parent {
         id
@@ -168,6 +174,7 @@ export const ADD_TASK = gql`
       description
       creator {
         username
+        avatar
       }
       parent {
         id
