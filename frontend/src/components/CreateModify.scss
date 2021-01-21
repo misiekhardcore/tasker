@@ -1,0 +1,52 @@
+@import "./../colors";
+
+.folder__info {
+  margin-bottom: 1rem;
+
+  .folder__header {
+    color: $black;
+  }
+
+  .folder__name {
+    color: $gray;
+    font-size: 1rem;
+
+    & span {
+      color: $black;
+      font-size: 1.5rem;
+    }
+  }
+
+  .icon {
+    font-size: 2rem;
+    color: $black-light;
+  }
+
+  .folder__description,
+  .folder__creator,
+  .folder__date {
+    color: $gray;
+    font-size: 0.625rem;
+
+    & span {
+      color: $black-light;
+      font-size: 1rem;
+    }
+
+    & span.avatar {
+      margin-left: 0.5rem;
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+  }
+
+  & .form__container {
+    background-color: $white-dark;
+
+    .form__group .form__label {
+      color: $black-light;
+    }
+  }
+}
