@@ -19,7 +19,11 @@ const Main = () => {
       <MenuBar />
       <div className="main__container">
         <div className="column1">
-          <FoldersList setData={setColumn2} setFolder={setFolder} />
+          <FoldersList
+            setData={setColumn2}
+            setFolder={setFolder}
+            setTask={setTask}
+          />
         </div>
         <div className="column2">
           {column2.length > 0 && (
