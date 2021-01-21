@@ -78,17 +78,31 @@
     }
 
     li {
-      padding: 0.5rem 0.8rem;
+      padding: 0.2rem 0.5rem;
       width: 100%;
-      background-color: rgba($white, 0.1);
+      background-color: rgba($white, 0.05);
       border-radius: 0.25rem;
       display: flex;
       align-items: center;
       transition: all 0.2s ease-in-out;
 
+      &.table {
+        background-color: $primary;
+        filter: hue-rotate(-10deg);
+      }
+
+      &.task {
+        background-color: $primary;
+        filter: hue-rotate(10deg);
+      }
+
+      svg {
+        font-size: 1.5rem;
+      }
+
       input {
         width: 80%;
-        background-color: rgba($color: $white, $alpha: 0.2);
+        background-color: rgba($color: $white, $alpha: 0.1);
         color: $white;
 
         &:focus {
@@ -139,6 +153,10 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+
+        &:first-of-type {
+          margin-left: 0.4rem;
+        }
 
         &:hover {
           cursor: pointer;
