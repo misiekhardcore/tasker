@@ -14,7 +14,7 @@ import {
 import { setContext } from "@apollo/client/link/context";
 
 const link = createHttpLink({
-  uri: "http://localhost:5000",
+  uri: "https://tasker-task.herokuapp.com/",
   credentials: "same-origin",
 });
 
