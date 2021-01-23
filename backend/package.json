@@ -1,7 +1,11 @@
 {
   "name": "tasker",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
+  "engines": {
+    "node": "12.18.1",
+    "yarn": "1.22.5"
+  },
   "license": "MIT",
   "dependencies": {
     "apollo-server": "^2.19.1",
@@ -15,7 +19,7 @@
     "nodemailer": "^6.4.17"
   },
   "scripts": {
-    "start": "nodemon server"
+    "start": "node server"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
