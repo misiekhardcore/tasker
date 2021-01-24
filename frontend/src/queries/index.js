@@ -138,7 +138,7 @@ export const UPDATE_TASK = gql`
     $name: String!
     $description: String
     $parent: ID
-    $status: Int
+    $status: String
   ) {
     updateTask(
       taskId: $taskId
@@ -194,5 +194,27 @@ export const DELETE_FOLDER = gql`
 export const DELETE_TASK = gql`
   mutation deleteTask($taskId: ID!) {
     deleteTask(taskId: $taskId)
+  }
+`;
+
+export const GET_COMMENTS = gql`
+  query getComments($parent: ID!) {
+    getComments(parent: $parent) {
+      id
+      body
+      creator {
+        username
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const ADD_COMMENT = gql`
+  mutation createComment($parent: ID!, $body: String!) {
+    createComment(parent: $parent, body: $body) {
+      id
+    }
   }
 `;
