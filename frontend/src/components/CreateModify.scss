@@ -44,9 +44,19 @@
 
   & .form__container {
     background-color: $white-dark;
+    max-width: 100%;
 
     .form__group .form__label {
       color: $black-light;
+    }
+
+    select {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      border: none;
+      appearance: none;
+      cursor: pointer;
     }
   }
 }
