@@ -1,0 +1,10 @@
+@import "../colors";
+
+.comments__container {
+  color: $black_light;
+
+  .comment__input {
+    display: flex;
+    flex-grow: 1;
+  }
+}
