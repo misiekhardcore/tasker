@@ -195,6 +195,35 @@
     background-color: $white-dark;
     grid-column: 3/-1;
   }
+
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+
+    .list__form {
+      width: 100%;
+    }
+
+    .list__item:last-of-type {
+      margin-bottom: 1rem;
+    }
+
+    .column1,
+    .column2 {
+      padding: 1rem 0.5rem;
+      overflow-x: scroll;
+      max-height: 15rem;
+    }
+
+    .column1 {
+      min-height: 10rem;
+    }
+
+    .column2 {
+      border-top: solid $primary-lightest 3px;
+    }
+  }
 }
 
 .table-details {
