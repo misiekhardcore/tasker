@@ -7,6 +7,7 @@ module.exports = gql`
     email: String!
     role: String!
     avatar: String!
+    teams: [Team]!
     createdAt: String!
     updatedAt: String!
   }
@@ -22,6 +23,7 @@ module.exports = gql`
     description: String
     creator: User!
     parent: Table
+    teams: [Team]!
     createdAt: String!
     updatedAt: String!
   }
@@ -32,7 +34,9 @@ module.exports = gql`
     description: String
     creator: User!
     parent: Table
-    status: Int!
+    status: String!
+    comments: [Comment]!
+    teams: [Team]!
     createdAt: String!
     updatedAt: String!
   }
@@ -44,6 +48,13 @@ module.exports = gql`
     parent: ID!
     createdAt: String!
     updatedAt: String!
+  }
+
+  type Team {
+    id: ID!
+    name: String!
+    creator: User!
+    users: [User]!
   }
 
   input RegisterInput {
@@ -63,10 +74,14 @@ module.exports = gql`
   type Query {
     getTables(parent: ID): [Table]!
     getTable(tableId: ID!): Table
+
     getTasks(parent: ID): [Task]!
     getTask(taskId: ID!): Task
+
     getComments(parent: ID!): [Comment]
     getComment(commentId: ID!): Comment
+
+    getTeam(teamId: ID!): Team
   }
 
   type Mutation {
@@ -88,13 +103,18 @@ module.exports = gql`
     ): Table
     deleteTable(tableId: ID!): Boolean
 
-    createTask(parent: ID!, name: String!, description: String): Task
+    createTask(
+      parent: ID!
+      name: String!
+      description: String
+      status: String
+    ): Task
     updateTask(
       taskId: ID!
       name: String!
       description: String
       parent: ID
-      status: Int
+      status: String
     ): Task
     deleteTask(taskId: ID!): Boolean
 
