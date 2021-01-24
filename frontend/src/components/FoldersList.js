@@ -2,7 +2,11 @@ import { useMutation, useQuery } from "@apollo/client";
 import React, { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { BiArrowBack } from "react-icons/bi";
-import { AiFillDelete, AiFillFolder, AiFillSchedule } from "react-icons/ai";
+import {
+  AiFillDelete,
+  AiFillFolder,
+  AiFillSchedule,
+} from "react-icons/ai";
 import {
   ADD_FOLDER,
   ADD_TASK,
@@ -11,6 +15,7 @@ import {
   GET_FOLDERS,
   GET_TASKS,
 } from "../queries";
+import { Button, Form, Input } from "./styled";
 
 const FoldersList = ({
   setData = () => {},
@@ -129,15 +134,14 @@ const FoldersList = ({
         </li>
       )}
       <li className="list__item" key="2">
-        <form
-          className="list__form"
+        <Form
           onSubmit={(e) => {
             e.preventDefault();
             addFolder();
             setTableName("");
           }}
         >
-          <input
+          <Input
             name="name"
             type="text"
             value={tableName}
@@ -145,23 +149,22 @@ const FoldersList = ({
             placeholder="Add new table..."
           />
           <div className="button--add">
-            <button type="submit">
+            <Button type="submit">
               <IoMdAdd />
-            </button>
+            </Button>
           </div>
-        </form>
+        </Form>
       </li>
       {parent && (
         <li className="list__item" key="3">
-          <form
-            className="list__form"
+          <Form
             onSubmit={(e) => {
               e.preventDefault();
               addTask();
               setTaskName("");
             }}
           >
-            <input
+            <Input
               name="name"
               type="text"
               value={taskName}
@@ -169,11 +172,11 @@ const FoldersList = ({
               placeholder="Add new task..."
             />
             <div className="button--add">
-              <button type="submit">
+              <Button type="submit">
                 <IoMdAdd />
-              </button>
+              </Button>
             </div>
-          </form>
+          </Form>
         </li>
       )}
       {Object.keys(errors).length > 0 && (
@@ -188,7 +191,11 @@ const FoldersList = ({
       {data &&
         data.getTables.map((table) => (
           <>
-            <li className="list__item table" data-tooltip={table.name} key={table.id}>
+            <li
+              className="list__item table"
+              data-tooltip={table.name}
+              key={table.id}
+            >
               <AiFillFolder />
               <p
                 onClick={() => {
@@ -197,20 +204,18 @@ const FoldersList = ({
               >
                 {table.name}
               </p>
-              <div className="buttons">
-                <button
-                  onClick={() => {
-                    deleteFolder({
-                      variables: { parent: table.id },
-                    });
-                    setData(parents2);
-                    setBack(back2);
-                    setFolder();
-                  }}
-                >
-                  <AiFillDelete />
-                </button>
-              </div>
+              <Button
+                onClick={() => {
+                  deleteFolder({
+                    variables: { parent: table.id },
+                  });
+                  setData(parents2);
+                  setBack(back2);
+                  setFolder();
+                }}
+              >
+                <AiFillDelete />
+              </Button>
             </li>
           </>
         ))}
@@ -228,17 +233,15 @@ const FoldersList = ({
             >
               <AiFillSchedule />
               <p>{task.name}</p>
-              <div className="buttons">
-                <button
-                  onClick={() => {
-                    deleteTask({
-                      variables: { taskId: task.id },
-                    });
-                  }}
-                >
-                  <AiFillDelete />
-                </button>
-              </div>
+              <Button
+                onClick={() => {
+                  deleteTask({
+                    variables: { taskId: task.id },
+                  });
+                }}
+              >
+                <AiFillDelete />
+              </Button>
             </li>
           </>
         ))}

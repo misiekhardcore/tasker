@@ -1,6 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { Button, Form, FormGroup, Input, Label } from "../components/styled";
 import { AuthContext } from "../context/auth";
 
 function Login(props) {
@@ -32,48 +33,39 @@ function Login(props) {
   return (
     <div className="container--center">
       <div className="form__container">
-        <form
+        <Form
           onSubmit={handleSubmit}
           className={loading ? "loading" : ""}
         >
           <h1>Login</h1>
-          <div className="form__group">
-            <label htmlFor="email" className="form__label">
-              Email:
-            </label>
-            <input
+          <FormGroup>
+            <Label htmlFor="email">Email:</Label>
+            <Input
               name="email"
               type="email"
-              className={`form__input ${
-                errors.email || errors.general ? "error" : ""
-              }`}
+              className={errors.email || errors.general ? "error" : ""}
               placeholder="Enter your email..."
               value={state.email}
               onChange={handleChange}
             />
-          </div>
-          <div className="form__group">
-            <label htmlFor="password" className="form__label">
-              Password:
-            </label>
-            <input
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="password">Password:</Label>
+            <Input
               name="password"
               type="password"
-              className={`form__input ${
+              className={
                 errors.password || errors.general ? "error" : ""
-              }`}
+              }
               placeholder="Enter your password..."
               value={state.password}
               onChange={handleChange}
             />
-          </div>
-          <button
-            className="button button--primary button--block"
-            type="submit"
-          >
+          </FormGroup>
+          <Button block primary="#d344a3" type="submit">
             submit
-          </button>
-        </form>
+          </Button>
+        </Form>
         <Link className="form__link" to="/register">
           You new here? Create an account!
         </Link>

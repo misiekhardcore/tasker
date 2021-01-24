@@ -4,15 +4,27 @@ import { AiFillFolder, AiOutlineCloseCircle } from "react-icons/ai";
 import { GET_FOLDER, UPDATE_FOLDER } from "../queries";
 import moment from "moment";
 import "./CreateModify.scss";
+import {
+  Button,
+  ButtonClose,
+  Form,
+  FormGroup,
+  Input,
+  Label,
+  Textarea,
+} from "./styled";
 
-const CreateModifyTable = ({ folder = undefined, setFolder = () => {} }) => {
+const CreateModifyTable = ({
+  folder = undefined,
+  setFolder = () => {},
+}) => {
   const [table, setTable] = useState({});
 
   //get folder info
-  const { data } = useQuery(GET_FOLDER, {
+  useQuery(GET_FOLDER, {
     variables: { tableId: folder },
-    onCompleted() {
-      setTable(data.getTable);
+    onCompleted({ getTable }) {
+      setTable(getTable);
     },
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
@@ -61,9 +73,9 @@ const CreateModifyTable = ({ folder = undefined, setFolder = () => {} }) => {
     <>
       {table && (
         <div className="table-details">
-          <button className="button button--close" onClick={() => setFolder()}>
+          <ButtonClose onClick={() => setFolder()}>
             <AiOutlineCloseCircle />
-          </button>
+          </ButtonClose>
           <div className="folder__info">
             <div className="icon">
               <AiFillFolder className="icon" />
@@ -87,56 +99,56 @@ const CreateModifyTable = ({ folder = undefined, setFolder = () => {} }) => {
               Created by:
               <span
                 className="avatar"
-                style={{ backgroundColor: `#${creator && creator.avatar}` }}
+                style={{
+                  backgroundColor: `#${creator && creator.avatar}`,
+                }}
               ></span>
-              <span>{(creator && creator.username) || "no creator"}</span>
+              <span>
+                {(creator && creator.username) || "no creator"}
+              </span>
             </p>
 
-            <div className="form__container">
-              <form onSubmit={handleSubmit}>
-                <div className="form__group">
-                  <label htmlFor="name" className="form__label">
-                    Table name:
-                  </label>
-                  <input
-                    value={state.name}
-                    onChange={handleChange}
-                    name="name"
-                    type="text"
-                    className={`form__input ${
-                      errors.name || errors.general ? "error" : ""
-                    }`}
-                  />
+            <Form onSubmit={handleSubmit}>
+              <FormGroup>
+                <Label htmlFor="name" className="form__label">
+                  Table name:
+                </Label>
+                <Input
+                  value={state.name}
+                  onChange={handleChange}
+                  name="name"
+                  type="text"
+                  className={
+                    errors.name || errors.general ? "error" : ""
+                  }
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label htmlFor="description">Table descrition:</Label>
+                <Textarea
+                  style={{ resize: "none" }}
+                  value={state.description}
+                  onChange={handleChange}
+                  name="description"
+                  type="text"
+                  className={
+                    errors.description || errors.general ? "error" : ""
+                  }
+                />
+              </FormGroup>
+              {Object.keys(errors).length > 0 && (
+                <div className="error-list">
+                  <ul className="list">
+                    {Object.values(errors).map((value) => (
+                      <li key={value}>{value}</li>
+                    ))}
+                  </ul>
                 </div>
-                <div className="form__group">
-                  <label htmlFor="description" className="form__label">
-                    Table descrition:
-                  </label>
-                  <textarea
-                    style={{ resize: "none" }}
-                    value={state.description}
-                    onChange={handleChange}
-                    name="description"
-                    type="text"
-                    className={`form__input ${
-                      errors.description || errors.general ? "error" : ""
-                    }`}
-                  />
-                </div>
-                {Object.keys(errors).length > 0 && (
-                  <div className="error-list">
-                    <ul className="list">
-                      {Object.values(errors).map((value) => (
-                        <li key={value}>{value}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                <button type="submit" className="button button--block">
-                  Save
-                </button>
-              </form>
-            </div>
+              )}
+              <Button type="submit" block>
+                Save
+              </Button>
+            </Form>
           </div>
         </div>
       )}
