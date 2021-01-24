@@ -4,6 +4,7 @@ import { AiFillSchedule, AiOutlineCloseCircle } from "react-icons/ai";
 import { GET_TASK, UPDATE_TASK } from "../queries";
 import moment from "moment";
 import "./CreateModify.scss";
+import Comments from "./Comments";
 
 const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
   const [task2, setTask2] = useState({});
@@ -19,8 +20,20 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
     },
   });
 
-  const { id, name, description, parent, creator, status, createdAt } = task2;
-  const [state, setState] = useState({ name: "", description: "" });
+  const {
+    id,
+    name,
+    description,
+    parent,
+    creator,
+    status,
+    createdAt,
+  } = task2;
+  const [state, setState] = useState({
+    name: "",
+    description: "",
+    status: 1,
+  });
   const [errors, setErrors] = useState({});
 
   const [update] = useMutation(UPDATE_TASK, {
@@ -29,7 +42,7 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
       name: state.name,
       description: state.description,
       parent: parent && parent.id,
-      status,
+      status: state.status,
     },
     onCompleted({ updateTask }) {
       setTask2(updateTask);
@@ -46,8 +59,12 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
   }
 
   useEffect(() => {
-    setState({ name: name || "", description: description || "" });
-  }, [name, description]);
+    setState({
+      name: name || "",
+      description: description || "",
+      status: status || "New",
+    });
+  }, [name, description, status]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -58,7 +75,10 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
     <>
       {task2 && (
         <div className="table-details">
-          <button className="button button--close" onClick={() => setTask()}>
+          <button
+            className="button button--close"
+            onClick={() => setTask()}
+          >
             <AiOutlineCloseCircle />
           </button>
           <div className="folder__info">
@@ -84,9 +104,13 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
               Created by:
               <span
                 className="avatar"
-                style={{ backgroundColor: `#${creator && creator.avatar}` }}
+                style={{
+                  backgroundColor: `#${creator && creator.avatar}`,
+                }}
               ></span>
-              <span>{(creator && creator.username) || "no creator"}</span>
+              <span>
+                {(creator && creator.username) || "no creator"}
+              </span>
             </p>
 
             <div className="form__container">
@@ -116,7 +140,9 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
                     name="description"
                     type="text"
                     className={`form__input ${
-                      errors.description || errors.general ? "error" : ""
+                      errors.description || errors.general
+                        ? "error"
+                        : ""
                     }`}
                   />
                 </div>
@@ -129,11 +155,41 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
                     </ul>
                   </div>
                 )}
+                <div className="form__group">
+                  <select
+                    name="status"
+                    value={state.status}
+                    onChange={handleChange}
+                    style={{
+                      backgroundColor:
+                        state.status === "New"
+                          ? "red"
+                          : state.status === "In progress"
+                          ? "yellow"
+                          : "green",
+                    }}
+                  >
+                    <option
+                      style={{ backgroundColor: "red" }}
+                      value="New"
+                    ></option>
+                    <option
+                      style={{ backgroundColor: "yellow" }}
+                      value="In progress"
+                    ></option>
+                    <option
+                      style={{ backgroundColor: "green" }}
+                      value="Finished"
+                    ></option>
+                  </select>
+                  {status}
+                </div>
                 <button type="submit" className="button button--block">
                   Save
                 </button>
               </form>
             </div>
+            {id && <Comments taskId={id} />}
           </div>
         </div>
       )}
