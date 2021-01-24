@@ -9,8 +9,11 @@ const taskSchema = new Schema(
       ref: "User",
     },
     parent: { type: Schema.Types.ObjectId, ref: "Table" },
-    status: Number,
+    status: String,
+    teams: [{ type: Schema.Types.ObjectId, ref: "Team" }],
+    comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
   },
+
   {
     timestamps: true,
   }
