@@ -1,6 +1,12 @@
-const { Schema } = require("mongoose");
-const Table = require("./Table");
+const { model, Schema } = require("mongoose");
 
-module.exports = Table.discriminator("Team", new Schema({}), {
-  timestamps: true,
-});
+const teamSchema = new Schema(
+  {
+    name: String,
+    creator: { type: Schema.Types.ObjectId, ref: "User" },
+    users: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  },
+  { timestamps: true }
+);
+
+module.exports = model("Team", teamSchema);
