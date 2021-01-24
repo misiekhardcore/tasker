@@ -33,13 +33,18 @@ module.exports = {
       //check if task exists
       const task = await Task.findById(taskId)
         .populate("creator")
-        .populate("parent");
+        .populate("parent")
+        .populate("comments");
 
       return task;
     },
   },
   Mutation: {
-    createTask: async (_, { parent, name, description }, context) => {
+    createTask: async (
+      _,
+      { parent, name, description, status },
+      context
+    ) => {
       //check if user sent auth token and it is valid
       const { id } = authCheck(context);
 
@@ -57,7 +62,7 @@ module.exports = {
         description: description || "",
         creator: id,
         parent,
-        status: 0,
+        status: status || "New",
         comments: [],
       });
 
