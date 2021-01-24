@@ -3,6 +3,10 @@ const Task = require("../../models/Task");
 const authCheck = require("../utils/authCheck");
 const { checkId } = require("../utils/validators");
 
+const { COMMENT_BODY_EMPTY } = require("../../messages");
+
+const errors = {};
+
 module.exports = {
   Query: {
     getComments: async (_, { parent }, context) => {
@@ -27,7 +31,10 @@ module.exports = {
       checkId(parent);
 
       if (body.trim() == "") {
-        throw new UserInputError("Comment body can not be empty");
+        errors = COMMENT_BODY_EMPTY;
+        throw new UserInputError(COMMENT_BODY_EMPTY, {
+          errors,
+        });
       }
 
       const comment = await Comment.create({
