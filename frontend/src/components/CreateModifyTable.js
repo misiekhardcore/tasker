@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AiFillFolder, AiOutlineCloseCircle } from "react-icons/ai";
 import { GET_FOLDER, UPDATE_FOLDER } from "../queries";
 import moment from "moment";
@@ -13,12 +13,11 @@ import {
   Label,
   Textarea,
 } from "./styled";
+import { ListContext } from "../context/list";
 
-const CreateModifyTable = ({
-  folder = undefined,
-  setFolder = () => {},
-}) => {
+const CreateModifyTable = () => {
   const [table, setTable] = useState({});
+  const { folder, setFolder } = useContext(ListContext);
 
   //get folder info
   useQuery(GET_FOLDER, {
@@ -86,7 +85,7 @@ const CreateModifyTable = ({
                 moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
                 ""}
             </span>
-            <h2 className="folder__name">
+            <h2>
               {parent && (
                 <>
                   {parent.name}
@@ -103,9 +102,7 @@ const CreateModifyTable = ({
                   backgroundColor: `#${creator && creator.avatar}`,
                 }}
               ></span>
-              <span>
-                {(creator && creator.username) || "no creator"}
-              </span>
+              <span>{(creator && creator.username) || "no creator"}</span>
             </p>
 
             <Form onSubmit={handleSubmit}>
@@ -118,9 +115,7 @@ const CreateModifyTable = ({
                   onChange={handleChange}
                   name="name"
                   type="text"
-                  className={
-                    errors.name || errors.general ? "error" : ""
-                  }
+                  className={errors.name || errors.general ? "error" : ""}
                 />
               </FormGroup>
               <FormGroup>

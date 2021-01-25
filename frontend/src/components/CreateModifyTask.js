@@ -1,38 +1,41 @@
 import { useMutation, useQuery } from "@apollo/client";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AiFillSchedule, AiOutlineCloseCircle } from "react-icons/ai";
 import { GET_TASK, UPDATE_TASK } from "../queries";
 import moment from "moment";
 import "./CreateModify.scss";
 import Comments from "./Comments";
+import {
+  Button,
+  ButtonClose,
+  Form,
+  FormGroup,
+  Input,
+  Label,
+  Textarea,
+} from "./styled";
+import { ListContext } from "../context/list";
 
-const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
+const CreateModifyTask = () => {
   const [task2, setTask2] = useState({});
+  const { task, setTask } = useContext(ListContext);
 
   //get task info
-  const { data } = useQuery(GET_TASK, {
+  useQuery(GET_TASK, {
     variables: { taskId: task },
-    onCompleted() {
-      setTask2(data.getTask);
+    onCompleted({ getTask }) {
+      setTask2(getTask);
     },
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
     },
   });
 
-  const {
-    id,
-    name,
-    description,
-    parent,
-    creator,
-    status,
-    createdAt,
-  } = task2;
+  const { id, name, description, parent, creator, status, createdAt } = task2;
   const [state, setState] = useState({
     name: "",
     description: "",
-    status: 1,
+    status: "New",
   });
   const [errors, setErrors] = useState({});
 
@@ -75,12 +78,9 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
     <>
       {task2 && (
         <div className="table-details">
-          <button
-            className="button button--close"
-            onClick={() => setTask()}
-          >
+          <ButtonClose onClick={() => setTask()}>
             <AiOutlineCloseCircle />
-          </button>
+          </ButtonClose>
           <div className="folder__info">
             <div className="icon">
               <AiFillSchedule className="icon" />
@@ -108,89 +108,79 @@ const CreateModifyTask = ({ task = undefined, setTask = () => {} }) => {
                   backgroundColor: `#${creator && creator.avatar}`,
                 }}
               ></span>
-              <span>
-                {(creator && creator.username) || "no creator"}
-              </span>
+              <span>{(creator && creator.username) || "no creator"}</span>
             </p>
 
-            <div className="form__container">
-              <form onSubmit={handleSubmit}>
-                <div className="form__group">
-                  <label htmlFor="name" className="form__label">
-                    Table name:
-                  </label>
-                  <input
-                    value={state.name}
-                    onChange={handleChange}
-                    name="name"
-                    type="text"
-                    className={`form__input ${
-                      errors.name || errors.general ? "error" : ""
-                    }`}
-                  />
+            <Form onSubmit={handleSubmit}>
+              <FormGroup>
+                <Label htmlFor="name" className="form__label">
+                  Table name:
+                </Label>
+                <Input
+                  value={state.name}
+                  onChange={handleChange}
+                  name="name"
+                  type="text"
+                  className={errors.name || errors.general ? "error" : ""}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label htmlFor="description">Table descrition:</Label>
+                <Textarea
+                  style={{ resize: "none" }}
+                  value={state.description}
+                  onChange={handleChange}
+                  name="description"
+                  type="text"
+                  className={
+                    errors.description || errors.general ? "error" : ""
+                  }
+                />
+              </FormGroup>
+              {Object.keys(errors).length > 0 && (
+                <div className="error-list">
+                  <ul className="list">
+                    {Object.values(errors).map((value) => (
+                      <li key={value}>{value}</li>
+                    ))}
+                  </ul>
                 </div>
-                <div className="form__group">
-                  <label htmlFor="description" className="form__label">
-                    Table descrition:
-                  </label>
-                  <textarea
-                    style={{ resize: "none" }}
-                    value={state.description}
-                    onChange={handleChange}
-                    name="description"
-                    type="text"
-                    className={`form__input ${
-                      errors.description || errors.general
-                        ? "error"
-                        : ""
-                    }`}
-                  />
-                </div>
-                {Object.keys(errors).length > 0 && (
-                  <div className="error-list">
-                    <ul className="list">
-                      {Object.values(errors).map((value) => (
-                        <li key={value}>{value}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                <div className="form__group">
-                  <select
-                    name="status"
-                    value={state.status}
-                    onChange={handleChange}
-                    style={{
-                      backgroundColor:
-                        state.status === "New"
-                          ? "red"
-                          : state.status === "In progress"
-                          ? "yellow"
-                          : "green",
-                    }}
-                  >
-                    <option
-                      style={{ backgroundColor: "red" }}
-                      value="New"
-                    ></option>
-                    <option
-                      style={{ backgroundColor: "yellow" }}
-                      value="In progress"
-                    ></option>
-                    <option
-                      style={{ backgroundColor: "green" }}
-                      value="Finished"
-                    ></option>
-                  </select>
-                  {status}
-                </div>
-                <button type="submit" className="button button--block">
-                  Save
-                </button>
-              </form>
-            </div>
-            {id && <Comments taskId={id} />}
+              )}
+              <FormGroup>
+                <select
+                  name="status"
+                  value={state.status}
+                  onChange={handleChange}
+                  style={{
+                    backgroundColor:
+                      state.status === "New"
+                        ? "red"
+                        : state.status === "In progress"
+                        ? "yellow"
+                        : "green",
+                  }}
+                >
+                  <option
+                    style={{ backgroundColor: "red" }}
+                    value="New"
+                  ></option>
+                  <option
+                    style={{ backgroundColor: "yellow" }}
+                    value="In progress"
+                  ></option>
+                  <option
+                    style={{ backgroundColor: "green" }}
+                    value="Finished"
+                  ></option>
+                </select>
+                {status}
+              </FormGroup>
+              <Button type="submit" block>
+                Save
+              </Button>
+            </Form>
           </div>
+          {id && <Comments taskId={id} />}
         </div>
       )}
     </>
