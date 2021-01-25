@@ -27,4 +27,5 @@ module.exports = {
   TASK_DELETE_ERROR: "Error ocurred during deteleTask",
 
   COMMENT_BODY_EMPTY: "Comment body can not be empty",
+  COMMENT_DELETE_ERROR: "Error ocurred during deteleComment",
 };
