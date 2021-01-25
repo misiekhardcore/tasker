@@ -1,9 +1,11 @@
 const Comment = require("../../models/Comment");
-const Task = require("../../models/Task");
 const authCheck = require("../utils/authCheck");
 const { checkId } = require("../utils/validators");
 
-const { COMMENT_BODY_EMPTY } = require("../../messages");
+const {
+  COMMENT_BODY_EMPTY,
+  COMMENT_DELETE_ERROR,
+} = require("../../messages");
 
 const errors = {};
 
@@ -44,6 +46,20 @@ module.exports = {
       });
 
       return await Comment.findById(comment.id).populate("creator");
+    },
+    deleteComment: async (_, { commentId }, context) => {
+      authCheck(context);
+
+      checkId(commentId);
+
+      try {
+        await Comment.deleteOne({ _id: commentId });
+      } catch (error) {
+        errors.general = COMMENT_DELETE_ERROR;
+        throw new Error(COMMENT_DELETE_ERROR, { errors });
+      }
+
+      return true;
     },
   },
 };

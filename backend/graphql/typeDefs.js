@@ -119,5 +119,6 @@ module.exports = gql`
     deleteTask(taskId: ID!): Boolean
 
     createComment(parent: ID!, body: String!): Comment
+    deleteComment(commentId: ID!): Boolean
   }
 `;
