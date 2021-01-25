@@ -1,23 +1,24 @@
 import { useMutation, useQuery } from "@apollo/client";
-import React, { useState } from "react";
-import { ADD_COMMENT, GET_COMMENTS } from "../queries";
+import React, { useContext, useEffect, useState } from "react";
+import { ADD_COMMENT, DELETE_COMMENT, GET_COMMENTS } from "../queries";
 import { MdComment } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
 import moment from "moment";
 
 import "./Comments.scss";
+import { Button, Form, Input } from "./styled";
+import { AiFillDelete } from "react-icons/ai";
+import { AuthContext } from "../context/auth";
 
 const Comments = ({ taskId }) => {
+  const { user } = useContext(AuthContext);
+
   const [toggle, setToggle] = useState(false);
   const [commentBody, setCommentBody] = useState("");
-  const [comments, setComments] = useState();
   const [errors, setErrors] = useState({});
 
   const { data } = useQuery(GET_COMMENTS, {
     variables: { parent: taskId },
-    onCompleted() {
-      setComments(data.getComments);
-    },
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
     },
@@ -28,10 +29,8 @@ const Comments = ({ taskId }) => {
       parent: taskId,
       body: commentBody,
     },
-    onCompleted({ createComment }) {
+    onCompleted() {
       setErrors({});
-      setCommentBody("");
-      console.log(createComment);
     },
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
@@ -41,62 +40,92 @@ const Comments = ({ taskId }) => {
     ],
   });
 
+  const [deleteComment] = useMutation(DELETE_COMMENT, {
+    onCompleted() {
+      setErrors({});
+    },
+    onError(err) {
+      setErrors(err.graphQLErrors[0].extensions.exception.errors);
+    },
+    refetchQueries: [
+      { query: GET_COMMENTS, variables: { parent: taskId } },
+    ],
+  });
+
+  useEffect(() => {
+    setToggle(false);
+  }, [taskId]);
+
+  function handleAddComment(e) {
+    e.preventDefault();
+    addComment();
+    setToggle(true);
+    setErrors({});
+    setCommentBody("");
+  }
+
+  function handleDeleteComment(id) {
+    deleteComment({
+      variables: {
+        commentId: id,
+      },
+    });
+  }
+
   return (
     <div className="comments__container">
       <div className="comment__input">
-        <form
-          className="list__form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            addComment();
-          }}
-        >
-          <input
-            className="form__input"
-            placeholder="Write a comment"
-            type="text"
-            value={commentBody}
-            onChange={(e) => {
-              setCommentBody(e.target.value);
-            }}
-          />
-          <button className="button--add" type="submit">
-            <IoMdAdd />
-          </button>
-        </form>
-        <button
-          className="button"
+        <Button
+          disabled={!data}
           onClick={() => {
             setToggle(!toggle);
           }}
         >
           <MdComment />
-        </button>
+        </Button>
+        <Form flex onSubmit={(e) => handleAddComment(e)}>
+          <Input
+            placeholder="Write a comment"
+            type="text"
+            value={commentBody}
+            onChange={(e) => setCommentBody(e.target.value)}
+          />
+          <Button type="submit">
+            <IoMdAdd />
+          </Button>
+        </Form>
       </div>
-      {comments && comments.length > 0 && (
+      {data && data.getComments && (
         <>
           <ul className="list__items">
             {toggle && (
               <>
-                {comments.map((comment) => {
-                  return (
-                    <li key={comment.id}>
-                      <div className="comment">
-                        <div className="comment__creator">
-                          {comment.creator.username}
+                {data.getComments.map(
+                  ({ id, creator, createdAt, body }) => {
+                    return (
+                      <li key={id}>
+                        <div className="comments__container">
+                          <div className="comment__creator">
+                            {creator.username}
+                          </div>
+                          <div className="comment__date">
+                            {moment(+createdAt).format(
+                              "YYYY-MM-DD, dddd hh:mm"
+                            )}
+                          </div>
+                          <div className="comment__body">{body}</div>
                         </div>
-                        <div className="comment__date">
-                          {moment(+comment.createdAt).format(
-                            "YYYY-MM-DD, dddd hh:mm"
-                          )}
-                        </div>
-                        <div className="comment__body">
-                          {comment.body}
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
+                        {user.username === creator.username && (
+                          <Button
+                            onClick={() => handleDeleteComment(id)}
+                          >
+                            <AiFillDelete />
+                          </Button>
+                        )}
+                      </li>
+                    );
+                  }
+                )}
               </>
             )}
           </ul>
