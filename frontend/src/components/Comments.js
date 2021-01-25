@@ -16,6 +16,7 @@ const Comments = ({ taskId }) => {
   const [toggle, setToggle] = useState(false);
   const [commentBody, setCommentBody] = useState("");
   const [errors, setErrors] = useState({});
+  console.log(errors)
 
   const { data } = useQuery(GET_COMMENTS, {
     variables: { parent: taskId },
