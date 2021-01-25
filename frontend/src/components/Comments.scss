@@ -2,9 +2,13 @@
 
 .comments__container {
   color: $black_light;
+  width: 100%;
+
+  & form {
+    width: 100%;
+  }
 
   .comment__input {
     display: flex;
-    flex-grow: 1;
   }
 }
