@@ -34,7 +34,6 @@ const CreateModifyTable = () => {
   const [state, setState] = useState({
     name: "",
     description: "",
-    state: 1,
   });
   const [errors, setErrors] = useState({});
 
