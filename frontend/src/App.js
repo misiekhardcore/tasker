@@ -6,15 +6,18 @@ import Register from "./pages/Register";
 import Main from "./pages/Main";
 import AuthRoute from "./utils/AuthRoute";
 import "./App.scss";
+import { ListProvider } from "./context/list";
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <AuthRoute exact path="/" component={Main} />
-        <Route exact path="/login" component={Login} />
-        <Route exact path="/register" component={Register} />
-      </Router>
+      <ListProvider>
+        <Router>
+          <AuthRoute exact path="/" component={Main} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/register" component={Register} />
+        </Router>
+      </ListProvider>
     </AuthProvider>
   );
 }
