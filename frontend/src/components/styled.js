@@ -15,7 +15,8 @@ export const Button = styled.button`
   &:hover,
   &:focus {
     cursor: pointer;
-    background-color: ${(props) => darken(0.05, props.primary || "gray")};
+    background-color: ${(props) =>
+      darken(0.05, props.primary || "gray")};
   }
 `;
 
@@ -61,6 +62,7 @@ const sharedInputTextarea = css`
   border-radius: 0.5rem;
   background-color: ${darken(0.05, "white")};
   color: ${lighten(0.3, "black")};
+  flex-grow: 1;
 
   &:focus {
     outline: none;
@@ -82,4 +84,6 @@ export const Textarea = styled.textarea`
 
 export const Form = styled.form`
   display: ${(props) => (props.flex ? "flex" : "inline")};
+  justify-content: center;
+  align-items: center;
 `;
