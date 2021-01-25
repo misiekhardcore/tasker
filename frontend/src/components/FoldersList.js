@@ -2,7 +2,11 @@ import { useMutation, useQuery } from "@apollo/client";
 import React, { useContext, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { BiArrowBack } from "react-icons/bi";
-import { AiFillDelete, AiFillFolder, AiFillSchedule } from "react-icons/ai";
+import {
+  AiFillDelete,
+  AiFillFolder,
+  AiFillSchedule,
+} from "react-icons/ai";
 import {
   ADD_FOLDER,
   ADD_TASK,
@@ -15,9 +19,14 @@ import { Button, Form, Input } from "./styled";
 import { ListContext } from "../context/list";
 
 const FoldersList = ({ subList }) => {
-  const { back, column2, setColumn2, setTask, setFolder, setBack } = useContext(
-    ListContext
-  );
+  const {
+    back,
+    column2,
+    setColumn2,
+    setTask,
+    setFolder,
+    setBack,
+  } = useContext(ListContext);
 
   let back2 = [...back];
   let parents2 = [...column2];
@@ -92,7 +101,6 @@ const FoldersList = ({ subList }) => {
   const [deleteTask] = useMutation(DELETE_TASK, {
     onCompleted() {
       setErrors({});
-      setTask();
     },
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
@@ -149,6 +157,7 @@ const FoldersList = ({ subList }) => {
     deleteTask({
       variables: { taskId: id },
     });
+    setTask();
   }
 
   return (
@@ -224,13 +233,16 @@ const FoldersList = ({ subList }) => {
             className="list__item task"
             data-tooltip={task.name}
             key={task.id}
-            onClick={() => {
-              setTask(task.id);
-              setFolder();
-            }}
           >
             <AiFillSchedule />
-            <p>{task.name}</p>
+            <p
+              onClick={() => {
+                setTask(task.id);
+                setFolder();
+              }}
+            >
+              {task.name}
+            </p>
             <Button onClick={() => handleDeleteTask(task.id)}>
               <AiFillDelete />
             </Button>
