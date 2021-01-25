@@ -1,12 +1,8 @@
 import { useMutation, useQuery } from "@apollo/client";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { BiArrowBack } from "react-icons/bi";
-import {
-  AiFillDelete,
-  AiFillFolder,
-  AiFillSchedule,
-} from "react-icons/ai";
+import { AiFillDelete, AiFillFolder, AiFillSchedule } from "react-icons/ai";
 import {
   ADD_FOLDER,
   ADD_TASK,
@@ -16,19 +12,19 @@ import {
   GET_TASKS,
 } from "../queries";
 import { Button, Form, Input } from "./styled";
+import { ListContext } from "../context/list";
 
-const FoldersList = ({
-  setData = () => {},
-  parents = [],
-  setBack = () => {},
-  back = [],
-  setFolder = () => {},
-  setTask = () => {},
-}) => {
-  const back2 = [...back];
-  const parents2 = [...parents];
-  const parent = parents2[parents.length - 1] || undefined;
-  const prev = parents2[parents.length - 2] || undefined;
+const FoldersList = ({ subList }) => {
+  const { back, column2, setColumn2, setTask, setFolder, setBack } = useContext(
+    ListContext
+  );
+
+  let back2 = [...back];
+  let parents2 = [...column2];
+  const parent = subList
+    ? parents2[column2.length - 1] || undefined
+    : undefined;
+  const prev = parents2[column2.length - 2] || undefined;
 
   const [tableName, setTableName] = useState("");
   const [taskName, setTaskName] = useState("");
@@ -108,39 +104,63 @@ const FoldersList = ({
   });
 
   function handleParent(id, name) {
-    parents2.push(id);
-    back2.push(name);
-    setFolder(id);
-    setData(parents2);
+    if (subList) {
+      parents2.push(id);
+      back2.push(name);
+    } else {
+      parents2 = [id];
+      back2 = [name];
+    }
+    setColumn2(parents2);
     setBack(back2);
+    setFolder(id);
     setTask();
+  }
+
+  function handleBack() {
+    parents2.pop();
+    back2.pop();
+    setColumn2(parents2);
+    setBack(back2);
+  }
+
+  function handleAddFolder(e) {
+    e.preventDefault();
+    addFolder();
+    setTableName("");
+  }
+
+  function handleDeleteFolder(id) {
+    deleteFolder({
+      variables: { parent: id },
+    });
+    setColumn2(parents2);
+    setBack(back2);
+    setFolder();
+  }
+
+  function handleAddTask(e) {
+    e.preventDefault();
+    addTask();
+    setTaskName("");
+  }
+
+  function handleDeleteTask(id) {
+    deleteTask({
+      variables: { taskId: id },
+    });
   }
 
   return (
     <ul className="list__items">
-      {prev && (
-        <li
-          key="1"
-          className="list__item"
-          onClick={() => {
-            parents2.pop();
-            back2.pop();
-            setData(parents2);
-            setBack(back2);
-          }}
-        >
+      {subList && prev && (
+        <li key="1" className="list__item" onClick={handleBack}>
           <BiArrowBack />
           <p>{back[back.length - 1] || ""}</p>
         </li>
       )}
       <li className="list__item" key="2">
-        <Form
-          onSubmit={(e) => {
-            e.preventDefault();
-            addFolder();
-            setTableName("");
-          }}
-        >
+        <Form flex onSubmit={handleAddFolder}>
           <Input
             name="name"
             type="text"
@@ -148,22 +168,14 @@ const FoldersList = ({
             onChange={(e) => setTableName(e.target.value)}
             placeholder="Add new table..."
           />
-          <div className="button--add">
-            <Button type="submit">
-              <IoMdAdd />
-            </Button>
-          </div>
+          <Button type="submit">
+            <IoMdAdd />
+          </Button>
         </Form>
       </li>
-      {parent && (
+      {subList && parent && (
         <li className="list__item" key="3">
-          <Form
-            onSubmit={(e) => {
-              e.preventDefault();
-              addTask();
-              setTaskName("");
-            }}
-          >
+          <Form flex onSubmit={handleAddTask}>
             <Input
               name="name"
               type="text"
@@ -171,11 +183,9 @@ const FoldersList = ({
               onChange={(e) => setTaskName(e.target.value)}
               placeholder="Add new task..."
             />
-            <div className="button--add">
-              <Button type="submit">
-                <IoMdAdd />
-              </Button>
-            </div>
+            <Button type="submit">
+              <IoMdAdd />
+            </Button>
           </Form>
         </li>
       )}
@@ -190,60 +200,41 @@ const FoldersList = ({
       )}
       {data &&
         data.getTables.map((table) => (
-          <>
-            <li
-              className="list__item table"
-              data-tooltip={table.name}
-              key={table.id}
+          <li
+            className="list__item table"
+            data-tooltip={table.name}
+            key={table.id}
+          >
+            <AiFillFolder />
+            <p
+              onClick={() => {
+                handleParent(table.id, table.name);
+              }}
             >
-              <AiFillFolder />
-              <p
-                onClick={() => {
-                  handleParent(table.id, table.name);
-                }}
-              >
-                {table.name}
-              </p>
-              <Button
-                onClick={() => {
-                  deleteFolder({
-                    variables: { parent: table.id },
-                  });
-                  setData(parents2);
-                  setBack(back2);
-                  setFolder();
-                }}
-              >
-                <AiFillDelete />
-              </Button>
-            </li>
-          </>
+              {table.name}
+            </p>
+            <Button onClick={() => handleDeleteFolder(table.id)}>
+              <AiFillDelete />
+            </Button>
+          </li>
         ))}
       {data2 &&
         data2.getTasks.map((task) => (
-          <>
-            <li
-              className="list__item task"
-              data-tooltip={task.name}
-              key={task.id}
-              onClick={() => {
-                setTask(task.id);
-                setFolder();
-              }}
-            >
-              <AiFillSchedule />
-              <p>{task.name}</p>
-              <Button
-                onClick={() => {
-                  deleteTask({
-                    variables: { taskId: task.id },
-                  });
-                }}
-              >
-                <AiFillDelete />
-              </Button>
-            </li>
-          </>
+          <li
+            className="list__item task"
+            data-tooltip={task.name}
+            key={task.id}
+            onClick={() => {
+              setTask(task.id);
+              setFolder();
+            }}
+          >
+            <AiFillSchedule />
+            <p>{task.name}</p>
+            <Button onClick={() => handleDeleteTask(task.id)}>
+              <AiFillDelete />
+            </Button>
+          </li>
         ))}
     </ul>
   );
