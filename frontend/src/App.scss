@@ -65,8 +65,8 @@
 .main__container {
   display: grid;
   grid-template-columns: repeat(5, minmax(10px, 1fr));
-  min-height: 100vh;
-  width: 100vw;
+  width: 100%;
+  flex-grow: 1;
 
   .list__items {
     list-style: none;
@@ -193,13 +193,12 @@
 
   .column3 {
     background-color: $primary-lightest;
-    grid-column: 3/-1;
+    grid-column: 3/6;
   }
 
   @media screen and (max-width: 768px) {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
 
     .list__form {
       width: 100%;
@@ -227,7 +226,6 @@
 }
 
 .table-details {
-  overflow-y: scroll;
   color: white;
   position: relative;
   padding: 1rem;
