@@ -16,7 +16,6 @@ const Comments = ({ taskId }) => {
   const [toggle, setToggle] = useState(false);
   const [commentBody, setCommentBody] = useState("");
   const [errors, setErrors] = useState({});
-  console.log(errors)
 
   const { data } = useQuery(GET_COMMENTS, {
     variables: { parent: taskId },
@@ -36,9 +35,7 @@ const Comments = ({ taskId }) => {
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
     },
-    refetchQueries: [
-      { query: GET_COMMENTS, variables: { parent: taskId } },
-    ],
+    refetchQueries: [{ query: GET_COMMENTS, variables: { parent: taskId } }],
   });
 
   const [deleteComment] = useMutation(DELETE_COMMENT, {
@@ -48,9 +45,7 @@ const Comments = ({ taskId }) => {
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
     },
-    refetchQueries: [
-      { query: GET_COMMENTS, variables: { parent: taskId } },
-    ],
+    refetchQueries: [{ query: GET_COMMENTS, variables: { parent: taskId } }],
   });
 
   useEffect(() => {
@@ -96,41 +91,27 @@ const Comments = ({ taskId }) => {
           </Button>
         </Form>
       </div>
-      {data && data.getComments && (
-        <>
-          <ul className="list__items">
-            {toggle && (
-              <>
-                {data.getComments.map(
-                  ({ id, creator, createdAt, body }) => {
-                    return (
-                      <li key={id}>
-                        <div className="comments__container">
-                          <div className="comment__creator">
-                            {creator.username}
-                          </div>
-                          <div className="comment__date">
-                            {moment(+createdAt).format(
-                              "YYYY-MM-DD, dddd hh:mm"
-                            )}
-                          </div>
-                          <div className="comment__body">{body}</div>
-                        </div>
-                        {user.username === creator.username && (
-                          <Button
-                            onClick={() => handleDeleteComment(id)}
-                          >
-                            <AiFillDelete />
-                          </Button>
-                        )}
-                      </li>
-                    );
-                  }
+      {data && data.getComments && toggle && (
+        <ul className="list__items">
+          {data.getComments.map(({ id, creator, createdAt, body }) => {
+            return (
+              <li key={id}>
+                <div className="comments__container">
+                  <div className="comment__creator">{creator.username}</div>
+                  <div className="comment__date">
+                    {moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")}
+                  </div>
+                  <div className="comment__body">{body}</div>
+                </div>
+                {user.username === creator.username && (
+                  <Button onClick={() => handleDeleteComment(id)}>
+                    <AiFillDelete />
+                  </Button>
                 )}
-              </>
-            )}
-          </ul>
-        </>
+              </li>
+            );
+          })}
+        </ul>
       )}
     </div>
   );
