@@ -43,9 +43,10 @@ function AuthProvider(props) {
 
   function login(userData) {
     localStorage.setItem("jwtToken", userData.token);
+    const decodedToken = jwtDecode(localStorage.getItem("jwtToken"));
     dispatch({
       type: "LOGIN",
-      payload: userData,
+      payload: decodedToken,
     });
   }
 
