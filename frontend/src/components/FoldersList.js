@@ -2,11 +2,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import React, { useContext, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { BiArrowBack } from "react-icons/bi";
-import {
-  AiFillDelete,
-  AiFillFolder,
-  AiFillSchedule,
-} from "react-icons/ai";
+import { AiFillDelete, AiFillFolder, AiFillSchedule } from "react-icons/ai";
 import {
   ADD_FOLDER,
   ADD_TASK,
@@ -17,16 +13,12 @@ import {
 } from "../queries";
 import { Button, Form, Input } from "./styled";
 import { ListContext } from "../context/list";
+import Errors from "./Errors";
 
 const FoldersList = ({ subList }) => {
-  const {
-    back,
-    column2,
-    setColumn2,
-    setTask,
-    setFolder,
-    setBack,
-  } = useContext(ListContext);
+  const { back, column2, setColumn2, setTask, setFolder, setBack } = useContext(
+    ListContext
+  );
 
   let back2 = [...back];
   let parents2 = [...column2];
@@ -198,15 +190,7 @@ const FoldersList = ({ subList }) => {
           </Form>
         </li>
       )}
-      {Object.keys(errors).length > 0 && (
-        <div className="error-list">
-          <ul className="list">
-            {Object.values(errors).map((value) => (
-              <li key={value}>{value}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <Errors errors={errors} />
       {data &&
         data.getTables.map((table) => (
           <li

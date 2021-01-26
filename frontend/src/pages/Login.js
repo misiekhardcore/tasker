@@ -1,6 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import Errors from "../components/Errors";
 import { Button, Form, FormGroup, Input, Label } from "../components/styled";
 import { AuthContext } from "../context/auth";
 
@@ -33,10 +34,7 @@ function Login(props) {
   return (
     <div className="container--center">
       <div className="form__container">
-        <Form
-          onSubmit={handleSubmit}
-          className={loading ? "loading" : ""}
-        >
+        <Form onSubmit={handleSubmit} className={loading ? "loading" : ""}>
           <h1>Login</h1>
           <FormGroup>
             <Label htmlFor="email">Email:</Label>
@@ -54,9 +52,7 @@ function Login(props) {
             <Input
               name="password"
               type="password"
-              className={
-                errors.password || errors.general ? "error" : ""
-              }
+              className={errors.password || errors.general ? "error" : ""}
               placeholder="Enter your password..."
               value={state.password}
               onChange={handleChange}
@@ -69,15 +65,7 @@ function Login(props) {
         <Link className="form__link" to="/register">
           You new here? Create an account!
         </Link>
-        {Object.keys(errors).length > 0 && (
-          <div className="error-list">
-            <ul className="list">
-              {Object.values(errors).map((value) => (
-                <li key={value}>{value}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <Errors errors={errors} />
       </div>
     </div>
   );
