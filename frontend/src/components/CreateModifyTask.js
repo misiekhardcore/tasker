@@ -15,6 +15,7 @@ import {
   Textarea,
 } from "./styled";
 import { ListContext } from "../context/list";
+import Errors from "./Errors";
 
 const CreateModifyTask = () => {
   const [task2, setTask2] = useState({});
@@ -137,15 +138,6 @@ const CreateModifyTask = () => {
                   }
                 />
               </FormGroup>
-              {Object.keys(errors).length > 0 && (
-                <div className="error-list">
-                  <ul className="list">
-                    {Object.values(errors).map((value) => (
-                      <li key={value}>{value}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
               <FormGroup>
                 <select
                   name="status"
@@ -175,6 +167,7 @@ const CreateModifyTask = () => {
                 </select>
                 {status}
               </FormGroup>
+              <Errors errors={errors} />
               <Button type="submit" block>
                 Save
               </Button>

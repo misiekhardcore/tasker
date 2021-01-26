@@ -14,6 +14,7 @@ import {
   Textarea,
 } from "./styled";
 import { ListContext } from "../context/list";
+import Errors from "./Errors";
 
 const CreateModifyTable = () => {
   const [table, setTable] = useState({});
@@ -130,15 +131,7 @@ const CreateModifyTable = () => {
                   }
                 />
               </FormGroup>
-              {Object.keys(errors).length > 0 && (
-                <div className="error-list">
-                  <ul className="list">
-                    {Object.values(errors).map((value) => (
-                      <li key={value}>{value}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <Errors errors={errors} />
               <Button type="submit" block>
                 Save
               </Button>

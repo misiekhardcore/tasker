@@ -9,6 +9,7 @@ import "./Comments.scss";
 import { Button, Form, Input } from "./styled";
 import { AiFillDelete } from "react-icons/ai";
 import { AuthContext } from "../context/auth";
+import Errors from "./Errors";
 
 const Comments = ({ taskId }) => {
   const { user } = useContext(AuthContext);
@@ -90,6 +91,7 @@ const Comments = ({ taskId }) => {
             <IoMdAdd />
           </Button>
         </Form>
+        <Errors errors={errors} />
       </div>
       {data && data.getComments && toggle && (
         <ul className="list__items">
