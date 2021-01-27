@@ -1,14 +1,12 @@
 const Table = require("../../models/Table");
 const Task = require("../../models/Task");
-const {
-  TABLE_TITLE_EMPTY,
-  TABLE_DELETE_ERROR,
-} = require("../../messages");
+const { TABLE_TITLE_EMPTY, TABLE_DELETE_ERROR } = require("../../messages");
 
 const authCheck = require("../utils/authCheck");
 const { checkId } = require("../utils/validators");
 
 const { UserInputError } = require("apollo-server");
+const { deleteSubtables } = require("./helpers");
 
 const errors = {};
 
@@ -72,11 +70,7 @@ module.exports = {
         .populate("creator")
         .populate("parent");
     },
-    updateTable: async (
-      _,
-      { tableId, name, description, parent },
-      context
-    ) => {
+    updateTable: async (_, { tableId, name, description, parent }, context) => {
       const { id } = authCheck(context);
 
       checkId(tableId);
@@ -111,19 +105,3 @@ module.exports = {
     },
   },
 };
-
-async function deleteSubtables(id) {
-  const tables = await Table.find({ parent: id });
-  await deleteSubtasks(id);
-  for (const table of tables) {
-    await Table.deleteOne({ _id: table._id });
-    await deleteSubtables(table._id);
-  }
-}
-
-async function deleteSubtasks(id) {
-  const tasks = await Task.find({ parent: id });
-  for (const task of tasks) {
-    await Task.deleteOne({ _id: task._id });
-  }
-}

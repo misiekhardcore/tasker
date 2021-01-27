@@ -1,13 +1,11 @@
 const Task = require("../../models/Task");
-const {
-  TASK_TITLE_EMPTY,
-  TASK_DELETE_ERROR,
-} = require("../../messages");
+const { TASK_TITLE_EMPTY, TASK_DELETE_ERROR } = require("../../messages");
 
 const authCheck = require("../utils/authCheck");
 const { checkId } = require("../utils/validators");
 
 const { UserInputError } = require("apollo-server");
+const { deleteSubcomments } = require("./helpers");
 
 const errors = {};
 
@@ -40,11 +38,7 @@ module.exports = {
     },
   },
   Mutation: {
-    createTask: async (
-      _,
-      { parent, name, description, status },
-      context
-    ) => {
+    createTask: async (_, { parent, name, description, status }, context) => {
       //check if user sent auth token and it is valid
       const { id } = authCheck(context);
 
@@ -102,6 +96,7 @@ module.exports = {
 
       try {
         await Task.deleteOne({ _id: taskId });
+        deleteSubcomments(taskId);
       } catch (error) {
         errors.general = TASK_DELETE_ERROR;
         throw new Error(TASK_DELETE_ERROR, { errors });
