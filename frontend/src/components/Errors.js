@@ -19,7 +19,7 @@ const ListItem = styled.li`
 `;
 
 const Errors = ({ errors }) => {
-  if (Object.keys(errors).length > 0)
+  if (errors && Object.keys(errors).length > 0)
     return (
       <ErrorList>
         {Object.values(errors).map((error) => (
