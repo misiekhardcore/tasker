@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { darken, lighten } from "polished";
+import { darken, lighten, rgba } from "polished";
 
 export const Button = styled.button`
   font-size: 1rem;
@@ -9,14 +9,32 @@ export const Button = styled.button`
   border: none;
   border-radius: 0.5rem;
   color: white;
-  background-color: ${(props) => props.primary || "gray"};
+  background-color: ${(props) =>
+    props.primary
+      ? "#d344a3"
+      : props.transparent
+      ? "transparent"
+      : "gray"};
   width: ${(props) => (props.block ? "100%" : "auto")};
+  transition: all 0.2s ease-in-out;
 
   &:hover,
   &:focus {
     cursor: pointer;
     background-color: ${(props) =>
-      darken(0.05, props.primary || "gray")};
+      darken(
+        0.05,
+        props.primary
+          ? "#d344a3"
+          : props.transparent
+          ? "transparent"
+          : "gray"
+      )};
+
+    ${(props) =>
+      props.transparent &&
+      `color: ${darken(0.2, "white")};
+    transform: scale(1.1);`}
   }
 `;
 
@@ -86,4 +104,43 @@ export const Form = styled.form`
   display: ${(props) => (props.flex ? "flex" : "inline")};
   justify-content: center;
   align-items: center;
+`;
+
+export const UnorderedList = styled.ul`
+  list-style: none;
+  padding: 0 0.5rem;
+  width: 100%;
+`;
+
+export const ListItem = styled.li`
+  padding: 0.2rem 0.5rem;
+  width: 100%;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease-in-out;
+  background: ${(props) =>
+    props.table ? "red" : props.task ? "green" : rgba("white", 0.05)};
+  margin-bottom: 0.5rem;
+
+  &:hover,
+  &:focus {
+    transform: scale(1.05);
+  }
+
+  p {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-left: 0.4rem;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  svg {
+    font-size: 1.5rem;
+  }
 `;
