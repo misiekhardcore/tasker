@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useContext, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { BiArrowBack } from "react-icons/bi";
@@ -48,16 +48,30 @@ const FoldersList = ({ subList }) => {
       name: tableName,
       parent,
     },
+    update(cache, { data: { createTable } }) {
+      cache.modify({
+        fields: {
+          getTables(existingTables = []) {
+            const newTableRef = cache.writeFragment({
+              data: createTable,
+              fragment: gql`
+                fragment NewTable on Tables {
+                  id
+                  type
+                }
+              `,
+            });
+            return [...existingTables, newTableRef];
+          },
+        },
+      });
+    },
     onCompleted() {
       setErrors({});
     },
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
     },
-    refetchQueries: [
-      { query: GET_TASKS, variables: { parent } },
-      { query: GET_FOLDERS, variables: { parent } },
-    ],
   });
 
   const [addTask] = useMutation(ADD_TASK, {
@@ -65,6 +79,7 @@ const FoldersList = ({ subList }) => {
       name: taskName,
       parent,
     },
+    update() {},
     onCompleted() {
       setErrors({});
     },
