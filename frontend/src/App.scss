@@ -153,10 +153,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-
-        &:first-of-type {
-          margin-left: 0.4rem;
-        }
+        margin-left: 0.4rem;
 
         &:hover {
           cursor: pointer;
