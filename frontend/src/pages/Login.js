@@ -58,7 +58,7 @@ function Login(props) {
               onChange={handleChange}
             />
           </FormGroup>
-          <Button block primary="#d344a3" type="submit">
+          <Button block primary type="submit">
             submit
           </Button>
         </Form>
