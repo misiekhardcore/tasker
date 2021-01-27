@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import FoldersList from "../components/FoldersList";
+import List from "../components/List";
 import MenuBar from "../components/MenuBar";
 import CreateModifyTable from "../components/CreateModifyTable";
 import CreateModifyTask from "../components/CreateModifyTask";
@@ -13,10 +13,10 @@ const Main = () => {
       <MenuBar />
       <div className="main__container">
         <div className="column1">
-          <FoldersList />
+          <List />
         </div>
         <div className="column2">
-          {column2.length > 0 && <FoldersList subList />}
+          {column2.length > 0 && <List subList />}
         </div>
         <div className="column3">
           {folder && <CreateModifyTable />}
