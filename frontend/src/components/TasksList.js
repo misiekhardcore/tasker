@@ -41,7 +41,11 @@ const TasksList = ({ parent }) => {
   return (
     <UnorderedList>
       {getTasks.map((task) => (
-        <ListItem task data-tooltip={task.name} key={task.id}>
+        <ListItem
+          status={task.status}
+          data-tooltip={task.name}
+          key={task.id}
+        >
           <AiFillSchedule />
           <p onClick={() => handleSetTask(task.id)}>{task.name}</p>
           <Button transparent onClick={() => handleDeleteTask(task.id)}>
