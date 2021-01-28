@@ -132,13 +132,13 @@ export const ListItem = styled.li`
   display: flex;
   align-items: center;
   transition: all 0.2s ease-in-out;
-  overflow: hidden;
   background: ${(props) =>
     props.status
       ? linearGradient({
           colorStops: [
             statusColor(props.status),
-            (adjustHue(10, props.theme.primary) || "transparent") + " 20%",
+            (adjustHue(10, props.theme.primary) || "transparent") +
+              " 20%",
           ],
           toDirection: "to right",
         })
@@ -151,6 +151,7 @@ export const ListItem = styled.li`
 
     button {
       transform: translateX(0);
+      opacity: 1;
       padding: 0 0.2rem;
     }
   }
@@ -170,6 +171,7 @@ export const ListItem = styled.li`
   button {
     padding: 0;
     transform: translateX(150%);
+    opacity: 0;
     svg {
       font-size: 1rem;
     }
