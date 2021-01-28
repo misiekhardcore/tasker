@@ -98,6 +98,7 @@ export const GET_TASKS = gql`
       id
       name
       description
+      status
       creator {
         username
         avatar
