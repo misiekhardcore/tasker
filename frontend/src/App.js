@@ -7,16 +7,23 @@ import Main from "./pages/Main";
 import AuthRoute from "./utils/AuthRoute";
 import "./App.scss";
 import { ListProvider } from "./context/list";
+import { ThemeProvider } from "styled-components";
+
+const theme={
+  primary: "#ee5d8d"
+}
 
 function App() {
   return (
     <AuthProvider>
       <ListProvider>
-        <Router>
-          <AuthRoute exact path="/" component={Main} />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/register" component={Register} />
-        </Router>
+        <ThemeProvider theme={theme}>
+          <Router>
+            <AuthRoute exact path="/" component={Main} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Register} />
+          </Router>
+        </ThemeProvider>
       </ListProvider>
     </AuthProvider>
   );

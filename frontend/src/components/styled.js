@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { darken, lighten, rgba } from "polished";
+import { adjustHue, darken, lighten, linearGradient, rgba } from "polished";
 
 export const Button = styled.button`
   font-size: 1rem;
@@ -11,7 +11,7 @@ export const Button = styled.button`
   color: white;
   background-color: ${(props) =>
     props.primary
-      ? "#d344a3"
+      ? darken(0.01, props.theme.primary)
       : props.transparent
       ? "transparent"
       : "gray"};
@@ -25,7 +25,7 @@ export const Button = styled.button`
       darken(
         0.05,
         props.primary
-          ? "#d344a3"
+          ? props.theme.primary
           : props.transparent
           ? "transparent"
           : "gray"
@@ -112,6 +112,19 @@ export const UnorderedList = styled.ul`
   width: 100%;
 `;
 
+const statusColor = (status) => {
+  switch (status) {
+    case "New":
+      return "red";
+    case "In progress":
+      return "yellow";
+    case "Finished":
+      return "green";
+    default:
+      return "orange";
+  }
+};
+
 export const ListItem = styled.li`
   padding: 0.2rem 0.5rem;
   width: 100%;
@@ -119,13 +132,27 @@ export const ListItem = styled.li`
   display: flex;
   align-items: center;
   transition: all 0.2s ease-in-out;
+  overflow: hidden;
   background: ${(props) =>
-    props.table ? "red" : props.task ? "green" : rgba("white", 0.05)};
+    props.status
+      ? linearGradient({
+          colorStops: [
+            statusColor(props.status),
+            (adjustHue(10, props.theme.primary) || "transparent") + " 20%",
+          ],
+          toDirection: "to right",
+        })
+      : adjustHue(-10, props.theme.primary)};
   margin-bottom: 0.5rem;
 
   &:hover,
   &:focus {
     transform: scale(1.05);
+
+    button {
+      transform: translateX(0);
+      padding: 0 0.2rem;
+    }
   }
 
   p {
@@ -137,6 +164,14 @@ export const ListItem = styled.li`
 
     &:hover {
       cursor: pointer;
+    }
+  }
+
+  button {
+    padding: 0;
+    transform: translateX(150%);
+    svg {
+      font-size: 1rem;
     }
   }
 
