@@ -22,7 +22,12 @@ const CreateModifyTask = () => {
   const { task, setTask } = useContext(ListContext);
   const [errors, setErrors] = useState({});
   const [desc, setDesc] = useState("");
-
+  const [state, setState] = useState({
+    name: "",
+    description: "",
+    status: "New",
+  });
+  
   //get task info
   const { loading, error } = useQuery(GET_TASK, {
     variables: { taskId: task },
@@ -45,11 +50,6 @@ const CreateModifyTask = () => {
     status,
     createdAt,
   } = task2;
-  const [state, setState] = useState({
-    name: "",
-    description: "",
-    status: "New",
-  });
 
   const [update] = useMutation(UPDATE_TASK, {
     variables: {
