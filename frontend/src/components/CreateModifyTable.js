@@ -11,20 +11,28 @@ import {
   FormGroup,
   Input,
   Label,
-  Textarea,
 } from "./styled";
 import { ListContext } from "../context/list";
 import Errors from "./Errors";
+import Editor from "./Editor";
 
 const CreateModifyTable = () => {
   const [table, setTable] = useState({});
   const { folder, setFolder } = useContext(ListContext);
+  const [errors, setErrors] = useState({});
+  const [desc, setDesc] = useState("");
+  const [state, setState] = useState({
+    name: "",
+    description: "",
+  });
 
   //get folder info
   useQuery(GET_FOLDER, {
     variables: { tableId: folder },
     onCompleted({ getTable }) {
       setTable(getTable);
+      setDesc(getTable.description);
+      setErrors({});
     },
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
@@ -32,17 +40,12 @@ const CreateModifyTable = () => {
   });
 
   const { id, name, description, parent, creator, createdAt } = table;
-  const [state, setState] = useState({
-    name: "",
-    description: "",
-  });
-  const [errors, setErrors] = useState({});
 
   const [update] = useMutation(UPDATE_FOLDER, {
     variables: {
       tableId: id,
       name: state.name,
-      description: state.description,
+      description: desc,
       parent: (parent && parent.id) || undefined,
     },
     onCompleted({ updateTable }) {
@@ -102,7 +105,9 @@ const CreateModifyTable = () => {
                   backgroundColor: `#${creator && creator.avatar}`,
                 }}
               ></span>
-              <span>{(creator && creator.username) || "no creator"}</span>
+              <span>
+                {(creator && creator.username) || "no creator"}
+              </span>
             </p>
 
             <Form onSubmit={handleSubmit}>
@@ -115,21 +120,14 @@ const CreateModifyTable = () => {
                   onChange={handleChange}
                   name="name"
                   type="text"
-                  className={errors.name || errors.general ? "error" : ""}
+                  className={
+                    errors.name || errors.general ? "error" : ""
+                  }
                 />
               </FormGroup>
               <FormGroup>
                 <Label htmlFor="description">Table descrition:</Label>
-                <Textarea
-                  style={{ resize: "none" }}
-                  value={state.description}
-                  onChange={handleChange}
-                  name="description"
-                  type="text"
-                  className={
-                    errors.description || errors.general ? "error" : ""
-                  }
-                />
+                <Editor data={desc} state={setDesc} />
               </FormGroup>
               <Errors errors={errors} />
               <Button type="submit" block>
