@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { adjustHue, darken, lighten, linearGradient, rgba } from "polished";
+import { adjustHue, darken, lighten, linearGradient } from "polished";
 
 export const Button = styled.button`
   font-size: 1rem;
