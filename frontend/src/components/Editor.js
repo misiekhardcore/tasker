@@ -1,11 +1,30 @@
 import React from "react";
+import styled from "styled-components";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
+const EditorContainer = styled.div`
+  color: black;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: solid 2px #aaa;
+  background-color: white;
+
+  ul {
+    padding-left: 1rem;
+  }
+
+  .ck-content {
+    min-height: 300px;
+    height: auto;
+  }
+`;
+
 const Editor = ({ data, state }) => {
   return (
-    <div style={{ color: "black" }}>
+    <EditorContainer>
       <CKEditor
+        style={{ height: "500px" }}
         editor={ClassicEditor}
         data={data}
         onReady={(editor) => {}}
@@ -14,7 +33,7 @@ const Editor = ({ data, state }) => {
           state(data);
         }}
       />
-    </div>
+    </EditorContainer>
   );
 };
 
