@@ -29,22 +29,6 @@
     margin-bottom: 1rem;
   }
 
-  .form__group {
-    width: 100%;
-    margin-bottom: 1rem;
-
-    .form__label,
-    .form__input {
-      display: block;
-      width: 100%;
-    }
-
-    .form__label {
-      margin-bottom: 0.5rem;
-      color: $white;
-    }
-  }
-
   .form__link {
     color: $white;
     text-decoration: none;
@@ -68,128 +52,18 @@
   width: 100%;
   flex-grow: 1;
 
-  .list__items {
-    list-style: none;
-    padding: 0.5rem;
-    padding-bottom: 0;
-
-    .list__form {
-      display: flex;
-    }
-
-    li {
-      padding: 0.2rem 0.5rem;
-      width: 100%;
-      background-color: rgba($white, 0.05);
-      border-radius: 0.25rem;
-      display: flex;
-      align-items: center;
-      transition: all 0.2s ease-in-out;
-
-      &.table {
-        background-color: $primary;
-        filter: hue-rotate(-10deg);
-      }
-
-      &.task {
-        background-color: $primary;
-        filter: hue-rotate(10deg);
-      }
-
-      svg {
-        font-size: 1.5rem;
-      }
-
-      input {
-        width: 80%;
-        background-color: rgba($color: $white, $alpha: 0.1);
-        color: $white;
-
-        &:focus {
-          box-shadow: none;
-        }
-      }
-
-      .buttons {
-        margin-left: auto;
-        display: flex;
-        gap: 0.2rem;
-        overflow: hidden;
-        opacity: 0;
-        transform: scale(0) translateX(10rem);
-        transition: all 0.3s ease-in-out;
-      }
-
-      &:hover .buttons {
-        opacity: 1;
-        transform: scale(1);
-      }
-
-      .button--add {
-        margin-left: auto;
-      }
-
-      button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background-color: transparent;
-        border: none;
-        color: $white;
-        font-size: 1.5rem;
-        cursor: pointer;
-
-        &:active {
-          color: $white-dark;
-        }
-      }
-
-      p {
-        width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        margin-left: 0.4rem;
-
-        &:hover {
-          cursor: pointer;
-        }
-      }
-
-      & + li {
-        margin-top: 0.5rem;
-      }
-
-      &.list__item:hover {
-        background-color: rgba($white, 0.3);
-        transform: scale(1.05);
-      }
-
-      &:focus {
-        background-color: rgba($white, 0.1);
-      }
-    }
-  }
-
   .column1 {
-    // max-width: 20rem;
+    background-color: #bbb;
     grid-column: 1/2;
-    background-color: $primary;
-    color: $white;
   }
 
   .column2 {
-    background-color: $primary-light;
+    background-color: #ddd;
     grid-column: 2/3;
-    color: $white;
   }
 
   .column3 {
-    background-color: $primary-lightest;
+    background-color: #eee;
     grid-column: 3/6;
   }
 
@@ -208,7 +82,7 @@
     .column1,
     .column2 {
       padding: 1rem 0.5rem;
-      overflow-x: scroll;
+      overflow-y: scroll;
       max-height: 15rem;
     }
 
@@ -216,45 +90,15 @@
       min-height: 10rem;
     }
 
-    .column2 {
-      border-top: solid $primary-lightest 3px;
+    .column2,
+    .column3 {
+      border-top: solid gray 3px;
     }
   }
 }
 
 .table-details {
-  color: white;
+  color: black;
   position: relative;
   padding: 1rem;
-
-  .button--close {
-    border-radius: 50%;
-    padding: 0.5rem;
-    position: absolute;
-    right: 0.5rem;
-    top: 0.5rem;
-    font-size: 1.5rem;
-    color: $gray-dark;
-    background-color: transparent;
-    border: none;
-
-    &:hover {
-      color: $white-dark;
-      cursor: pointer;
-    }
-  }
-}
-
-.error-list {
-  margin: 1rem 0;
-  padding: 0.5rem 0.8rem;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 0.5rem;
-  color: rgb(255, 106, 106);
-  ul {
-    padding-left: 1rem;
-    list-style: disc;
-    line-height: 2;
-    font-size: 0.8rem;
-  }
 }
