@@ -5,14 +5,7 @@ import { GET_TASK, UPDATE_TASK } from "../queries";
 import moment from "moment";
 import "./CreateModify.scss";
 import Comments from "./Comments";
-import {
-  Button,
-  ButtonClose,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-} from "./styled";
+import { Button, ButtonClose, Form, FormGroup, Input, Label } from "./styled";
 import { ListContext } from "../context/list";
 import Errors from "./Errors";
 import Editor from "./Editor";
@@ -27,7 +20,7 @@ const CreateModifyTask = () => {
     description: "",
     status: "New",
   });
-  
+
   //get task info
   const { loading, error } = useQuery(GET_TASK, {
     variables: { taskId: task },
@@ -41,15 +34,7 @@ const CreateModifyTask = () => {
     },
   });
 
-  const {
-    id,
-    name,
-    description,
-    parent,
-    creator,
-    status,
-    createdAt,
-  } = task2;
+  const { id, name, description, parent, creator, status, createdAt } = task2;
 
   const [update] = useMutation(UPDATE_TASK, {
     variables: {
@@ -67,7 +52,6 @@ const CreateModifyTask = () => {
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
     },
-    refetchQueries: [{ query: GET_TASK, variables: { taskId: id } }],
   });
 
   function handleChange(e) {
@@ -102,8 +86,7 @@ const CreateModifyTask = () => {
         </div>
 
         <span className="folder__date">
-          {(createdAt &&
-            moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
+          {(createdAt && moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
             ""}
         </span>
         <h2 className="folder__name">
@@ -157,10 +140,7 @@ const CreateModifyTask = () => {
                     : "green",
               }}
             >
-              <option
-                style={{ backgroundColor: "red" }}
-                value="New"
-              ></option>
+              <option style={{ backgroundColor: "red" }} value="New"></option>
               <option
                 style={{ backgroundColor: "yellow" }}
                 value="In progress"

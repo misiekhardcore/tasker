@@ -55,7 +55,6 @@ const CreateModifyTable = () => {
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
     },
-    refetchQueries: [{ query: GET_FOLDER, variables: { tableId: id } }],
   });
 
   function handleChange(e) {
