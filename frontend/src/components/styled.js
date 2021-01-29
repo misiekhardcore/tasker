@@ -33,7 +33,7 @@ export const Button = styled.button`
 
     ${(props) =>
       props.transparent &&
-      `color: ${darken(0.2, "white")};
+      `color: ${darken(0.3, "white")};
     transform: scale(1.1);`}
   }
 `;
@@ -46,13 +46,14 @@ export const ButtonClose = styled.button`
   right: 0.5rem;
   top: 0.5rem;
   font-size: 1.5rem;
-  color: ${darken(0.1, "white")};
+  color: gray;
   background-color: transparent;
   border: none;
+  transition: all 0.2s ease-in-out;
 
   &:hover {
-    color: ${darken(0.1, "gray")};
-    background-color: ${darken(0.1, "white")};
+    color: white;
+    background-color: gray;
     cursor: pointer;
   }
 `;
@@ -70,7 +71,7 @@ export const FormGroup = styled.div`
 `;
 
 export const Label = styled.label`
-  color: white;
+  color: inherit;
   margin-bottom: 0.5rem;
 `;
 
@@ -78,7 +79,7 @@ const sharedInputTextarea = css`
   padding: 0.5rem 1rem;
   border: 2px solid #aaaaaa;
   border-radius: 0.5rem;
-  background-color: ${darken(0.05, "white")};
+  background-color: white;
   color: ${lighten(0.3, "black")};
   flex-grow: 1;
 
@@ -88,12 +89,13 @@ const sharedInputTextarea = css`
   }
 
   &:placeholder {
-    color: ${lighten(0.4, "black")};
+    color: ${lighten(0.3, "black")};
   }
 `;
 
 export const Input = styled.input`
-  ${sharedInputTextarea}
+  ${sharedInputTextarea};
+  min-width: 10px;
 `;
 
 export const Textarea = styled.textarea`
@@ -104,6 +106,7 @@ export const Form = styled.form`
   display: ${(props) => (props.flex ? "flex" : "inline")};
   justify-content: center;
   align-items: center;
+  max-width: 100%;
 `;
 
 export const UnorderedList = styled.ul`
@@ -137,8 +140,7 @@ export const ListItem = styled.li`
       ? linearGradient({
           colorStops: [
             statusColor(props.status),
-            (adjustHue(10, props.theme.primary) || "transparent") +
-              " 20%",
+            (adjustHue(10, props.theme.primary) || "transparent") + " 20%",
           ],
           toDirection: "to right",
         })
