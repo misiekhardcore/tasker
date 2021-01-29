@@ -10,10 +10,6 @@
   font-family: "Noto Sans JP", sans-serif;
 }
 
-body{
-  background-color: $white-dark;
-}
-
 #root {
   height: 100vh;
   display: flex;
@@ -24,7 +20,7 @@ body{
   box-shadow: $error-shadow;
   &:hover,
   &:focus {
-    box-shadow: $error-shadow;
+    box-shadow: $error-shadow !important;
   }
 }
 
@@ -40,7 +36,7 @@ body{
   color: $white;
   font-size: 0.75rem;
   border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 5px rgba($color: $primary-light, $alpha: 0.3);
+  box-shadow: 0 1px 3px 5px rgba(127, 127, 127, 0.3);
 }
 
 [data-tooltip]:hover:before {
@@ -50,7 +46,7 @@ body{
   margin-left: 1rem;
 
   /* customizable */
-  background: $primary-dark;
+  background: gray;
   transition: all 0.4s ease 0.6s;
 }
 
