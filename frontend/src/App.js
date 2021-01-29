@@ -10,7 +10,7 @@ import { ListProvider } from "./context/list";
 import { ThemeProvider } from "styled-components";
 
 const theme={
-  primary: "#ee5d8d"
+  primary: "#cfcfcf"
 }
 
 function App() {
