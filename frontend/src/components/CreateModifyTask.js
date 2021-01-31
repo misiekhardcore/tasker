@@ -9,6 +9,7 @@ import { Button, ButtonClose, Form, FormGroup, Input, Label } from "./styled";
 import { ListContext } from "../context/list";
 import Errors from "./Errors";
 import Editor from "./Editor";
+import Loading from "./Loading";
 
 const CreateModifyTask = () => {
   const [task2, setTask2] = useState({});
@@ -56,7 +57,6 @@ const CreateModifyTask = () => {
 
   function handleChange(e) {
     setState({ ...state, [e.target.name]: e.target.value });
-    console.log(e.target.name);
   }
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const CreateModifyTask = () => {
     update();
   }
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading/>;
   if (error) return <p>Error :( {JSON.stringify(error, null, 2)}</p>;
 
   return (

@@ -15,10 +15,11 @@ import {
 import { ListContext } from "../context/list";
 import Errors from "./Errors";
 import Editor from "./Editor";
+import Loading from "./Loading";
 
 const CreateModifyTable = () => {
-  const [table, setTable] = useState({});
   const { folder, setFolder } = useContext(ListContext);
+  const [table, setTable] = useState({});
   const [errors, setErrors] = useState({});
   const [desc, setDesc] = useState("");
   const [state, setState] = useState({
@@ -27,7 +28,7 @@ const CreateModifyTable = () => {
   });
 
   //get folder info
-  useQuery(GET_FOLDER, {
+  const { loading, error } = useQuery(GET_FOLDER, {
     variables: { tableId: folder },
     onCompleted({ getTable }) {
       setTable(getTable);
@@ -69,6 +70,9 @@ const CreateModifyTable = () => {
     e.preventDefault();
     update();
   }
+
+  if (loading) return <Loading />;
+  if (error) return <p>Error :( {JSON.stringify(error, null, 2)}</p>;
 
   return (
     <>
