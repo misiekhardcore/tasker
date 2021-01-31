@@ -1,6 +1,16 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import Errors from "../components/Errors";
+import {
+  Button,
+  Form,
+  FormContainer,
+  FormGroup,
+  Input,
+  Label,
+  LinkStyled,
+} from "../components/styled";
 import { AuthContext } from "../context/auth";
 
 const Register = (props) => {
@@ -36,109 +46,76 @@ const Register = (props) => {
   });
 
   return (
-    <div className="container--center">
-      <div className="form__container">
-        <form
-          onSubmit={handleSubmit}
-          className={loading ? "loading" : ""}
-        >
-          <h1>Register</h1>
-          <div className="form__group">
-            <label htmlFor="email" className="form__label">
-              Email:
-            </label>
-            <input
-              name="email"
-              type="email"
-              className={`form__input ${
-                errors.email || errors.general ? "error" : ""
-              }`}
-              placeholder="Enter your email..."
-              value={state.email}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form__group">
-            <label htmlFor="username" className="form__label">
-              Username:
-            </label>
-            <input
-              name="username"
-              type="text"
-              className={`form__input ${
-                errors.username || errors.general ? "error" : ""
-              }`}
-              placeholder="Enter your username..."
-              value={state.username}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form__group">
-            <label htmlFor="password" className="form__label">
-              Password:
-            </label>
-            <input
-              name="password"
-              type="password"
-              className={`form__input ${
-                errors.password || errors.general ? "error" : ""
-              }`}
-              placeholder="Enter your password..."
-              value={state.password}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form__group">
-            <label htmlFor="confirmPassword" className="form__label">
-              Confirm password:
-            </label>
-            <input
-              name="confirmPassword"
-              type="password"
-              className={`form__input ${
-                errors.confirmPassword || errors.general ? "error" : ""
-              }`}
-              placeholder="Confirm password..."
-              value={state.confirmPassword}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form__group">
-            <label htmlFor="key" className="form__label">
-              Key:
-            </label>
-            <input
-              name="key"
-              type="text"
-              className={`form__input ${
-                errors.key || errors.general ? "error" : ""
-              }`}
-              placeholder="Enter your licence/key..."
-              value={state.key}
-              onChange={handleChange}
-            />
-          </div>
-          <button
-            className="button button--primary button--block"
-            type="submit"
-          >
-            submit
-          </button>
-        </form>
-        <Link className="form__link" to="/login">
-          You have an account? Sign in!
-        </Link>
-        {Object.keys(errors).length > 0 && (
-          <div className="error-list">
-            <ul className="list">
-              {Object.values(errors).map((value) => (
-                <li key={value}>{value}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    </div>
+    <FormContainer>
+      <Form
+        onSubmit={handleSubmit}
+        className={loading ? "loading" : ""}
+      >
+        <h1>Register</h1>
+        <FormGroup>
+          <Label htmlFor="email">Email:</Label>
+          <Input
+            name="email"
+            type="email"
+            className={errors.email || errors.general ? "error" : ""}
+            placeholder="Enter your email..."
+            value={state.email}
+            onChange={handleChange}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="username">Username:</Label>
+          <Input
+            name="username"
+            type="text"
+            className={errors.username || errors.general ? "error" : ""}
+            placeholder="Enter your username..."
+            value={state.username}
+            onChange={handleChange}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="password">Password:</Label>
+          <Input
+            name="password"
+            type="password"
+            className={errors.password || errors.general ? "error" : ""}
+            placeholder="Enter your password..."
+            value={state.password}
+            onChange={handleChange}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="confirmPassword">Confirm password:</Label>
+          <Input
+            name="confirmPassword"
+            type="password"
+            className={
+              errors.confirmPassword || errors.general ? "error" : ""
+            }
+            placeholder="Confirm password..."
+            value={state.confirmPassword}
+            onChange={handleChange}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="key">Key:</Label>
+          <Input
+            name="key"
+            type="text"
+            className={errors.key || errors.general ? "error" : ""}
+            placeholder="Enter your licence/key..."
+            value={state.key}
+            onChange={handleChange}
+          />
+        </FormGroup>
+        <Errors errors={errors} />
+        <Button primary block type="submit">
+          submit
+        </Button>
+      </Form>
+      <LinkStyled to="/login">You have an account? Sign in!</LinkStyled>
+    </FormContainer>
   );
 };
 

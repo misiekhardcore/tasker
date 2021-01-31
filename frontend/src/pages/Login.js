@@ -2,7 +2,15 @@ import { gql, useMutation } from "@apollo/client";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import Errors from "../components/Errors";
-import { Button, Form, FormGroup, Input, Label } from "../components/styled";
+import {
+  Button,
+  Form,
+  FormContainer,
+  FormGroup,
+  Input,
+  Label,
+  LinkStyled,
+} from "../components/styled";
 import { AuthContext } from "../context/auth";
 
 function Login(props) {
@@ -32,42 +40,43 @@ function Login(props) {
   });
 
   return (
-    <div className="container--center">
-      <div className="form__container">
-        <Form onSubmit={handleSubmit} className={loading ? "loading" : ""}>
-          <h1>Login</h1>
-          <FormGroup>
-            <Label htmlFor="email">Email:</Label>
-            <Input
-              name="email"
-              type="email"
-              className={errors.email || errors.general ? "error" : ""}
-              placeholder="Enter your email..."
-              value={state.email}
-              onChange={handleChange}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label htmlFor="password">Password:</Label>
-            <Input
-              name="password"
-              type="password"
-              className={errors.password || errors.general ? "error" : ""}
-              placeholder="Enter your password..."
-              value={state.password}
-              onChange={handleChange}
-            />
-          </FormGroup>
-          <Button block primary type="submit">
-            submit
-          </Button>
-        </Form>
-        <Link className="form__link" to="/register">
-          You new here? Create an account!
-        </Link>
+    <FormContainer>
+      <Form
+        onSubmit={handleSubmit}
+        className={loading ? "loading" : ""}
+      >
+        <h1>Login</h1>
+        <FormGroup>
+          <Label htmlFor="email">Email:</Label>
+          <Input
+            name="email"
+            type="email"
+            className={errors.email || errors.general ? "error" : ""}
+            placeholder="Enter your email..."
+            value={state.email}
+            onChange={handleChange}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="password">Password:</Label>
+          <Input
+            name="password"
+            type="password"
+            className={errors.password || errors.general ? "error" : ""}
+            placeholder="Enter your password..."
+            value={state.password}
+            onChange={handleChange}
+          />
+        </FormGroup>
         <Errors errors={errors} />
-      </div>
-    </div>
+        <Button block primary type="submit">
+          submit
+        </Button>
+      </Form>
+      <LinkStyled to="/register">
+        You new here? Create an account!
+      </LinkStyled>
+    </FormContainer>
   );
 }
 
