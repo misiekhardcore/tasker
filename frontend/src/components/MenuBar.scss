@@ -26,6 +26,7 @@
     margin-left: auto;
 
     .nav__links {
+      display: flex;
       list-style: none;
       color: $white;
       font-size: 1.5rem;
@@ -36,6 +37,10 @@
           cursor: pointer;
           transform: scale(1.05);
         }
+      }
+
+      .nav__link + .nav__link{
+        margin-left: 1rem;
       }
     }
   }
