@@ -15,37 +15,6 @@
   }
 }
 
-.form__container {
-  max-width: 600px;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-
-  background-color: $primary-light;
-  border-radius: 1rem 1rem 0 0;
-
-  h1 {
-    color: $white;
-    margin-bottom: 1rem;
-  }
-
-  .form__link {
-    color: $white;
-    text-decoration: none;
-    margin-top: 1rem;
-    margin-left: auto;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  @media screen and (max-width: 400px) {
-    width: 100%;
-    border-radius: 0;
-  }
-}
-
 .main__container {
   display: grid;
   grid-template-columns: repeat(5, minmax(10px, 1fr));
