@@ -5,8 +5,10 @@ import { ListContext } from "../context/list";
 import "./MenuBar.scss";
 
 const MenuBar = () => {
-  const { logout } = useContext(AuthContext);
-  const { setTask, setBack, setColumn2, setFolder } = useContext(ListContext);
+  const { logout, user } = useContext(AuthContext);
+  const { setTask, setBack, setColumn2, setFolder } = useContext(
+    ListContext
+  );
 
   function handleLogout() {
     setBack([]);
@@ -23,6 +25,7 @@ const MenuBar = () => {
       </Link>
       <nav className="nav">
         <ul className="nav__links">
+          <li className="nav__link">{user.username}</li>
           <li className="nav__link" onClick={handleLogout}>
             Logout
           </li>
