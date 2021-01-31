@@ -4,6 +4,7 @@ import { AiFillDelete, AiFillFolder } from "react-icons/ai";
 import { DELETE_FOLDER, GET_FOLDERS } from "../queries";
 import { Button, ListItem, UnorderedList } from "./styled";
 import { ListContext } from "../context/list";
+import Loading from "./Loading";
 
 const FoldersList = ({ parent }) => {
   const {
@@ -22,17 +23,24 @@ const FoldersList = ({ parent }) => {
   });
 
   const [deleteFolder] = useMutation(DELETE_FOLDER, {
-    onCompleted() {},
+    update(cache) {
+      cache.modify({
+        fields: {
+          getTables(existingTables = [], { DELETE }) {
+            return DELETE;
+          },
+        },
+      });
+    },
     onError(err) {
       throw new Error(err);
     },
-    refetchQueries: [{ query: GET_FOLDERS, variables: { parent } }],
   });
 
   function handleParent(nextId, backName) {
     if (parent) {
-      setColumn2(column2.push(nextId));
-      setBack(back.push(backName));
+      setColumn2([...column2, nextId]);
+      setBack([...back, backName]);
     } else {
       setColumn2([nextId]);
       setBack([backName]);
@@ -48,7 +56,7 @@ const FoldersList = ({ parent }) => {
     setFolder();
   }
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading />;
   if (error) return <p>Error :( {JSON.stringify(error, null, 2)}</p>;
 
   const { getTables } = data;

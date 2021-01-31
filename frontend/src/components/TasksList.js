@@ -4,6 +4,7 @@ import { AiFillDelete, AiFillSchedule } from "react-icons/ai";
 import { DELETE_TASK, GET_TASKS } from "../queries";
 import { Button, ListItem, UnorderedList } from "./styled";
 import { ListContext } from "../context/list";
+import Loading from "./Loading";
 
 const TasksList = ({ parent }) => {
   const { setTask, setFolder } = useContext(ListContext);
@@ -15,10 +16,18 @@ const TasksList = ({ parent }) => {
   });
 
   const [deleteTask] = useMutation(DELETE_TASK, {
+    update(cache) {
+      cache.modify({
+        fields: {
+          getTasks(existingTasks = [], { DELETE }) {
+            return DELETE;
+          },
+        },
+      });
+    },
     onError(err) {
       throw new Error(err);
     },
-    refetchQueries: [{ query: GET_TASKS, variables: { parent } }],
   });
 
   function handleSetTask(id) {
@@ -33,7 +42,7 @@ const TasksList = ({ parent }) => {
     setTask();
   }
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading />;
   if (error) return <p>Error :( {JSON.stringify(error, null, 2)}</p>;
 
   const { getTasks } = data;
