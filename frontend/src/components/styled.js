@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components";
 import { adjustHue, darken, lighten, linearGradient } from "polished";
+import { Link } from "react-router-dom";
 
 export const Button = styled.button`
   font-size: 1rem;
@@ -109,9 +110,36 @@ export const Form = styled.form`
   max-width: 100%;
 `;
 
+export const FormContainer = styled.div`
+  max-width: 600px;
+  padding: 1.5rem;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  background-color: #ececec;
+
+  @media screen and (max-width: 600px) {
+    width: 100%;
+    margin: 0 auto;
+    border-radius: 0;
+    height: 100vh;
+  }
+`;
+
+export const LinkStyled = styled(Link)`
+  text-decoration: none;
+  margin-top: 1rem;
+  margin-left: auto;
+  color: black;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 export const UnorderedList = styled.ul`
   list-style: none;
-  padding: 0 0.5rem;
   width: 100%;
 `;
 
@@ -140,7 +168,8 @@ export const ListItem = styled.li`
       ? linearGradient({
           colorStops: [
             statusColor(props.status),
-            (adjustHue(10, props.theme.primary) || "transparent") + " 20%",
+            (adjustHue(10, props.theme.primary) || "transparent") +
+              " 20%",
           ],
           toDirection: "to right",
         })
