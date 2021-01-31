@@ -6,6 +6,7 @@ const {
   COMMENT_BODY_EMPTY,
   COMMENT_DELETE_ERROR,
 } = require("../../messages");
+const { UserInputError } = require("apollo-server");
 
 const errors = {};
 
@@ -33,7 +34,7 @@ module.exports = {
       checkId(parent);
 
       if (body.trim() == "") {
-        errors = COMMENT_BODY_EMPTY;
+        errors.body = COMMENT_BODY_EMPTY;
         throw new UserInputError(COMMENT_BODY_EMPTY, {
           errors,
         });
