@@ -21,6 +21,12 @@
   width: 100%;
   flex-grow: 1;
 
+  .column1,
+  .column2,
+  .column3 {
+    padding: 0.5rem;
+  }
+
   .column1 {
     background-color: #bbb;
     grid-column: 1/2;
