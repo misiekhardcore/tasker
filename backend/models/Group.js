@@ -2,8 +2,7 @@ const { model, Schema } = require("mongoose");
 
 const groupSchema = new Schema(
   {
-    team: { type: Schema.Types.ObjectId, ref: "Team" },
-    name: String,
+    creator: { type: Schema.Types.ObjectId, ref: "User" },
     avatar: String,
     users: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
