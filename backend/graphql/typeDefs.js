@@ -7,7 +7,7 @@ module.exports = gql`
     email: String!
     role: String!
     avatar: String!
-    teams: [Team]!
+    team: ID!
     createdAt: String!
     updatedAt: String!
   }
@@ -17,13 +17,26 @@ module.exports = gql`
     token: String!
   }
 
+  type Team {
+    id: ID!
+    name: String!
+    creator: User!
+    users: [User]!
+  }
+
+  type Group {
+    id: ID!
+    creator: User!
+    users: [User]!
+  }
+
   type Table {
     id: ID!
     name: String!
     description: String
     creator: User!
     parent: Table
-    teams: [Team]!
+    groups: [Group]
     createdAt: String!
     updatedAt: String!
   }
@@ -36,7 +49,7 @@ module.exports = gql`
     parent: Table
     status: String!
     comments: [Comment]!
-    teams: [Team]!
+    groups: [Group]
     createdAt: String!
     updatedAt: String!
   }
@@ -48,13 +61,6 @@ module.exports = gql`
     parent: ID!
     createdAt: String!
     updatedAt: String!
-  }
-
-  type Team {
-    id: ID!
-    name: String!
-    creator: User!
-    users: [User]!
   }
 
   input RegisterInput {
