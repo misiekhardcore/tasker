@@ -61,6 +61,7 @@ function generateToken(user) {
       id: user.id,
       email: user.email,
       username: user.username,
+      role: user.role,
     },
     JWT_SECRET,
     { expiresIn: "8h" }
@@ -124,6 +125,18 @@ module.exports = {
       //check if email is not already taken
       await checkUser({ email }, "email", EMAIL_ALREADY_EXISTS, false);
 
+      let user;
+      let team;
+
+      if (matchLicence) {
+        team = await Team.create({
+          name: `${username}'s team`,
+        });
+      } else {
+        const admin = await User.findOne({ key, role: "Admin" });
+        team = await Team.findById(admin.team);
+      }
+
       //common data
       const common = {
         username,
@@ -133,13 +146,30 @@ module.exports = {
         key,
       };
 
-      let user;
-
       //create User
       user = await User.create({
         ...common,
         role: matchLicence ? "Admin" : "User",
+        team: team._id,
       });
+
+      await Team.findOneAndUpdate(
+        { _id: team._id },
+        {
+          $addToSet: { users: user._id },
+        },
+        { new: true, useFindAndModify: false }
+      );
+
+      if (matchLicence) {
+        await Team.findOneAndUpdate(
+          { _id: team._id },
+          {
+            $set: { creator: user._id },
+          },
+          { new: true, useFindAndModify: false }
+        );
+      }
 
       //generate token
       const token = generateToken(user);
