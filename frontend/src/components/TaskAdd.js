@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { Input, Button, Form } from "./styled";
 import styled from "styled-components";
-import { ADD_TASK } from "../queries";
+import { ADD_TASK, GET_TASKS } from "../queries";
 import { gql, useMutation } from "@apollo/client";
 import { IoMdAdd } from "react-icons/io";
 
 const TaskAddContainer = styled.div`
-  padding: 0 0.5rem;
   width: 100%;
   display: flex;
   margin-bottom: 0.5rem;
@@ -40,30 +39,33 @@ const TaskAdd = ({ setErrors, parent }) => {
       parent,
     },
     update(cache, { data: { createTask } }) {
-      cache.modify({
-        fields: {
-          getTasks(existingTasks = []) {
-            const newTaskRef = cache.writeFragment({
-              data: createTask,
-              fragment: gql`
-                fragment NewTask on Tasks {
-                  id
-                  type
-                }
-              `,
-            });
-            return [...existingTasks, newTaskRef];
-          },
-        },
-      });
+      try {
+        const { getTasks } = cache.readQuery({
+          query: GET_TASKS,
+          variables: { parent },
+        });
+
+        cache.writeQuery({
+          query: GET_TASKS,
+          data: { getTasks: [createTask, ...getTasks] },
+          variables: { parent },
+        });
+      } catch (error) {
+        throw error;
+      }
     },
     onCompleted() {
       setErrors({});
       setErr({});
     },
     onError(err) {
-      setErrors(err.graphQLErrors[0].extensions.exception.errors);
-      setErr(err.graphQLErrors[0].extensions.exception.errors);
+      try {
+        const error = err.graphQLErrors[0].extensions.exception.errors;
+        setErrors(error);
+        setErr(error);
+      } catch (error) {
+        throw err;
+      }
     },
   });
 

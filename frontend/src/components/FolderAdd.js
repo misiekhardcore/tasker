@@ -1,12 +1,11 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
-import { ADD_FOLDER } from "../queries";
+import { ADD_FOLDER, GET_FOLDERS } from "../queries";
 import { Button, Form, Input } from "./styled";
 import styled from "styled-components";
 
 const FolderAddContainer = styled.div`
-  padding: 0 0.5rem;
   width: 100%;
   display: flex;
   margin-bottom: 0.5rem;
@@ -40,30 +39,35 @@ const FolderAdd = ({ setErrors = {}, parent = undefined }) => {
       parent,
     },
     update(cache, { data: { createTable } }) {
-      cache.modify({
-        fields: {
-          getTables(existingTables = []) {
-            const newTableRef = cache.writeFragment({
-              data: createTable,
-              fragment: gql`
-                fragment NewTable on Tables {
-                  id
-                  type
-                }
-              `,
-            });
-            return [...existingTables, newTableRef];
+      try {
+        const { getTables } = cache.readQuery({
+          query: GET_FOLDERS,
+          variables: { parent },
+        });
+
+        cache.writeQuery({
+          query: GET_FOLDERS,
+          data: {
+            getTables: [createTable, ...getTables],
           },
-        },
-      });
+          variables: { parent },
+        });
+      } catch (error) {
+        throw error;
+      }
     },
     onCompleted() {
       setErrors({});
       setErr({});
     },
     onError(err) {
-      setErrors(err.graphQLErrors[0].extensions.exception.errors);
-      setErr(err.graphQLErrors[0].extensions.exception.errors);
+      try {
+        const error = err.graphQLErrors[0].extensions.exception.errors;
+        setErrors(error);
+        setErr(error);
+      } catch (error) {
+        throw err;
+      }
     },
   });
 
