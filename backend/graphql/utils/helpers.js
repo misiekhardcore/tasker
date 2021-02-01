@@ -21,6 +21,6 @@ const avatarColors = [
 ];
 
 //random picker
-module.exports.randomChoice = function (arr) {
-  return arr[Math.floor(arr.length * Math.random())];
+module.exports.randomChoice = function () {
+  return avatarColors[Math.floor(avatarColors.length * Math.random())];
 };
