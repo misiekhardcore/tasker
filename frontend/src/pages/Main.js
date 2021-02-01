@@ -11,18 +11,18 @@ const Main = () => {
   return (
     <>
       <MenuBar />
-      <div className="main__container">
-        <div className="column1">
+      <main className="main__container">
+        <section className="column1">
           <List />
-        </div>
-        <div className="column2">
+        </section>
+        <section className="column2">
           {column2.length > 0 && <List subList />}
-        </div>
-        <div className="column3">
+        </section>
+        <section className="column3">
           {folder && <CreateModifyTable />}
           {task && <CreateModifyTask />}
-        </div>
-      </div>
+        </section>
+      </main>
     </>
   );
 };
