@@ -27,7 +27,9 @@ module.exports = gql`
   type Group {
     id: ID!
     creator: User!
+    avatar: String!
     users: [User]!
+    parent: ID!
   }
 
   type Table {
@@ -88,6 +90,8 @@ module.exports = gql`
     getComment(commentId: ID!): Comment
 
     getTeam(teamId: ID!): Team
+    getGroups(userId: ID): Group
+    getGroup(parent: ID): Group
   }
 
   type Mutation {
@@ -126,5 +130,8 @@ module.exports = gql`
 
     createComment(parent: ID!, body: String!): Comment
     deleteComment(commentId: ID!): Boolean
+
+    createGroup(parent: ID!, users: [ID!]!): Group
+    updateGroup(groupId: ID!, users: [ID!]!): Group
   }
 `;
