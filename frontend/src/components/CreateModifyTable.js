@@ -91,7 +91,7 @@ const CreateModifyTable = () => {
                 moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
                 ""}
             </span>
-            <h2>
+            <h2 className="folder__name">
               {parent && (
                 <>
                   {parent.name}
