@@ -1,20 +1,20 @@
 const Table = require("../../models/Table");
-const Task = require("../../models/Task");
-const Group = require("../../models/Group");
-const { TABLE_TITLE_EMPTY, TABLE_DELETE_ERROR } = require("../../messages");
+const {
+  TABLE_TITLE_EMPTY,
+  TABLE_DELETE_ERROR,
+} = require("../../messages");
 
 const authCheck = require("../utils/authCheck");
 const { checkId } = require("../utils/validators");
 
 const { UserInputError } = require("apollo-server");
-const { deleteSubtables } = require("./helpers");
-
-const errors = {};
+const { deleteSubtables, deleteSubgroup } = require("./helpers");
 
 const {
   Mutation: { createGroup },
 } = require("./groupResolver");
-const Team = require("../../models/Team");
+
+const errors = {};
 
 module.exports = {
   Query: {
@@ -52,7 +52,7 @@ module.exports = {
   Mutation: {
     createTable: async (_, { parent, name, description }, context) => {
       //check if user sent auth token and it is valid
-      const { id } = authCheck(context);
+      const { id, team } = authCheck(context);
 
       //check id
       checkId(parent);
@@ -63,28 +63,43 @@ module.exports = {
         throw new UserInputError(TABLE_TITLE_EMPTY, { errors });
       }
 
-      //create new Table in database
-      const table = await Table.create({
-        name,
-        description: description || "",
-        creator: id,
-        parent: parent || undefined,
-      });
+      try {
+        //TODO: make separate function for this
+        // const { users } = parent
+        //   ? await Group.findById((await Table.findById(parent)).group)
+        //   : await Team.findById(team);
 
-      const users = parent ? await Group.findById() : await Team.findById();
+        // const group = await Group.create({
+        //   creator: id,
+        //   avatar: randomChoice(),
+        //   users,
+        // });
 
-      const group = await createGroup({
-        creator: id,
-        parent: table._id,
-        avatar: randomChoice(),
-      });
+        //probably this will work
+        const group = await createGroup(_, { parent }, context);
+
+        //create new Table in database
+        const table = await Table.create({
+          name,
+          description: description || "",
+          creator: id,
+          parent: parent || undefined,
+          group: group._id,
+        });
+        return await Table.findById(table.id)
+          .populate("creator")
+          .populate("parent");
+      } catch (error) {
+        console.log(error);
+      }
 
       //prepare data to send query
-      return await Table.findById(table.id)
-        .populate("creator")
-        .populate("parent");
     },
-    updateTable: async (_, { tableId, name, description, parent }, context) => {
+    updateTable: async (
+      _,
+      { tableId, name, description, parent },
+      context
+    ) => {
       const { id } = authCheck(context);
 
       checkId(tableId);
@@ -109,6 +124,8 @@ module.exports = {
       authCheck(context);
       try {
         await deleteSubtables(tableId);
+        const table = await Table.findById(tableId);
+        await deleteSubgroup(table.group);
         await Table.deleteOne({ _id: tableId });
       } catch (error) {
         errors.general = TABLE_DELETE_ERROR;

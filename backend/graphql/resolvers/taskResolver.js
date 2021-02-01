@@ -1,11 +1,18 @@
 const Task = require("../../models/Task");
-const { TASK_TITLE_EMPTY, TASK_DELETE_ERROR } = require("../../messages");
+const {
+  TASK_TITLE_EMPTY,
+  TASK_DELETE_ERROR,
+} = require("../../messages");
 
 const authCheck = require("../utils/authCheck");
 const { checkId } = require("../utils/validators");
 
 const { UserInputError } = require("apollo-server");
-const { deleteSubcomments } = require("./helpers");
+const { deleteSubcomments, deleteSubgroup } = require("./helpers");
+
+const {
+  Mutation: { createGroup },
+} = require("./groupResolver");
 
 const errors = {};
 
@@ -38,7 +45,11 @@ module.exports = {
     },
   },
   Mutation: {
-    createTask: async (_, { parent, name, description, status }, context) => {
+    createTask: async (
+      _,
+      { parent, name, description, status },
+      context
+    ) => {
       //check if user sent auth token and it is valid
       const { id } = authCheck(context);
 
@@ -50,19 +61,37 @@ module.exports = {
         errors.name = TASK_TITLE_EMPTY;
         throw new UserInputError(TASK_TITLE_EMPTY, errors);
       }
+      try {
+        //TODO: make separate function for this
+        // const { users } = parent
+        //   ? await Group.findById((await Table.findById(parent)).group)
+        //   : await Team.findById(team);
 
-      const task = await Task.create({
-        name,
-        description: description || "",
-        creator: id,
-        parent,
-        status: status || "New",
-        comments: [],
-      });
+        // const group = await Group.create({
+        //   creator: id,
+        //   avatar: randomChoice(),
+        //   users,
+        // });
 
-      return await Task.findById(task._id)
-        .populate("creator")
-        .populate("parent");
+        //probably this will work
+        const group = await createGroup(_, { parent }, context);
+
+        const task = await Task.create({
+          name,
+          description: description || "",
+          creator: id,
+          parent,
+          status: status || "New",
+          group: group._id,
+          comments: [],
+        });
+
+        return await Task.findById(task._id)
+          .populate("creator")
+          .populate("parent");
+      } catch (error) {
+        console.log(error);
+      }
     },
     updateTask: async (
       _,
@@ -95,6 +124,8 @@ module.exports = {
       authCheck(context);
 
       try {
+        const task = await Task.findById(taskId);
+        deleteSubgroup(task.group);
         await Task.deleteOne({ _id: taskId });
         deleteSubcomments(taskId);
       } catch (error) {
