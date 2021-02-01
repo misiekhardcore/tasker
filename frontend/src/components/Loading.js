@@ -1,6 +1,5 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import { linearGradient } from "polished";
 
 const gradient = css`
   animation-duration: 2s;
