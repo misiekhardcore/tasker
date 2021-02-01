@@ -29,7 +29,6 @@ module.exports = gql`
     creator: User!
     avatar: String!
     users: [User]!
-    parent: ID!
   }
 
   type Table {
@@ -38,7 +37,7 @@ module.exports = gql`
     description: String
     creator: User!
     parent: Table
-    groups: [Group]
+    group: ID!
     createdAt: String!
     updatedAt: String!
   }
@@ -51,7 +50,7 @@ module.exports = gql`
     parent: Table
     status: String!
     comments: [Comment]!
-    groups: [Group]
+    group: Group
     createdAt: String!
     updatedAt: String!
   }
@@ -131,7 +130,7 @@ module.exports = gql`
     createComment(parent: ID!, body: String!): Comment
     deleteComment(commentId: ID!): Boolean
 
-    createGroup(parent: ID!, users: [ID!]!): Group
+    createGroup( users: [ID!]!): Group
     updateGroup(groupId: ID!, users: [ID!]!): Group
   }
 `;
