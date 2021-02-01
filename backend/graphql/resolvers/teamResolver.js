@@ -9,8 +9,11 @@ module.exports = {
       const { id } = authCheck(context);
 
       checkId(teamId);
-      
-      return await Team.findById(teamId);
+
+      return await Team.findById(teamId)
+        .populate("users")
+        .populate("creator")
+        .populate("parent");
     },
   },
 };
