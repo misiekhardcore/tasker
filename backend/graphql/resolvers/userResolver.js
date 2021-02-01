@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { UserInputError } = require("apollo-server");
 
+const { randomChoice } = require("../utils/helpers");
+
 //messages
 const {
   USER_NOT_FOUND,
@@ -9,33 +11,6 @@ const {
   EMAIL_ALREADY_EXISTS,
   REGISTER_KEY_NOT_VALID,
 } = require("../../messages");
-
-//avatars
-const avatarColors = [
-  "D81B60",
-  "F06292",
-  "F48FB1",
-  "FFB74D",
-  "FF9800",
-  "F57C00",
-  "00897B",
-  "4DB6AC",
-  "80CBC4",
-  "80DEEA",
-  "4DD0E1",
-  "00ACC1",
-  "9FA8DA",
-  "7986CB",
-  "3949AB",
-  "8E24AA",
-  "BA68C8",
-  "CE93D8",
-];
-
-//random picker
-function randomChoice(arr) {
-  return arr[Math.floor(arr.length * Math.random())];
-}
 
 //checkers
 const {
@@ -96,13 +71,7 @@ module.exports = {
       { username, email, password, confirmPassword, key }
     ) => {
       //validate inputs
-      validateRegisterInput(
-        username,
-        email,
-        password,
-        confirmPassword,
-        key
-      );
+      validateRegisterInput(username, email, password, confirmPassword, key);
 
       const matchLicence = await bcrypt.compare(username + email, key);
       if (!matchLicence) {
@@ -115,12 +84,7 @@ module.exports = {
       }
 
       //check if username is not already taken
-      await checkUser(
-        { username },
-        "username",
-        USERNAME_ALREADY_EXISTS,
-        false
-      );
+      await checkUser({ username }, "username", USERNAME_ALREADY_EXISTS, false);
 
       //check if email is not already taken
       await checkUser({ email }, "email", EMAIL_ALREADY_EXISTS, false);
