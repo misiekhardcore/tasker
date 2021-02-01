@@ -10,7 +10,7 @@ const taskSchema = new Schema(
     },
     parent: { type: Schema.Types.ObjectId, ref: "Table" },
     status: String,
-    teams: [{ type: Schema.Types.ObjectId, ref: "Team" }],
+    group: { type: Schema.Types.ObjectId, ref: "Group" },
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
   },
 

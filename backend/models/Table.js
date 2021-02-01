@@ -9,7 +9,7 @@ const tableSchema = new Schema(
       ref: "User",
     },
     parent: { type: Schema.Types.ObjectId, ref: "Table" },
-    teams: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    group: { type: Schema.Types.ObjectId, ref: "Group" },
   },
   {
     timestamps: true,
