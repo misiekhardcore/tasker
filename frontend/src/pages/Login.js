@@ -1,6 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
 import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
 import Errors from "../components/Errors";
 import {
   Button,
@@ -34,7 +33,11 @@ function Login(props) {
       props.history.push("/");
     },
     onError(err) {
-      setErrors(err.graphQLErrors[0].extensions.exception.errors);
+      if (err.graphQLErrors[0].extensions.exception.errors) {
+        setErrors(err.graphQLErrors[0].extensions.exception.errors);
+      } else {
+        setErrors({ err: err.message });
+      }
     },
     variables: state,
   });
@@ -86,10 +89,10 @@ const LOGIN = gql`
       user {
         id
         username
-        role
-        createdAt
-        updatedAt
         email
+        role
+        avatar
+        team
       }
       token
     }

@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import React, { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { ADD_FOLDER, GET_FOLDERS } from "../queries";
