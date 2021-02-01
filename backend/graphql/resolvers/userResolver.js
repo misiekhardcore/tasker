@@ -33,10 +33,8 @@ const JWT_SECRET = process.env.JWT_SECRET;
 function generateToken(user) {
   return jwt.sign(
     {
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      role: user.role,
+      ...user,
+      password: null,
     },
     JWT_SECRET,
     { expiresIn: "8h" }
@@ -58,7 +56,7 @@ module.exports = {
       await checkPassword(password, user.password);
 
       //everything is ok, generate token
-      const token = generateToken(user);
+      const token = generateToken(user._doc);
 
       return {
         user,
@@ -71,7 +69,13 @@ module.exports = {
       { username, email, password, confirmPassword, key }
     ) => {
       //validate inputs
-      validateRegisterInput(username, email, password, confirmPassword, key);
+      validateRegisterInput(
+        username,
+        email,
+        password,
+        confirmPassword,
+        key
+      );
 
       const matchLicence = await bcrypt.compare(username + email, key);
       if (!matchLicence) {
@@ -84,7 +88,12 @@ module.exports = {
       }
 
       //check if username is not already taken
-      await checkUser({ username }, "username", USERNAME_ALREADY_EXISTS, false);
+      await checkUser(
+        { username },
+        "username",
+        USERNAME_ALREADY_EXISTS,
+        false
+      );
 
       //check if email is not already taken
       await checkUser({ email }, "email", EMAIL_ALREADY_EXISTS, false);

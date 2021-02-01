@@ -6,23 +6,21 @@ const { AUTHORIZATION_ERROR } = require("../../messages");
 module.exports = (context) => {
   //get header from request context
   const authHeader = context.req.headers.authorization;
-  
 
   const errors = {};
 
   if (!authHeader) {
     errors.authorization = AUTHORIZATION_ERROR;
-    throw new AuthenticationError(AUTHORIZATION_ERROR, {errors});
+    throw new AuthenticationError(AUTHORIZATION_ERROR, { errors });
   }
 
   const token = authHeader.split("Bearer ")[1];
-  
+
   if (!token) {
     errors.authorization = AUTHORIZATION_ERROR;
-    throw new AuthenticationError(AUTHORIZATION_ERROR, {errors});
+    throw new AuthenticationError(AUTHORIZATION_ERROR, { errors });
   }
 
   const user = jwt.verify(token, JWT_SECRET);
-
-  return user;
+  return { ...user, id: user._id };
 };
