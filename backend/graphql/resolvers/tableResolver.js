@@ -1,5 +1,6 @@
 const Table = require("../../models/Table");
 const Task = require("../../models/Task");
+const Group = require("../../models/Group");
 const { TABLE_TITLE_EMPTY, TABLE_DELETE_ERROR } = require("../../messages");
 
 const authCheck = require("../utils/authCheck");
@@ -9,6 +10,11 @@ const { UserInputError } = require("apollo-server");
 const { deleteSubtables } = require("./helpers");
 
 const errors = {};
+
+const {
+  Mutation: { createGroup },
+} = require("./groupResolver");
+const Team = require("../../models/Team");
 
 module.exports = {
   Query: {
@@ -63,6 +69,14 @@ module.exports = {
         description: description || "",
         creator: id,
         parent: parent || undefined,
+      });
+
+      const users = parent ? await Group.findById() : await Team.findById();
+
+      const group = await createGroup({
+        creator: id,
+        parent: table._id,
+        avatar: randomChoice(),
       });
 
       //prepare data to send query
