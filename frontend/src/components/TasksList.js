@@ -49,19 +49,23 @@ const TasksList = ({ parent }) => {
 
   return (
     <UnorderedList>
-      {getTasks.map((task) => (
-        <ListItem
-          status={task.status}
-          data-tooltip={task.name}
-          key={task.id}
-        >
-          <AiFillSchedule />
-          <p onClick={() => handleSetTask(task.id)}>{task.name}</p>
-          <Button transparent onClick={() => handleDeleteTask(task.id)}>
-            <AiFillDelete />
-          </Button>
-        </ListItem>
-      ))}
+      {getTasks &&
+        getTasks.map((task) => (
+          <ListItem
+            status={task.status}
+            data-tooltip={task.name}
+            key={task.id}
+          >
+            <AiFillSchedule />
+            <p onClick={() => handleSetTask(task.id)}>{task.name}</p>
+            <Button
+              transparent
+              onClick={() => handleDeleteTask(task.id)}
+            >
+              <AiFillDelete />
+            </Button>
+          </ListItem>
+        ))}
     </UnorderedList>
   );
 };
