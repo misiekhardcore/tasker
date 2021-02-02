@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Input, Button, Form } from "./styled";
 import styled from "styled-components";
 import { ADD_TASK, GET_TASKS } from "../queries";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { IoMdAdd } from "react-icons/io";
 
 const TaskAddContainer = styled.div`
