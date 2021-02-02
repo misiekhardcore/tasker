@@ -29,6 +29,9 @@ const FoldersList = ({ parent }) => {
           getTables(existingTables = [], { DELETE }) {
             return DELETE;
           },
+          getTasks(existingTasks = [], { DELETE }) {
+            return DELETE;
+          },
         },
       });
     },
@@ -54,33 +57,39 @@ const FoldersList = ({ parent }) => {
       variables: { parent: id },
     });
     setFolder();
+    if (!parent) {
+      setColumn2([]);
+      setBack([]);
+    }
   }
 
   if (loading) return <Loading />;
   if (error) return <p>Error :( {JSON.stringify(error, null, 2)}</p>;
 
   const { getTables } = data;
+  console.log(getTables);
 
   return (
     <UnorderedList>
-      {getTables.map((table) => (
-        <ListItem table data-tooltip={table.name} key={table.id}>
-          <AiFillFolder />
-          <p
-            onClick={() => {
-              handleParent(table.id, table.name);
-            }}
-          >
-            {table.name}
-          </p>
-          <Button
-            transparent
-            onClick={() => handleDeleteFolder(table.id)}
-          >
-            <AiFillDelete />
-          </Button>
-        </ListItem>
-      ))}
+      {getTables &&
+        getTables.map((table) => (
+          <ListItem table data-tooltip={table.name} key={table.id}>
+            <AiFillFolder />
+            <p
+              onClick={() => {
+                handleParent(table.id, table.name);
+              }}
+            >
+              {table.name}
+            </p>
+            <Button
+              transparent
+              onClick={() => handleDeleteFolder(table.id)}
+            >
+              <AiFillDelete />
+            </Button>
+          </ListItem>
+        ))}
     </UnorderedList>
   );
 };
