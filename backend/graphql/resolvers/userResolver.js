@@ -115,7 +115,7 @@ module.exports = {
         username,
         email,
         password: await bcrypt.hash(password, 2),
-        avatar: randomChoice(avatarColors),
+        avatar: randomChoice(),
         key,
       };
 
