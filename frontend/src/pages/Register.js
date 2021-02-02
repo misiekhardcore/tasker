@@ -39,7 +39,12 @@ const Register = (props) => {
       props.history.push("/");
     },
     onError(err) {
-      setErrors(err.graphQLErrors[0].extensions.exception.errors);
+      if (err.graphQLErrors[0].extensions.exception.errors) {
+        setErrors(err.graphQLErrors[0].extensions.exception.errors);
+      } else {
+        setErrors({ err: err.message });
+        throw err
+      }
     },
     variables: state,
   });
