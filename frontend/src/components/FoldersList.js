@@ -67,7 +67,6 @@ const FoldersList = ({ parent }) => {
   if (error) return <p>Error :( {JSON.stringify(error, null, 2)}</p>;
 
   const { getTables } = data;
-  console.log(getTables);
 
   return (
     <UnorderedList>
