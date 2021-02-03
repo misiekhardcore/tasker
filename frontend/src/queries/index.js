@@ -5,6 +5,7 @@ export const GET_FOLDERS = gql`
     getTables(parent: $parent) {
       id
       name
+      group
       parent {
         id
         name
@@ -20,6 +21,7 @@ export const GET_FOLDER = gql`
     getTable(tableId: $tableId) {
       id
       name
+      group
       description
       creator {
         username
@@ -223,5 +225,21 @@ export const ADD_COMMENT = gql`
 export const DELETE_COMMENT = gql`
   mutation deleteComment($commentId: ID!) {
     deleteComment(commentId: $commentId)
+  }
+`;
+
+export const GET_GROUP = gql`
+  query getGroup($groupId: ID!) {
+    getGroup(groupId: $groupId) {
+      avatar
+      creator {
+        username
+      }
+      users {
+        username
+        id
+        avatar
+      }
+    }
   }
 `;

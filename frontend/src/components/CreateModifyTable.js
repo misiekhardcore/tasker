@@ -16,6 +16,7 @@ import { ListContext } from "../context/list";
 import Errors from "./Errors";
 import Editor from "./Editor";
 import Loading from "./Loading";
+import Group from "./Group";
 
 const CreateModifyTable = () => {
   const { folder, setFolder } = useContext(ListContext);
@@ -73,7 +74,7 @@ const CreateModifyTable = () => {
 
   if (loading) return <Loading />;
   if (error) return <p>Error :( {JSON.stringify(error, null, 2)}</p>;
-
+  
   return (
     <>
       {table && (
@@ -112,6 +113,7 @@ const CreateModifyTable = () => {
                 {(creator && creator.username) || "no creator"}
               </span>
             </p>
+            <Group groupId={table.group} />
 
             <Form onSubmit={handleSubmit}>
               <FormGroup>
