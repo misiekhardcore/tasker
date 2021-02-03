@@ -90,7 +90,7 @@ module.exports = gql`
 
     getTeam(teamId: ID!): Team
     getGroups(userId: ID): Group
-    getGroup(parent: ID): Group
+    getGroup(groupId: ID): Group
   }
 
   type Mutation {
