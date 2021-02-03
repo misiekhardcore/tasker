@@ -3,11 +3,28 @@ const Table = require("../../models/Table");
 const Team = require("../../models/Team");
 const authCheck = require("../utils/authCheck");
 const { randomChoice } = require("../utils/helpers");
+const { checkId } = require("../utils/validators");
 
 module.exports = {
   Query: {
-    getGroups: async (_, { userId }, context) => {},
-    getGroup: async (_, { groupId }, context) => {},
+    getGroups: async (_, { userId }, context) => {
+      const { id } = authCheck(context);
+
+      checkId(userId);
+
+      return await Group.find({ users: userId })
+        .populate("creator")
+        .populate("users");
+    },
+    getGroup: async (_, { groupId }, context) => {
+      const { id } = authCheck(context);
+
+      checkId(groupId);
+
+      return await Group.findById(groupId)
+        .populate("creator")
+        .populate("users");
+    },
   },
   Mutation: {
     createGroup: async (_, { parent }, context) => {
@@ -30,6 +47,16 @@ module.exports = {
         console.log(error);
       }
     },
-    updateGroup: async (_, { users, groupId }, context) => {},
+    updateGroup: async (_, { users, groupId }, context) => {
+      const { id } = authCheck(context);
+
+      checkId(groupId);
+
+      return await Group.findOneAndUpdate(
+        { _id: groupId },
+        { $set: { users } },
+        { new: true, useFindAndModify: false }
+      );
+    },
   },
 };
