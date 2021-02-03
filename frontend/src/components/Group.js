@@ -45,20 +45,24 @@ const Group = ({ groupId }) => {
   const { getGroup = undefined } = data;
   const { users, avatar } = getGroup || {};
   return (
-    <GroupContainer avatar={avatar}>
-      <Users>
-        {users &&
-          users.map((user) => {
-            return (
-              <User avatar={user.avatar}>
-                <span></span>
-                {user.username}
-              </User>
-            );
-          })}
-      </Users>
-      <Button>a</Button>
-    </GroupContainer>
+    <>
+      {getGroup ? (
+        <GroupContainer avatar={avatar}>
+          <Users>
+            {users &&
+              users.map((user) => {
+                return (
+                  <User avatar={user.avatar}>
+                    <span></span>
+                    {user.username}
+                  </User>
+                );
+              })}
+          </Users>
+          <Button>a</Button>
+        </GroupContainer>
+      ) : null}
+    </>
   );
 };
 
