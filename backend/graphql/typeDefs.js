@@ -50,7 +50,7 @@ module.exports = gql`
     parent: Table
     status: String!
     comments: [Comment]!
-    group: Group
+    group: ID
     createdAt: String!
     updatedAt: String!
   }
@@ -130,7 +130,7 @@ module.exports = gql`
     createComment(parent: ID!, body: String!): Comment
     deleteComment(commentId: ID!): Boolean
 
-    createGroup( users: [ID!]!): Group
+    createGroup(users: [ID!]!): Group
     updateGroup(groupId: ID!, users: [ID!]!): Group
   }
 `;
