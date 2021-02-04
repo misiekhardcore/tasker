@@ -86,7 +86,7 @@ const sharedInputTextarea = css`
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 3px 5px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 3px 5px rgba(0, 119, 255, 0.2);
   }
 
   &:placeholder {
