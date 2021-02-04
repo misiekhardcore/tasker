@@ -37,7 +37,12 @@ const CreateModifyTable = () => {
       setErrors({});
     },
     onError(err) {
-      setErrors(err.graphQLErrors[0].extensions.exception.errors);
+      try {
+        const error = err.graphQLErrors[0].extensions.exception.errors;
+        setErrors({ error });
+      } catch (error) {
+        throw err;
+      }
     },
   });
 
@@ -55,7 +60,12 @@ const CreateModifyTable = () => {
       setErrors({});
     },
     onError(err) {
-      setErrors(err.graphQLErrors[0].extensions.exception.errors);
+      try {
+        const error = err.graphQLErrors[0].extensions.exception.errors;
+        setErrors({ error });
+      } catch (error) {
+        throw err;
+      }
     },
   });
 
@@ -74,7 +84,7 @@ const CreateModifyTable = () => {
 
   if (loading) return <Loading />;
   if (error) return <p>Error :( {JSON.stringify(error, null, 2)}</p>;
-  
+
   return (
     <>
       {table && (
@@ -113,7 +123,7 @@ const CreateModifyTable = () => {
                 {(creator && creator.username) || "no creator"}
               </span>
             </p>
-            <Group groupId={table.group} />
+            {table.group && <Group groupId={table.group} />}
 
             <Form onSubmit={handleSubmit}>
               <FormGroup>
