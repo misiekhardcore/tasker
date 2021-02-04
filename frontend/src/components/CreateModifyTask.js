@@ -5,11 +5,19 @@ import { GET_TASK, UPDATE_TASK } from "../queries";
 import moment from "moment";
 import "./CreateModify.scss";
 import Comments from "./Comments";
-import { Button, ButtonClose, Form, FormGroup, Input, Label } from "./styled";
+import {
+  Button,
+  ButtonClose,
+  Form,
+  FormGroup,
+  Input,
+  Label,
+} from "./styled";
 import { ListContext } from "../context/list";
 import Errors from "./Errors";
 import Editor from "./Editor";
 import Loading from "./Loading";
+import Group from "./Group";
 
 const CreateModifyTask = () => {
   const [task2, setTask2] = useState({});
@@ -31,11 +39,25 @@ const CreateModifyTask = () => {
       setErrors({});
     },
     onError(err) {
-      setErrors(err.graphQLErrors[0].extensions.exception.errors);
+      try {
+        const error = err.graphQLErrors[0].extensions.exception.errors;
+        setErrors({ error });
+      } catch (error) {
+        throw err;
+      }
     },
   });
 
-  const { id, name, description, parent, creator, status, createdAt } = task2;
+  const {
+    id,
+    name,
+    description,
+    parent,
+    group,
+    creator,
+    status,
+    createdAt,
+  } = task2;
 
   const [update] = useMutation(UPDATE_TASK, {
     variables: {
@@ -51,7 +73,12 @@ const CreateModifyTask = () => {
       setErrors({});
     },
     onError(err) {
-      setErrors(err.graphQLErrors[0].extensions.exception.errors);
+      try {
+        const error = err.graphQLErrors[0].extensions.exception.errors;
+        setErrors({ error });
+      } catch (error) {
+        throw err;
+      }
     },
   });
 
@@ -72,7 +99,7 @@ const CreateModifyTask = () => {
     update();
   }
 
-  if (loading) return <Loading/>;
+  if (loading) return <Loading />;
   if (error) return <p>Error :( {JSON.stringify(error, null, 2)}</p>;
 
   return (
@@ -86,7 +113,8 @@ const CreateModifyTask = () => {
         </div>
 
         <span className="folder__date">
-          {(createdAt && moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
+          {(createdAt &&
+            moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
             ""}
         </span>
         <h2 className="folder__name">
@@ -108,6 +136,8 @@ const CreateModifyTask = () => {
           ></span>
           <span>{(creator && creator.username) || "no creator"}</span>
         </p>
+
+        {group && <Group groupId={group} />}
 
         <Form onSubmit={handleSubmit}>
           <FormGroup>
@@ -140,7 +170,10 @@ const CreateModifyTask = () => {
                     : "green",
               }}
             >
-              <option style={{ backgroundColor: "red" }} value="New"></option>
+              <option
+                style={{ backgroundColor: "red" }}
+                value="New"
+              ></option>
               <option
                 style={{ backgroundColor: "yellow" }}
                 value="In progress"
