@@ -1,9 +1,10 @@
-import { useQuery } from "@apollo/client";
-import React from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import React, { useContext, useState } from "react";
 import Loading from "./Loading";
-import { GET_GROUP } from "../queries";
+import { GET_GROUP, UPDATE_GROUP } from "../queries";
 import styled from "styled-components";
 import { Button } from "./styled";
+import { AuthContext } from "../context/auth";
 
 const GroupContainer = styled.div`
   border: 2px solid ${(props) => `#${props.avatar}`};
@@ -36,30 +37,94 @@ const User = styled.div`
 `;
 
 const Group = ({ groupId }) => {
+  const {
+    user: { username: uname },
+  } = useContext(AuthContext);
+  const [edit, setEdit] = useState(false);
+  const [state, setState] = useState({});
+
   const { loading, error, data } = useQuery(GET_GROUP, {
     variables: { groupId },
+    refetchQueries: [GET_GROUP],
+    onCompleted({ getGroup }) {
+      const { users } = getGroup || {};
+      if (users) {
+        let u = {};
+        users.forEach((element) => {
+          u[element.username] = { checked: true, id: element.id };
+        });
+        setState({ ...state, ...u });
+      }
+    },
   });
+
+  const [updateGroup] = useMutation(UPDATE_GROUP);
+
   if (loading) return <Loading />;
   if (error) return <p>Error :( {JSON.stringify(error, null, 2)}</p>;
 
-  const { getGroup = undefined } = data;
-  const { users, avatar } = getGroup || {};
+  const handleChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.checked;
+
+    setState({ ...state, [name]: { ...state[name], checked: value } });
+  };
+
+  const { getGroup } = data;
+  const { users, avatar, creator } = getGroup || {};
+
   return (
     <>
       {getGroup ? (
         <GroupContainer avatar={avatar}>
-          <Users>
-            {users &&
-              users.map((user) => {
-                return (
-                  <User avatar={user.avatar}>
-                    <span></span>
-                    {user.username}
-                  </User>
-                );
-              })}
-          </Users>
-          <Button>a</Button>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+
+              const newUsers = Object.keys(state)
+                .map((a) => state[a].checked && state[a].id)
+                .filter((e) => e !== false);
+
+              console.log(newUsers);
+
+              updateGroup({
+                variables: { groupId, users: newUsers },
+              });
+            }}
+          >
+            <Users>
+              {users &&
+                users.map((user) => {
+                  const { id, username, avatar } = user;
+                  const show =
+                    edit &&
+                    username !== creator.username &&
+                    username !== uname;
+                  return (
+                    <User key={id} avatar={avatar}>
+                      <span></span>
+                      {username}
+                      {show && (
+                        <input
+                          type="checkbox"
+                          checked={state[username].checked}
+                          name={username}
+                          onChange={handleChange}
+                        />
+                      )}
+                    </User>
+                  );
+                })}
+            </Users>
+            <Button
+              onClick={() => {
+                setEdit(!edit);
+              }}
+              type={edit ? "button" : "submit"}
+            >
+              {edit ? "save" : "edit"}
+            </Button>
+          </form>
         </GroupContainer>
       ) : null}
     </>
