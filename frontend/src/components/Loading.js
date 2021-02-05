@@ -31,7 +31,7 @@ const Element1 = styled.div`
   ${gradient}
   width: 100%;
   height: 1.5rem;
-  border-radius: 0.25rem;
+  border-radius: 4px;
   margin-bottom: 0.5rem;
 `;
 

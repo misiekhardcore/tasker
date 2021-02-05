@@ -15,7 +15,7 @@ const BackButton = styled.button`
   margin-bottom: 0.5rem;
   padding: 0.3rem 0.5rem;
   border: none;
-  border-radius: 0.25rem;
+  border-radius: 4px;
   transition: all 0.2s ease-in-out;
 
   &:hover {

@@ -8,7 +8,7 @@ export const Button = styled.button`
   padding: 0.5rem 1rem;
   text-transform: capitalize;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 4px;
   color: white;
   background-color: ${(props) =>
     props.primary
@@ -79,7 +79,7 @@ export const Label = styled.label`
 const sharedInputTextarea = css`
   padding: 0.5rem 1rem;
   border: 2px solid #aaaaaa;
-  border-radius: 0.5rem;
+  border-radius: 4px;
   background-color: white;
   color: ${lighten(0.3, "black")};
   flex-grow: 1;
@@ -159,7 +159,7 @@ const statusColor = (status) => {
 export const ListItem = styled.li`
   padding: 0.2rem 0.5rem;
   width: 100%;
-  border-radius: 0.25rem;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   transition: all 0.2s ease-in-out;

@@ -7,7 +7,7 @@ const ErrorList = styled.ul`
   padding: 0.5rem;
   padding-left: 2rem;
   margin: 1rem 0;
-  border-radius: 0.5rem;
+  border-radius: 4px;
   color: #dd3131;
   font-size: 0.8rem;
   background-color: ${darken(0.05, "white")};

@@ -13,7 +13,7 @@ const FolderAddContainer = styled.div`
 
 const InputMod = styled(Input)`
   padding: 0.2rem 0.5rem;
-  border-radius: 0.25rem;
+  border-radius: 4px;
   border: none;
 `;
 

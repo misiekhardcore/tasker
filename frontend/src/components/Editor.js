@@ -6,7 +6,7 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 const EditorContainer = styled.div`
   color: black;
   padding: 0.5rem;
-  border-radius: 0.5rem;
+  border-radius: 4px;
   border: solid 2px #aaa;
   background-color: white;
 
