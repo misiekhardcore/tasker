@@ -23,26 +23,29 @@ module.exports = {
 
       return await Group.findById(groupId)
         .populate("creator")
-        .populate("users");
+        .populate("users")
+        .populate("parent");
     },
   },
   Mutation: {
     createGroup: async (_, { parent }, context) => {
       const { id, team } = authCheck(context);
       try {
-        const { users } = parent
+        const { users, _id } = parent
           ? await Group.findById((await Table.findById(parent)).group)
           : await Team.findById(team);
 
         const group = await Group.create({
           creator: id,
           avatar: randomChoice(),
+          parent: _id,
           users,
         });
 
         return await Group.findById(group._id)
           .populate("users")
-          .populate("creator");
+          .populate("creator")
+          .populate("parent");
       } catch (error) {
         console.log(error);
       }
@@ -58,7 +61,8 @@ module.exports = {
         { new: true, useFindAndModify: false }
       )
         .populate("users")
-        .populate("creator");
+        .populate("creator")
+        .populate("parent");
     },
   },
 };

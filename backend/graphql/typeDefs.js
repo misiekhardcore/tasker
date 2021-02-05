@@ -27,6 +27,7 @@ module.exports = gql`
   type Group {
     id: ID!
     creator: User!
+    parent: Group
     avatar: String!
     users: [User]!
   }
