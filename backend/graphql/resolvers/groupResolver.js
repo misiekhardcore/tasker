@@ -56,7 +56,9 @@ module.exports = {
         { _id: groupId },
         { $set: { users } },
         { new: true, useFindAndModify: false }
-      );
+      )
+        .populate("users")
+        .populate("creator");
     },
   },
 };
