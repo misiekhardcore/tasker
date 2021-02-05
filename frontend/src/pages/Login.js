@@ -33,10 +33,10 @@ function Login(props) {
       props.history.push("/");
     },
     onError(err) {
-      if (err.graphQLErrors[0].extensions.exception.errors) {
+      try {
         setErrors(err.graphQLErrors[0].extensions.exception.errors);
-      } else {
-        setErrors({ err: err.message });
+      } catch (e) {
+        setErrors({ err: err.message, e: e.message });
       }
     },
     variables: state,
@@ -44,10 +44,7 @@ function Login(props) {
 
   return (
     <FormContainer>
-      <Form
-        onSubmit={handleSubmit}
-        className={loading ? "loading" : ""}
-      >
+      <Form onSubmit={handleSubmit} className={loading ? "loading" : ""}>
         <h1>Login</h1>
         <FormGroup>
           <Label htmlFor="email">Email:</Label>
@@ -76,9 +73,7 @@ function Login(props) {
           submit
         </Button>
       </Form>
-      <LinkStyled to="/register">
-        You new here? Create an account!
-      </LinkStyled>
+      <LinkStyled to="/register">You new here? Create an account!</LinkStyled>
     </FormContainer>
   );
 }
