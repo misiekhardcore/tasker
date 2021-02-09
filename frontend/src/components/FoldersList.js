@@ -5,16 +5,12 @@ import { DELETE_FOLDER, GET_FOLDERS } from "../queries";
 import { Button, ListItem, UnorderedList } from "./styled";
 import { ListContext } from "../context/list";
 import Loading from "./Loading";
+import Errors from "./Errors";
 
 const FoldersList = ({ parent }) => {
-  const {
-    back,
-    column2,
-    setColumn2,
-    setTask,
-    setFolder,
-    setBack,
-  } = useContext(ListContext);
+  const { back, column2, setColumn2, setTask, setFolder, setBack } = useContext(
+    ListContext
+  );
 
   const { loading, error, data } = useQuery(GET_FOLDERS, {
     variables: {
@@ -29,7 +25,19 @@ const FoldersList = ({ parent }) => {
           getTables(existingTables = [], { DELETE }) {
             return DELETE;
           },
+          getGroup(existingGroup = [], { DELETE }) {
+            return { DELETE };
+          },
+          getTable(existinfTable = [], { DELETE }) {
+            return DELETE;
+          },
           getTasks(existingTasks = [], { DELETE }) {
+            return DELETE;
+          },
+          getTask(existingTask = [], { DELETE }) {
+            return DELETE;
+          },
+          getComments(existingComments = [], { DELETE }) {
             return DELETE;
           },
         },
@@ -64,7 +72,7 @@ const FoldersList = ({ parent }) => {
   }
 
   if (loading) return <Loading />;
-  if (error) return <p>Error :( {JSON.stringify(error, null, 2)}</p>;
+  if (error) return <Errors errors={error} />;
 
   const { getTables } = data;
 
@@ -81,10 +89,7 @@ const FoldersList = ({ parent }) => {
             >
               {table.name}
             </p>
-            <Button
-              transparent
-              onClick={() => handleDeleteFolder(table.id)}
-            >
+            <Button transparent onClick={() => handleDeleteFolder(table.id)}>
               <AiFillDelete />
             </Button>
           </ListItem>

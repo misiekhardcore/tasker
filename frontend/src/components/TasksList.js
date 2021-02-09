@@ -5,6 +5,7 @@ import { DELETE_TASK, GET_TASKS } from "../queries";
 import { Button, ListItem, UnorderedList } from "./styled";
 import { ListContext } from "../context/list";
 import Loading from "./Loading";
+import Errors from "./Errors";
 
 const TasksList = ({ parent }) => {
   const { setTask, setFolder } = useContext(ListContext);
@@ -20,6 +21,15 @@ const TasksList = ({ parent }) => {
       cache.modify({
         fields: {
           getTasks(existingTasks = [], { DELETE }) {
+            return DELETE;
+          },
+          getTask(existingTask = [], { DELETE }) {
+            return DELETE;
+          },
+          getGroup(existingGroup = [], { DELETE }) {
+            return DELETE;
+          },
+          getComments(existingComments = [], { DELETE }) {
             return DELETE;
           },
         },
@@ -43,7 +53,7 @@ const TasksList = ({ parent }) => {
   }
 
   if (loading) return <Loading />;
-  if (error) return <p>Error :( {JSON.stringify(error, null, 2)}</p>;
+  if (error) return <Errors errors={error} />;
 
   const { getTasks } = data;
 
@@ -51,17 +61,10 @@ const TasksList = ({ parent }) => {
     <UnorderedList>
       {getTasks &&
         getTasks.map((task) => (
-          <ListItem
-            status={task.status}
-            data-tooltip={task.name}
-            key={task.id}
-          >
+          <ListItem status={task.status} data-tooltip={task.name} key={task.id}>
             <AiFillSchedule />
             <p onClick={() => handleSetTask(task.id)}>{task.name}</p>
-            <Button
-              transparent
-              onClick={() => handleDeleteTask(task.id)}
-            >
+            <Button transparent onClick={() => handleDeleteTask(task.id)}>
               <AiFillDelete />
             </Button>
           </ListItem>
