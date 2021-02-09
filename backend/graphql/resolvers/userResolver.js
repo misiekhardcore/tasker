@@ -33,6 +33,7 @@ function generateToken(user) {
     {
       ...user,
       password: null,
+      key: null,
     },
     JWT_SECRET,
     { expiresIn: "8h" }
@@ -72,7 +73,13 @@ module.exports = {
       { username, email, password, confirmPassword, key }
     ) => {
       //validate inputs
-      validateRegisterInput(username, email, password, confirmPassword, key);
+      validateRegisterInput(
+        username,
+        email,
+        password,
+        confirmPassword,
+        key
+      );
 
       const matchLicence = await bcrypt.compare(username + email, key);
       if (!matchLicence) {
@@ -85,7 +92,12 @@ module.exports = {
       }
 
       //check if username is not already taken
-      await checkUser({ username }, "username", USERNAME_ALREADY_EXISTS, false);
+      await checkUser(
+        { username },
+        "username",
+        USERNAME_ALREADY_EXISTS,
+        false
+      );
 
       //check if email is not already taken
       await checkUser({ email }, "email", EMAIL_ALREADY_EXISTS, false);
