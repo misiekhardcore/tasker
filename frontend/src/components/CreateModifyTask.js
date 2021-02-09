@@ -5,14 +5,7 @@ import { GET_TASK, UPDATE_TASK } from "../queries";
 import moment from "moment";
 import "./CreateModify.scss";
 import Comments from "./Comments";
-import {
-  Button,
-  ButtonClose,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-} from "./styled";
+import { Button, ButtonClose, Form, FormGroup, Input, Label } from "./styled";
 import { ListContext } from "../context/list";
 import Errors from "./Errors";
 import Editor from "./Editor";
@@ -74,8 +67,8 @@ const CreateModifyTask = () => {
     },
     onError(err) {
       try {
-        const error = err.graphQLErrors[0].extensions.exception.errors;
-        setErrors({ error });
+        const errors = err.graphQLErrors[0].extensions.exception.errors;
+        setErrors(errors);
       } catch (error) {
         throw err;
       }
@@ -87,11 +80,15 @@ const CreateModifyTask = () => {
   }
 
   useEffect(() => {
-    setState({
-      name: name || "",
-      description: description || "",
-      status: status || "New",
-    });
+    let mounted = true;
+    if (mounted)
+      setState({
+        name: name || "",
+        description: description || "",
+        status: status || "New",
+      });
+
+    return () => (mounted = false);
   }, [name, description, status]);
 
   function handleSubmit(e) {
@@ -113,8 +110,7 @@ const CreateModifyTask = () => {
         </div>
 
         <span className="folder__date">
-          {(createdAt &&
-            moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
+          {(createdAt && moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
             ""}
         </span>
         <h2 className="folder__name">
@@ -137,7 +133,7 @@ const CreateModifyTask = () => {
           <span>{(creator && creator.username) || "no creator"}</span>
         </p>
 
-        {group && <Group groupId={group} />}
+        {group && <Group groupId={group.id} />}
 
         <Form onSubmit={handleSubmit}>
           <FormGroup>
@@ -170,10 +166,7 @@ const CreateModifyTask = () => {
                     : "green",
               }}
             >
-              <option
-                style={{ backgroundColor: "red" }}
-                value="New"
-              ></option>
+              <option style={{ backgroundColor: "red" }} value="New"></option>
               <option
                 style={{ backgroundColor: "yellow" }}
                 value="In progress"

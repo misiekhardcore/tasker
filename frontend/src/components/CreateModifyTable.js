@@ -4,14 +4,7 @@ import { AiFillFolder, AiOutlineCloseCircle } from "react-icons/ai";
 import { GET_FOLDER, UPDATE_FOLDER } from "../queries";
 import moment from "moment";
 import "./CreateModify.scss";
-import {
-  Button,
-  ButtonClose,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-} from "./styled";
+import { Button, ButtonClose, Form, FormGroup, Input, Label } from "./styled";
 import { ListContext } from "../context/list";
 import Errors from "./Errors";
 import Editor from "./Editor";
@@ -61,8 +54,8 @@ const CreateModifyTable = () => {
     },
     onError(err) {
       try {
-        const error = err.graphQLErrors[0].extensions.exception.errors;
-        setErrors({ error });
+        const errors = err.graphQLErrors[0].extensions.exception.errors;
+        setErrors(errors);
       } catch (error) {
         throw err;
       }
@@ -74,7 +67,10 @@ const CreateModifyTable = () => {
   }
 
   useEffect(() => {
-    setState({ name: name || "", description: description || "" });
+    let mounted = true;
+    if (mounted) setState({ name: name || "", description: description || "" });
+
+    return () => (mounted = false);
   }, [name, description]);
 
   function handleSubmit(e) {
@@ -119,11 +115,9 @@ const CreateModifyTable = () => {
                   backgroundColor: `#${creator && creator.avatar}`,
                 }}
               ></span>
-              <span>
-                {(creator && creator.username) || "no creator"}
-              </span>
+              <span>{(creator && creator.username) || "no creator"}</span>
             </p>
-            {table.group && <Group groupId={table.group} />}
+            {table.group && <Group groupId={table.group.id} />}
 
             <Form onSubmit={handleSubmit}>
               <FormGroup>
@@ -135,9 +129,7 @@ const CreateModifyTable = () => {
                   onChange={handleChange}
                   name="name"
                   type="text"
-                  className={
-                    errors.name || errors.general ? "error" : ""
-                  }
+                  className={errors.name || errors.general ? "error" : ""}
                 />
               </FormGroup>
               <FormGroup>
