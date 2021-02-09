@@ -15,6 +15,12 @@ import { AuthContext } from "../context/auth";
 const Register = (props) => {
   const context = useContext(AuthContext);
 
+  const { user } = context;
+
+  if (user) {
+    props.history.push("/");
+  }
+
   const [state, setState] = useState({
     username: "",
     email: "",
@@ -43,7 +49,7 @@ const Register = (props) => {
         setErrors(err.graphQLErrors[0].extensions.exception.errors);
       } else {
         setErrors({ err: err.message });
-        throw err
+        throw err;
       }
     },
     variables: state,
@@ -51,10 +57,7 @@ const Register = (props) => {
 
   return (
     <FormContainer>
-      <Form
-        onSubmit={handleSubmit}
-        className={loading ? "loading" : ""}
-      >
+      <Form onSubmit={handleSubmit} className={loading ? "loading" : ""}>
         <h1>Register</h1>
         <FormGroup>
           <Label htmlFor="email">Email:</Label>
@@ -94,9 +97,7 @@ const Register = (props) => {
           <Input
             name="confirmPassword"
             type="password"
-            className={
-              errors.confirmPassword || errors.general ? "error" : ""
-            }
+            className={errors.confirmPassword || errors.general ? "error" : ""}
             placeholder="Confirm password..."
             value={state.confirmPassword}
             onChange={handleChange}

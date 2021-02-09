@@ -1,5 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { useContext, useState } from "react";
+import { Redirect } from "react-router-dom";
 import Errors from "../components/Errors";
 import {
   Button,
@@ -14,6 +15,12 @@ import { AuthContext } from "../context/auth";
 
 function Login(props) {
   const context = useContext(AuthContext);
+
+  const { user } = context;
+
+  if (user) {
+    props.history.push("/");
+  }
 
   const [state, setState] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
