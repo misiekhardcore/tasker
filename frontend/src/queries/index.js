@@ -20,7 +20,9 @@ export const GET_FOLDER = gql`
     getTable(tableId: $tableId) {
       id
       name
-      group
+      group{
+        id
+      }
       description
       creator {
         username
@@ -56,6 +58,7 @@ export const UPDATE_FOLDER = gql`
       creator {
         username
         avatar
+        role
       }
       parent {
         id
@@ -84,6 +87,7 @@ export const ADD_FOLDER = gql`
       creator {
         username
         avatar
+        role
       }
       parent {
         id
@@ -100,10 +104,6 @@ export const GET_TASKS = gql`
       name
       description
       status
-      creator {
-        username
-        avatar
-      }
       parent {
         id
       }
@@ -118,11 +118,14 @@ export const GET_TASK = gql`
     getTask(taskId: $taskId) {
       id
       name
-      group
+      group{
+        id
+      }
       description
       creator {
         username
         avatar
+        role
       }
       parent {
         id
@@ -155,8 +158,8 @@ export const UPDATE_TASK = gql`
       description
       creator {
         username
-        id
         avatar
+        role
       }
       parent {
         id
@@ -178,6 +181,7 @@ export const ADD_TASK = gql`
       creator {
         username
         avatar
+        role
       }
       parent {
         id
