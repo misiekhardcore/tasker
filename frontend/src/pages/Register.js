@@ -1,5 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { useContext, useState } from "react";
+import { Redirect } from "react-router-dom";
 import Errors from "../components/Errors";
 import {
   Button,
@@ -16,10 +17,6 @@ const Register = (props) => {
   const context = useContext(AuthContext);
 
   const { user } = context;
-
-  if (user) {
-    props.history.push("/");
-  }
 
   const [state, setState] = useState({
     username: "",
@@ -55,9 +52,14 @@ const Register = (props) => {
     variables: state,
   });
 
+  if (user) return <Redirect to="/" />;
+
   return (
     <FormContainer>
-      <Form onSubmit={handleSubmit} className={loading ? "loading" : ""}>
+      <Form
+        onSubmit={handleSubmit}
+        className={loading ? "loading" : ""}
+      >
         <h1>Register</h1>
         <FormGroup>
           <Label htmlFor="email">Email:</Label>
@@ -97,7 +99,9 @@ const Register = (props) => {
           <Input
             name="confirmPassword"
             type="password"
-            className={errors.confirmPassword || errors.general ? "error" : ""}
+            className={
+              errors.confirmPassword || errors.general ? "error" : ""
+            }
             placeholder="Confirm password..."
             value={state.confirmPassword}
             onChange={handleChange}

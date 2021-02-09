@@ -18,26 +18,12 @@ function Login(props) {
 
   const { user } = context;
 
-  if (user) {
-    props.history.push("/");
-  }
-
   const [state, setState] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
-
-  function handleChange(e) {
-    setState({ ...state, [e.target.name]: e.target.value });
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    login();
-  }
 
   const [login, { loading }] = useMutation(LOGIN, {
     update(_, { data: { login } }) {
       context.login(login);
-      props.history.push("/");
     },
     onError(err) {
       try {
@@ -49,9 +35,23 @@ function Login(props) {
     variables: state,
   });
 
+  function handleChange(e) {
+    setState({ ...state, [e.target.name]: e.target.value });
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    await login();
+  }
+
+  if (user) return <Redirect to="/" />;
+
   return (
     <FormContainer>
-      <Form onSubmit={handleSubmit} className={loading ? "loading" : ""}>
+      <Form
+        onSubmit={handleSubmit}
+        className={loading ? "loading" : ""}
+      >
         <h1>Login</h1>
         <FormGroup>
           <Label htmlFor="email">Email:</Label>
@@ -80,7 +80,9 @@ function Login(props) {
           submit
         </Button>
       </Form>
-      <LinkStyled to="/register">You new here? Create an account!</LinkStyled>
+      <LinkStyled to="/register">
+        You new here? Create an account!
+      </LinkStyled>
     </FormContainer>
   );
 }
@@ -94,7 +96,7 @@ const LOGIN = gql`
         email
         role
         avatar
-        team{
+        team {
           id
         }
       }
