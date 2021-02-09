@@ -142,10 +142,12 @@ const REGISTER = gql`
       user {
         id
         username
-        role
-        createdAt
-        updatedAt
         email
+        role
+        avatar
+        team {
+          id
+        }
       }
       token
     }

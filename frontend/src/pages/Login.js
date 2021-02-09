@@ -94,7 +94,9 @@ const LOGIN = gql`
         email
         role
         avatar
-        team
+        team{
+          id
+        }
       }
       token
     }
