@@ -7,7 +7,7 @@ module.exports = gql`
     email: String!
     role: String!
     avatar: String!
-    team: ID!
+    team: Team!
     createdAt: String!
     updatedAt: String!
   }
@@ -38,7 +38,7 @@ module.exports = gql`
     description: String
     creator: User!
     parent: Table
-    group: ID!
+    group: Group!
     createdAt: String!
     updatedAt: String!
   }
@@ -48,10 +48,10 @@ module.exports = gql`
     name: String!
     description: String
     creator: User!
-    parent: Table
+    parent: Table!
     status: String!
     comments: [Comment]!
-    group: ID
+    group: Group!
     createdAt: String!
     updatedAt: String!
   }
@@ -60,7 +60,7 @@ module.exports = gql`
     id: ID!
     body: String!
     creator: User!
-    parent: ID!
+    parent: Task!
     createdAt: String!
     updatedAt: String!
   }
@@ -71,12 +71,6 @@ module.exports = gql`
     confirmPassword: String!
     email: String!
     key: String!
-  }
-
-  input TableInput {
-    name: String!
-    description: String
-    parent: ID
   }
 
   type Query {
@@ -90,8 +84,8 @@ module.exports = gql`
     getComment(commentId: ID!): Comment
 
     getTeam(teamId: ID!): Team
-    getGroups(userId: ID): Group
-    getGroup(groupId: ID): Group
+    getGroups(userId: ID!): Group
+    getGroup(groupId: ID!): Group
   }
 
   type Mutation {
@@ -104,34 +98,34 @@ module.exports = gql`
       key: String!
     ): AuthPayload!
 
-    createTable(parent: ID, name: String!, description: String): Table
+    createTable(parent: ID, name: String!, description: String): Table!
     updateTable(
       tableId: ID!
       name: String!
       description: String
       parent: ID
     ): Table
-    deleteTable(tableId: ID!): Boolean
+    deleteTable(tableId: ID!): Boolean!
 
     createTask(
       parent: ID!
       name: String!
       description: String
       status: String
-    ): Task
+    ): Task!
     updateTask(
       taskId: ID!
       name: String!
       description: String
-      parent: ID
+      parent: ID!
       status: String
-    ): Task
-    deleteTask(taskId: ID!): Boolean
+    ): Task!
+    deleteTask(taskId: ID!): Boolean!
 
-    createComment(parent: ID!, body: String!): Comment
-    deleteComment(commentId: ID!): Boolean
+    createComment(parent: ID!, body: String!): Comment!
+    deleteComment(commentId: ID!): Boolean!
 
-    createGroup(users: [ID!]!): Group
-    updateGroup(groupId: ID!, users: [ID!]!): Group
+    createGroup(users: [ID!]!): Group!
+    updateGroup(groupId: ID!, users: [ID!]!): Group!
   }
 `;
