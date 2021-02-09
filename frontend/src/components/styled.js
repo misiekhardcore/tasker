@@ -3,6 +3,9 @@ import { adjustHue, darken, lighten, linearGradient } from "polished";
 import { Link } from "react-router-dom";
 
 export const Button = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 1rem;
   text-align: center;
   padding: 0.5rem 1rem;
@@ -108,6 +111,7 @@ export const Form = styled.form`
   justify-content: center;
   align-items: center;
   max-width: 100%;
+  width: 100%;
 `;
 
 export const FormContainer = styled.div`
@@ -168,8 +172,7 @@ export const ListItem = styled.li`
       ? linearGradient({
           colorStops: [
             statusColor(props.status),
-            (adjustHue(10, props.theme.primary) || "transparent") +
-              " 20%",
+            (adjustHue(10, props.theme.primary) || "transparent") + " 20%",
           ],
           toDirection: "to right",
         })
