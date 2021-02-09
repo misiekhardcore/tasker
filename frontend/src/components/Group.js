@@ -5,6 +5,7 @@ import { GET_GROUP, UPDATE_GROUP } from "../queries";
 import { Button } from "./styled";
 import { AuthContext } from "../context/auth";
 import styled from "styled-components";
+import Errors from "./Errors";
 
 const GroupContainer = styled.div`
   border: 2px solid ${(props) => `#${props.avatar}`};
@@ -113,30 +114,34 @@ const Group = ({ groupId }) => {
   const [state, setState] = useState([]);
   const [users2, setUsers2] = useState([]);
 
+  function mapUserToCheckbox(users) {
+    if (users) {
+      let u = {};
+      users.forEach((element) => {
+        u[element.username] = { checked: true, id: element.id };
+      });
+      setState(u);
+      setUsers2(users);
+    }
+  }
+
   const { loading, error, data } = useQuery(GET_GROUP, {
     variables: { groupId },
-    refetchQueries: [GET_GROUP],
     onCompleted({ getGroup }) {
       const { users } = getGroup || {};
-      if (users) {
-        let u = {};
-        users.forEach((element) => {
-          u[element.username] = { checked: true, id: element.id };
-        });
-        setState({ ...state, ...u });
-        setUsers2(users);
-      }
+      mapUserToCheckbox(users);
     },
   });
 
-  const [updateGroup] = useMutation(UPDATE_GROUP, {
-    onCompleted({ updateGroup: { users } }) {
-      setUsers2(users);
+  const [update] = useMutation(UPDATE_GROUP, {
+    onCompleted({ updateGroup }) {
+      const { users } = updateGroup;
+      mapUserToCheckbox(users);
     },
   });
 
   if (loading) return <Loading />;
-  if (error) return <p>Error :( {JSON.stringify(error, null, 2)}</p>;
+  if (error) return <Errors errors={error} />;
 
   const handleChange = (e) => {
     const name = e.target.name;
@@ -145,6 +150,18 @@ const Group = ({ groupId }) => {
     setState({ ...state, [name]: { ...state[name], checked: value } });
   };
 
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    const newUsers = Object.keys(state)
+      .map((user) => state[user].checked && state[user].id)
+      .filter((e) => e !== false);
+
+    update({
+      variables: { groupId, users: newUsers },
+    });
+  }
+
   const { getGroup } = data;
   const { avatar, creator } = getGroup || {};
 
@@ -152,19 +169,7 @@ const Group = ({ groupId }) => {
     <>
       {getGroup ? (
         <GroupContainer avatar={avatar}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-
-              const newUsers = Object.keys(state)
-                .map((a) => state[a].checked && state[a].id)
-                .filter((e) => e !== false);
-
-              updateGroup({
-                variables: { groupId, users: newUsers },
-              });
-            }}
-          >
+          <form onSubmit={handleSubmit}>
             <Users open={edit}>
               {users2 && (
                 <>
