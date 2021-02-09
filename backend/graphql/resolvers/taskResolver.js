@@ -1,8 +1,5 @@
 const Task = require("../../models/Task");
-const {
-  TASK_TITLE_EMPTY,
-  TASK_DELETE_ERROR,
-} = require("../../messages");
+const { TASK_TITLE_EMPTY, TASK_DELETE_ERROR } = require("../../messages");
 
 const authCheck = require("../utils/authCheck");
 const { checkId } = require("../utils/validators");
@@ -13,21 +10,34 @@ const { deleteSubcomments, deleteSubgroup } = require("./helpers");
 const {
   Mutation: { createGroup },
 } = require("./groupResolver");
+const User = require("../../models/User");
+const Table = require("../../models/Table");
+const Group = require("../../models/Group");
 
 const errors = {};
 
 module.exports = {
+  Task: {
+    creator: async function (parent) {
+      return await User.findById(parent.creator);
+    },
+    parent: async function (parent) {
+      return await Table.findById(parent.parent);
+    },
+    comments: async function (parent) {
+      return await Comment.find({ _id: { $in: parent.comments } });
+    },
+    group: async function (parent) {
+      return await Group.findById(parent.group);
+    },
+  },
   Query: {
     getTasks: async (_, { parent }, context) => {
       const { id } = authCheck(context);
 
       checkId(parent);
 
-      const tasks = await Task.find({ parent })
-        .populate("creator")
-        .populate("parent");
-
-      return tasks;
+      return await Task.find({ parent });
     },
     getTask: async (_, { taskId }, context) => {
       //check if user sent auth token and it is valid
@@ -36,20 +46,11 @@ module.exports = {
       checkId(taskId);
 
       //check if task exists
-      const task = await Task.findById(taskId)
-        .populate("creator")
-        .populate("parent")
-        .populate("comments");
-
-      return task;
+      return await Task.findById(taskId);
     },
   },
   Mutation: {
-    createTask: async (
-      _,
-      { parent, name, description, status },
-      context
-    ) => {
+    createTask: async (_, { parent, name, description, status }, context) => {
       //check if user sent auth token and it is valid
       const { id } = authCheck(context);
 
@@ -86,9 +87,7 @@ module.exports = {
           comments: [],
         });
 
-        return await Task.findById(task._id)
-          .populate("creator")
-          .populate("parent");
+        return await Task.findById(task._id);
       } catch (error) {
         console.log(error);
       }
@@ -116,9 +115,7 @@ module.exports = {
           $set: { name, description, status, parent },
         },
         { new: true, useFindAndModify: false }
-      )
-        .populate("creator")
-        .populate("parent");
+      );
     },
     deleteTask: async (_, { taskId }, context) => {
       authCheck(context);

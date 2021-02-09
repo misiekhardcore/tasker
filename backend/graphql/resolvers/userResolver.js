@@ -18,13 +18,11 @@ const {
   validateLoginInput,
   checkPassword,
   checkUser,
-  checkId,
 } = require("../utils/validators");
 
 //get User model
 const User = require("../../models/User");
 const Team = require("../../models/Team");
-const Table = require("../../models/Table");
 
 //JWT secret
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -44,6 +42,11 @@ function generateToken(user) {
 const errors = {};
 
 module.exports = {
+  User: {
+    team: async function (parent) {
+      return await Team.findById(parent.team);
+    },
+  },
   Mutation: {
     login: async (_, { email, password }) => {
       //validate inputs
@@ -69,13 +72,7 @@ module.exports = {
       { username, email, password, confirmPassword, key }
     ) => {
       //validate inputs
-      validateRegisterInput(
-        username,
-        email,
-        password,
-        confirmPassword,
-        key
-      );
+      validateRegisterInput(username, email, password, confirmPassword, key);
 
       const matchLicence = await bcrypt.compare(username + email, key);
       if (!matchLicence) {
@@ -88,12 +85,7 @@ module.exports = {
       }
 
       //check if username is not already taken
-      await checkUser(
-        { username },
-        "username",
-        USERNAME_ALREADY_EXISTS,
-        false
-      );
+      await checkUser({ username }, "username", USERNAME_ALREADY_EXISTS, false);
 
       //check if email is not already taken
       await checkUser({ email }, "email", EMAIL_ALREADY_EXISTS, false);

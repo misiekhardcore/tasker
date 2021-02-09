@@ -1,8 +1,5 @@
 const Table = require("../../models/Table");
-const {
-  TABLE_TITLE_EMPTY,
-  TABLE_DELETE_ERROR,
-} = require("../../messages");
+const { TABLE_TITLE_EMPTY, TABLE_DELETE_ERROR } = require("../../messages");
 
 const authCheck = require("../utils/authCheck");
 const { checkId } = require("../utils/validators");
@@ -13,10 +10,23 @@ const { deleteSubtables, deleteSubgroup } = require("./helpers");
 const {
   Mutation: { createGroup },
 } = require("./groupResolver");
+const User = require("../../models/User");
+const Group = require("../../models/Group");
 
 const errors = {};
 
 module.exports = {
+  Table: {
+    creator: async function (parent) {
+      return await User.findById(parent.creator._id);
+    },
+    parent: async function (parent) {
+      return parent.parent ? await Table.findById(parent.parent) : null;
+    },
+    group: async function (parent) {
+      return await Group.findById(parent.group);
+    },
+  },
   Query: {
     getTables: async (_, { parent }, context) => {
       //check if user sent auth token and it is valid
@@ -26,16 +36,12 @@ module.exports = {
 
         const table = await Table.find({
           parent,
-        })
-          .populate("creator")
-          .populate("parent");
+        });
 
         return table;
       }
 
-      return await Table.find({ parent: null })
-        .populate("creator")
-        .populate("parent");
+      return await Table.find({ parent: null });
     },
     getTable: async (_, { tableId }, context) => {
       //check if user sent auth token and it is valid
@@ -44,9 +50,7 @@ module.exports = {
       //check ids
       checkId(tableId);
 
-      return await Table.findById(tableId)
-        .populate("creator")
-        .populate("parent");
+      return await Table.findById(tableId);
     },
   },
   Mutation: {
@@ -86,20 +90,14 @@ module.exports = {
           parent: parent || undefined,
           group: group._id,
         });
-        return await Table.findById(table.id)
-          .populate("creator")
-          .populate("parent");
+        return await Table.findById(table.id);
       } catch (error) {
         console.log(error);
       }
 
       //prepare data to send query
     },
-    updateTable: async (
-      _,
-      { tableId, name, description, parent },
-      context
-    ) => {
+    updateTable: async (_, { tableId, name, description, parent }, context) => {
       const { id } = authCheck(context);
 
       checkId(tableId);
@@ -116,9 +114,7 @@ module.exports = {
         },
         { $set: { name, description, parent } },
         { new: true, useFindAndModify: false }
-      )
-        .populate("creator")
-        .populate("parent");
+      );
     },
     deleteTable: async (_, { tableId }, context) => {
       authCheck(context);
