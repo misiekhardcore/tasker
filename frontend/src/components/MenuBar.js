@@ -23,6 +23,7 @@ const Logo = styled(Link)`
   font-style: italic;
   font-size: 2rem;
   color: white;
+  transition: all 0.2s cubic-bezier(0, -5, 0, 5);
 
   &:hover {
     transform: scale(1.05) rotate(5deg);
