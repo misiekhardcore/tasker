@@ -5,6 +5,9 @@ export const GET_FOLDERS = gql`
     getTables(parent: $parent) {
       id
       name
+      group {
+        id
+      }
       parent {
         id
         name
@@ -20,7 +23,7 @@ export const GET_FOLDER = gql`
     getTable(tableId: $tableId) {
       id
       name
-      group{
+      group {
         id
       }
       description
@@ -71,16 +74,8 @@ export const UPDATE_FOLDER = gql`
 `;
 
 export const ADD_FOLDER = gql`
-  mutation createTable(
-    $name: String!
-    $description: String
-    $parent: ID
-  ) {
-    createTable(
-      name: $name
-      description: $description
-      parent: $parent
-    ) {
+  mutation createTable($name: String!, $description: String, $parent: ID) {
+    createTable(name: $name, description: $description, parent: $parent) {
       id
       name
       description
@@ -104,6 +99,9 @@ export const GET_TASKS = gql`
       name
       description
       status
+      group {
+        id
+      }
       parent {
         id
       }
@@ -118,7 +116,7 @@ export const GET_TASK = gql`
     getTask(taskId: $taskId) {
       id
       name
-      group{
+      group {
         id
       }
       description
