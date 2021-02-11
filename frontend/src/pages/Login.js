@@ -2,6 +2,7 @@ import { gql, useMutation } from "@apollo/client";
 import { useContext, useState } from "react";
 import { Redirect } from "react-router-dom";
 import Errors from "../components/Errors";
+import Loading from "../components/Loading";
 import {
   Button,
   Form,
@@ -13,7 +14,7 @@ import {
 } from "../components/styled";
 import { AuthContext } from "../context/auth";
 
-function Login(props) {
+function Login() {
   const context = useContext(AuthContext);
 
   const { user } = context;
@@ -22,15 +23,17 @@ function Login(props) {
   const [errors, setErrors] = useState({});
 
   const [login, { loading }] = useMutation(LOGIN, {
-    update(_, { data: { login } }) {
+    update(cache, { data: { login } }) {
+      //clear cache on login, to prevent new user from viewing
+      //previous user data
+      Object.keys(cache.data.data).forEach((key) => {
+        cache.data.delete(key);
+      });
       context.login(login);
     },
     onError(err) {
-      try {
-        setErrors(err.graphQLErrors[0].extensions.exception.errors);
-      } catch (e) {
-        setErrors({ err: err.message, e: e.message });
-      }
+      const errors = err.graphQLErrors[0]?.extensions?.exception?.errors;
+      setErrors(errors || err);
     },
     variables: state,
   });
@@ -47,43 +50,41 @@ function Login(props) {
   if (user) return <Redirect to="/" />;
 
   return (
-    <FormContainer>
-      <Form
-        onSubmit={handleSubmit}
-        className={loading ? "loading" : ""}
-      >
-        <h1>Login</h1>
-        <FormGroup>
-          <Label htmlFor="email">Email:</Label>
-          <Input
-            name="email"
-            type="email"
-            className={errors.email || errors.general ? "error" : ""}
-            placeholder="Enter your email..."
-            value={state.email}
-            onChange={handleChange}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="password">Password:</Label>
-          <Input
-            name="password"
-            type="password"
-            className={errors.password || errors.general ? "error" : ""}
-            placeholder="Enter your password..."
-            value={state.password}
-            onChange={handleChange}
-          />
-        </FormGroup>
-        <Errors errors={errors} />
-        <Button block primary type="submit">
-          submit
-        </Button>
-      </Form>
-      <LinkStyled to="/register">
-        You new here? Create an account!
-      </LinkStyled>
-    </FormContainer>
+    <>
+      {loading && <Loading block />}
+      <FormContainer>
+        <Form onSubmit={handleSubmit}>
+          <h1>Login</h1>
+          <FormGroup>
+            <Label htmlFor="email">Email:</Label>
+            <Input
+              name="email"
+              type="email"
+              className={errors.email || errors.general ? "error" : ""}
+              placeholder="Enter your email..."
+              value={state.email}
+              onChange={handleChange}
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="password">Password:</Label>
+            <Input
+              name="password"
+              type="password"
+              className={errors.password || errors.general ? "error" : ""}
+              placeholder="Enter your password..."
+              value={state.password}
+              onChange={handleChange}
+            />
+          </FormGroup>
+          <Errors errors={errors} />
+          <Button block primary type="submit">
+            submit
+          </Button>
+        </Form>
+        <LinkStyled to="/register">You new here? Create an account!</LinkStyled>
+      </FormContainer>
+    </>
   );
 }
 
