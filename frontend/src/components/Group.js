@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import React, { useContext, useState } from "react";
 import Loading from "./Loading";
 import { GET_GROUP, UPDATE_GROUP } from "../queries";
@@ -6,35 +6,6 @@ import { Button } from "./styled";
 import { AuthContext } from "../context/auth";
 import styled from "styled-components";
 import Errors from "./Errors";
-
-const getGroupInfo = gql`
-  query getGroup($tableId: ID!) {
-    getTable(tableId: $tableId) {
-      group {
-        users {
-          id
-          username
-        }
-      }
-      creator {
-        team {
-          users {
-            username
-            id
-          }
-        }
-      }
-      parent {
-        group {
-          users {
-            id
-            username
-          }
-        }
-      }
-    }
-  }
-`;
 
 const GroupContainer = styled.div`
   border: 2px solid ${(props) => `#${props.avatar}`};
