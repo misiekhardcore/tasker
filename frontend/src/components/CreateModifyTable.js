@@ -30,12 +30,8 @@ const CreateModifyTable = () => {
       setErrors({});
     },
     onError(err) {
-      try {
-        const error = err.graphQLErrors[0].extensions.exception.errors;
-        setErrors({ error });
-      } catch (error) {
-        throw err;
-      }
+      const error = err.graphQLErrors[0]?.extensions?.exception?.errors;
+      setErrors(error || err);
     },
   });
 
@@ -53,12 +49,8 @@ const CreateModifyTable = () => {
       setErrors({});
     },
     onError(err) {
-      try {
-        const errors = err.graphQLErrors[0].extensions.exception.errors;
-        setErrors(errors);
-      } catch (error) {
-        throw err;
-      }
+      const errors = err.graphQLErrors[0]?.extensions?.exception?.errors;
+      setErrors(errors || err);
     },
   });
 

@@ -32,12 +32,8 @@ const CreateModifyTask = () => {
       setErrors({});
     },
     onError(err) {
-      try {
-        const error = err.graphQLErrors[0].extensions.exception.errors;
-        setErrors({ error });
-      } catch (error) {
-        throw err;
-      }
+      const errors = err.graphQLErrors[0]?.extensions?.exception?.errors;
+      setErrors(errors || err);
     },
   });
 
@@ -66,12 +62,8 @@ const CreateModifyTask = () => {
       setErrors({});
     },
     onError(err) {
-      try {
-        const errors = err.graphQLErrors[0].extensions.exception.errors;
-        setErrors(errors);
-      } catch (error) {
-        throw err;
-      }
+      const errors = err.graphQLErrors[0]?.extensions?.exception?.errors;
+      setErrors(errors || err);
     },
   });
 
