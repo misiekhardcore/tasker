@@ -13,6 +13,7 @@ import {
   LinkStyled,
 } from "../components/styled";
 import { AuthContext } from "../context/auth";
+import { errorHandler } from "../utils/helpers";
 
 function Login() {
   const context = useContext(AuthContext);
@@ -32,8 +33,7 @@ function Login() {
       context.login(login);
     },
     onError(err) {
-      const errors = err.graphQLErrors[0]?.extensions?.exception?.errors;
-      setErrors(errors || err);
+      errorHandler(err, setErrors);
     },
     variables: state,
   });
@@ -71,7 +71,9 @@ function Login() {
             <Input
               name="password"
               type="password"
-              className={errors.password || errors.general ? "error" : ""}
+              className={
+                errors?.password || errors?.general ? "error" : ""
+              }
               placeholder="Enter your password..."
               value={state.password}
               onChange={handleChange}
@@ -82,7 +84,9 @@ function Login() {
             submit
           </Button>
         </Form>
-        <LinkStyled to="/register">You new here? Create an account!</LinkStyled>
+        <LinkStyled to="/register">
+          You new here? Create an account!
+        </LinkStyled>
       </FormContainer>
     </>
   );
