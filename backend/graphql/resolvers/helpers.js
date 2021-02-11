@@ -30,9 +30,15 @@ async function deleteSubgroup(id) {
   await Group.deleteOne({ _id: id });
 }
 
+async function getGroups(userId) {
+  const groups = await Group.find({ users: userId });
+  return groups.map((group) => group._id);
+}
+
 module.exports = {
   deleteSubtables,
   deleteSubtasks,
   deleteSubcomments,
   deleteSubgroup,
+  getGroups,
 };
