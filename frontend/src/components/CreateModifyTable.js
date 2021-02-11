@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useContext, useEffect, useState } from "react";
 import { AiFillFolder, AiOutlineCloseCircle } from "react-icons/ai";
 import { GET_FOLDER, UPDATE_FOLDER } from "../queries";
@@ -11,6 +11,37 @@ import Editor from "./Editor";
 import Loading from "./Loading";
 import Group from "./Group";
 
+const getGroupInfo = gql`
+  query getGroup($tableId: ID!) {
+    getTable(tableId: $tableId) {
+      id
+      name
+      description
+      group {
+        id
+      }
+      creator {
+        id
+        username
+        role
+        avatar
+        team {
+          id
+        }
+      }
+      parent {
+        id
+        name
+        group {
+          id
+        }
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 const CreateModifyTable = () => {
   const { folder, setFolder } = useContext(ListContext);
   const [table, setTable] = useState({});
@@ -22,7 +53,7 @@ const CreateModifyTable = () => {
   });
 
   //get folder info
-  const { loading, error } = useQuery(GET_FOLDER, {
+  const { loading, error } = useQuery(getGroupInfo, {
     variables: { tableId: folder },
     onCompleted({ getTable }) {
       setTable(getTable);
@@ -109,7 +140,13 @@ const CreateModifyTable = () => {
               ></span>
               <span>{(creator && creator.username) || "no creator"}</span>
             </p>
-            {table.group && <Group groupId={table.group.id} />}
+            {table.group && (
+              <Group
+                groupId={table.group.id}
+                childGroup={table.group.id}
+                parentGroup={table.parent?.group.id || table.creator.team.id}
+              />
+            )}
 
             <Form onSubmit={handleSubmit}>
               <FormGroup>
