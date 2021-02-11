@@ -5,7 +5,7 @@ const authCheck = require("../utils/authCheck");
 const { checkId } = require("../utils/validators");
 
 const { UserInputError } = require("apollo-server");
-const { deleteSubtables, deleteSubgroup } = require("./helpers");
+const { deleteSubtables, deleteSubgroup, getGroups } = require("./helpers");
 
 const {
   Mutation: { createGroup },
@@ -31,26 +31,34 @@ module.exports = {
     getTables: async (_, { parent }, context) => {
       //check if user sent auth token and it is valid
       const { id } = authCheck(context);
+
+      //get list of group IDs which you belong to
+      const groups = await getGroups(id);
+
       if (parent) {
         checkId(parent);
 
         const table = await Table.find({
           parent,
+          group: { $in: groups },
         });
 
         return table;
       }
 
-      return await Table.find({ parent: null });
+      return await Table.find({ parent: null, group: { $in: groups } });
     },
     getTable: async (_, { tableId }, context) => {
       //check if user sent auth token and it is valid
       const { id } = authCheck(context);
 
+      //get list of group IDs which you belong to
+      const groups = await getGroups(id);
+
       //check ids
       checkId(tableId);
 
-      return await Table.findById(tableId);
+      return await Table.findOne({ _id: tableId, group: { $in: groups } });
     },
   },
   Mutation: {

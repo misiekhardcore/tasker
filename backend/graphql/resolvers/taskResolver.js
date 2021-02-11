@@ -5,7 +5,7 @@ const authCheck = require("../utils/authCheck");
 const { checkId } = require("../utils/validators");
 
 const { UserInputError } = require("apollo-server");
-const { deleteSubcomments, deleteSubgroup } = require("./helpers");
+const { deleteSubcomments, deleteSubgroup, getGroups } = require("./helpers");
 
 const {
   Mutation: { createGroup },
@@ -37,7 +37,10 @@ module.exports = {
 
       checkId(parent);
 
-      return await Task.find({ parent });
+      //get list of group IDs which you belong to
+      const groups = await getGroups(id);
+
+      return await Task.find({ parent, group: { $in: groups } });
     },
     getTask: async (_, { taskId }, context) => {
       //check if user sent auth token and it is valid
@@ -45,8 +48,11 @@ module.exports = {
 
       checkId(taskId);
 
+      //get list of group IDs which you belong to
+      const groups = await getGroups(id);
+
       //check if task exists
-      return await Task.findById(taskId);
+      return await Task.findOne({ _id: taskId, group: { $in: groups } });
     },
   },
   Mutation: {
