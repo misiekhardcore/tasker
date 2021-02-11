@@ -22,8 +22,8 @@ const Errors = ({ errors }) => {
   if (errors && Object.keys(errors).length > 0)
     return (
       <ErrorList>
-        {Object.values(errors).map((error) => (
-          <ListItem key={error}>{error}</ListItem>
+        {Object.values(errors).map((error, index) => (
+          <ListItem key={index}>{error}</ListItem>
         ))}
       </ErrorList>
     );
