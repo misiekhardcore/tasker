@@ -1,5 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components";
+import { BiLoaderAlt } from "react-icons/bi";
 
 const gradient = css`
   animation-duration: 2s;
@@ -26,7 +27,38 @@ const gradient = css`
   }
 `;
 
-const LoadingContainer = styled.div``;
+const spin = css`
+  animation-name: spin;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+const LoadingContainer = styled.div`
+  position: ${(props) => (props.block ? "absolute" : "relative")};
+  ${(props) =>
+    props.block &&
+    `
+right: 0;
+top: 0;
+left: 0;
+bottom: 0;
+background: rgba(0,0,0,0.4);
+z-index: 2;
+display: flex;
+justify-content: center;
+align-items: center;`};
+`;
+
 const Element1 = styled.div`
   ${gradient}
   width: 100%;
@@ -39,12 +71,28 @@ const Element2 = styled(Element1)`
   width: 80%;
 `;
 
-const Loading = ({ type = "list" }) => {
+const SpinIcon = styled(BiLoaderAlt)`
+  font-size: 10rem;
+  color: white;
+  ${spin}
+`;
+
+const Spiner = () => {
+  return <SpinIcon />;
+};
+
+const Loading = ({ block = false }) => {
   return (
-    <LoadingContainer>
-      <Element1 />
-      <Element2 />
-      <Element1 />
+    <LoadingContainer block={block}>
+      {block ? (
+        <Spiner />
+      ) : (
+        <>
+          <Element1 />
+          <Element2 />
+          <Element1 />
+        </>
+      )}
     </LoadingContainer>
   );
 };
