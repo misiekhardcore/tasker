@@ -107,10 +107,19 @@ const Checkbox = styled.label`
 `;
 
 const Group = ({ groupId, parentGroup, childGroup }) => {
+  //for debugging purpose
+  // console.log("parent:", parentGroup);
+  // console.log("child:", childGroup);
+
+  //get username from AuthContext, it's used to prevent user from
+  //deleting himself from group
   const {
     user: { username: uname },
   } = useContext(AuthContext);
+
+  //toggle group edit
   const [edit, setEdit] = useState(false);
+
   const [state, setState] = useState([]);
   const [users2, setUsers2] = useState([]);
 
@@ -178,12 +187,11 @@ const Group = ({ groupId, parentGroup, childGroup }) => {
     });
   }
 
-  const { getGroup } = dataChild;
-  const { avatar, creator } = getGroup || {};
+  const { avatar, creator } = dataChild?.getGroup || {};
 
   return (
     <>
-      {getGroup ? (
+      {dataChild ? (
         <GroupContainer avatar={avatar}>
           <form onSubmit={handleSubmit}>
             <Users open={edit}>
