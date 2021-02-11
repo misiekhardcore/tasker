@@ -38,7 +38,7 @@ const Register = (props) => {
   }
 
   const [register, { loading }] = useMutation(REGISTER, {
-    update(_, { data: { register } }) {
+    update(cache, { data: { register } }) {
       //clear cache on login, to prevent new user from viewing
       //previous user data
       Object.keys(cache.data.data).forEach((key) => {
