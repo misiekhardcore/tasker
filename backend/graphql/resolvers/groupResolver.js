@@ -31,7 +31,7 @@ module.exports = {
 
       checkId(groupId);
 
-      return await Group.findById(groupId);
+      return await Group.findById(groupId) || await Team.findById(groupId);
     },
   },
   Mutation: {
