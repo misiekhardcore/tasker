@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useContext, useState } from "react";
 import Loading from "./Loading";
 import { GET_GROUP, UPDATE_GROUP } from "../queries";
@@ -6,6 +6,35 @@ import { Button } from "./styled";
 import { AuthContext } from "../context/auth";
 import styled from "styled-components";
 import Errors from "./Errors";
+
+const getGroupInfo = gql`
+  query getGroup($tableId: ID!) {
+    getTable(tableId: $tableId) {
+      group {
+        users {
+          id
+          username
+        }
+      }
+      creator {
+        team {
+          users {
+            username
+            id
+          }
+        }
+      }
+      parent {
+        group {
+          users {
+            id
+            username
+          }
+        }
+      }
+    }
+  }
+`;
 
 const GroupContainer = styled.div`
   border: 2px solid ${(props) => `#${props.avatar}`};
@@ -106,7 +135,7 @@ const Checkbox = styled.label`
   }
 `;
 
-const Group = ({ groupId }) => {
+const Group = ({ groupId, parentGroup, childGroup }) => {
   const {
     user: { username: uname },
   } = useContext(AuthContext);
@@ -114,19 +143,31 @@ const Group = ({ groupId }) => {
   const [state, setState] = useState([]);
   const [users2, setUsers2] = useState([]);
 
-  function mapUserToCheckbox(users) {
-    if (users) {
+  function mapUserToCheckbox(parentUsers, childUsers) {
+    if (parentUsers) {
       let u = {};
-      users.forEach((element) => {
+      parentUsers.forEach((element) => {
         u[element.username] = { checked: true, id: element.id };
       });
       setState(u);
-      setUsers2(users);
+      setUsers2(parentUsers);
     }
   }
 
-  const { loading, error, data } = useQuery(GET_GROUP, {
-    variables: { groupId },
+  const {
+    loading: loadingParent,
+    error: errorParrent,
+    data: dataParent,
+  } = useQuery(GET_GROUP, {
+    variables: { groupId: parentGroup },
+  });
+
+  const {
+    loading: loadingChild,
+    error: errorChild,
+    data: dataChild,
+  } = useQuery(GET_GROUP, {
+    variables: { groupId: childGroup },
     onCompleted({ getGroup }) {
       const { users } = getGroup || {};
       mapUserToCheckbox(users);
@@ -136,12 +177,16 @@ const Group = ({ groupId }) => {
   const [update] = useMutation(UPDATE_GROUP, {
     onCompleted({ updateGroup }) {
       const { users } = updateGroup;
+      console.log(users);
       mapUserToCheckbox(users);
     },
   });
 
-  if (loading) return <Loading />;
-  if (error) return <Errors errors={error} />;
+  if (loadingParent || loadingChild) return <Loading />;
+  if (errorParrent || errorChild) {
+    console.log(errorParrent || errorChild);
+    return <Errors />;
+  }
 
   const handleChange = (e) => {
     const name = e.target.name;
@@ -162,7 +207,7 @@ const Group = ({ groupId }) => {
     });
   }
 
-  const { getGroup } = data;
+  const { getGroup } = dataChild;
   const { avatar, creator } = getGroup || {};
 
   return (
