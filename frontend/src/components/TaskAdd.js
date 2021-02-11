@@ -59,13 +59,9 @@ const TaskAdd = ({ setErrors, parent }) => {
       setErr({});
     },
     onError(err) {
-      try {
-        const error = err.graphQLErrors[0].extensions.exception.errors;
-        setErrors(error);
-        setErr(error);
-      } catch (error) {
-        throw err;
-      }
+      const errors = err.graphQLErrors[0]?.extensions?.exception?.errors;
+      setErrors(errors || err);
+      setErr(errors || err);
     },
   });
 
