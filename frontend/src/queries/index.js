@@ -141,7 +141,7 @@ export const UPDATE_TASK = gql`
     $taskId: ID!
     $name: String!
     $description: String
-    $parent: ID
+    $parent: ID!
     $status: String
   ) {
     updateTask(
