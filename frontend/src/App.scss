@@ -21,11 +21,14 @@
   grid-template-columns: repeat(5, minmax(10px, 1fr));
   width: 100%;
   flex-grow: 1;
+  overflow: hidden;
 
   .column1,
   .column2,
   .column3 {
     padding: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .column1 {
