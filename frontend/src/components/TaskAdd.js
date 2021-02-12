@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { ADD_TASK, GET_TASKS } from "../queries";
 import { useMutation } from "@apollo/client";
 import { IoMdAdd } from "react-icons/io";
+import { errorHandler } from "../utils/helpers";
 
 const TaskAddContainer = styled.div`
   width: 100%;
@@ -59,13 +60,11 @@ const TaskAdd = ({ setErrors, parent }) => {
       setErr({});
     },
     onError(err) {
-      const errors = err.graphQLErrors[0]?.extensions?.exception?.errors;
-      setErrors(errors || err);
-      setErr(errors || err);
+      errorHandler(err, setErrors);
     },
   });
 
-  function handleAdd(e) {
+  function handleAddTask(e) {
     e.preventDefault();
     addTask();
     setName("");
@@ -73,7 +72,7 @@ const TaskAdd = ({ setErrors, parent }) => {
 
   return (
     <TaskAddContainer>
-      <Form flex onSubmit={handleAdd}>
+      <Form flex onSubmit={handleAddTask}>
         <InputMod
           name="name"
           type="text"

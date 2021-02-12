@@ -66,7 +66,7 @@ module.exports = {
       //check name
       if (name.trim() === "") {
         errors.name = TASK_TITLE_EMPTY;
-        throw new UserInputError(TASK_TITLE_EMPTY, errors);
+        throw new UserInputError(TASK_TITLE_EMPTY, { errors });
       }
       try {
         //TODO: make separate function for this

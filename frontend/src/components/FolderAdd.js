@@ -4,6 +4,7 @@ import { IoMdAdd } from "react-icons/io";
 import { ADD_FOLDER, GET_FOLDERS } from "../queries";
 import { Button, Form, Input } from "./styled";
 import styled from "styled-components";
+import { errorHandler } from "../utils/helpers";
 
 const FolderAddContainer = styled.div`
   width: 100%;
@@ -61,9 +62,7 @@ const FolderAdd = ({ setErrors = {}, parent = undefined }) => {
       setErr({});
     },
     onError(err) {
-      const errors = err.graphQLErrors[0]?.extensions?.exception?.errors;
-      setErrors(errors || err);
-      setErr(errors);
+      errorHandler(err, setErrors);
     },
   });
 
