@@ -14,11 +14,21 @@ import { Button, ListItem, UnorderedList } from "./styled";
 import { ListContext } from "../context/list";
 import Loading from "./Loading";
 import Errors from "./Errors";
+import { AuthContext } from "../context/auth";
 
 const FoldersList = ({ parent }) => {
-  const { back, column2, setColumn2, setTask, setFolder, setBack } = useContext(
-    ListContext
-  );
+  const {
+    user: { username: uname },
+  } = useContext(AuthContext);
+
+  const {
+    back,
+    column2,
+    setColumn2,
+    setTask,
+    setFolder,
+    setBack,
+  } = useContext(ListContext);
 
   const { loading, error, data } = useQuery(GET_FOLDERS, {
     variables: {
@@ -114,7 +124,9 @@ const FoldersList = ({ parent }) => {
   }
 
   function handleDeleteFolder(id, name = "") {
-    const r = window.confirm(`Are you sure you want to delete ${name}?`);
+    const r = window.confirm(
+      `Are you sure you want to delete ${name}?`
+    );
     if (!r) return;
     deleteFolder({
       variables: { parent: id },
@@ -185,12 +197,14 @@ const FoldersList = ({ parent }) => {
             >
               {table.name}
             </p>
-            <Button
-              transparent
-              onClick={() => handleDeleteFolder(table.id, table.name)}
-            >
-              <AiFillDelete />
-            </Button>
+            {table.creator.username === uname && (
+              <Button
+                transparent
+                onClick={() => handleDeleteFolder(table.id, table.name)}
+              >
+                <AiFillDelete />
+              </Button>
+            )}
           </ListItem>
         ))}
     </UnorderedList>
