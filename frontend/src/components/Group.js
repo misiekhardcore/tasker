@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Loading from "./Loading";
 import { GET_GROUP, UPDATE_GROUP } from "../queries";
 import { Button } from "./styled";
@@ -33,6 +33,10 @@ const User = styled.div`
   padding: 0.2rem;
   justify-content: flex-start;
   align-items: baseline;
+  text-decoration: ${(props) =>
+    props.disabled ? "line-through #bbb" : "none"};
+  color: ${(props) => props.disabled && "#bbb"};
+  display: ${(props) => (props.open || !props.disabled ? "block" : "none")};
 
   span {
     content: "";
@@ -120,20 +124,32 @@ const Group = ({ groupId, parentGroup, childGroup }) => {
   //toggle group edit
   const [edit, setEdit] = useState(false);
 
-  const [state, setState] = useState([]);
-  const [users2, setUsers2] = useState([]);
+  //containe state of checkboxes
+  const [state, setState] = useState({});
 
-  function mapUserToCheckbox(parentUsers, childUsers) {
-    if (parentUsers) {
+  //gets parent group's users and current group's users and sets which
+  //checkbox is checked
+  function mapUserToCheckbox(parentUsers = [], childUsers = []) {
+    if (parentUsers && childUsers) {
+      //empty object to hold checkboxes data
       let u = {};
+
+      //first set for all usernames checkbox to false
       parentUsers.forEach((element) => {
+        u[element.username] = { checked: false, id: element.id };
+      });
+
+      //override checkbox true for all users incurrent group
+      childUsers.forEach((element) => {
         u[element.username] = { checked: true, id: element.id };
       });
+
+      //set state with prepared data
       setState(u);
-      setUsers2(parentUsers);
     }
   }
 
+  //get group of parent element
   const {
     loading: loadingParent,
     error: errorParrent,
@@ -142,32 +158,39 @@ const Group = ({ groupId, parentGroup, childGroup }) => {
     variables: { groupId: parentGroup },
   });
 
+  //get group of current element
   const {
     loading: loadingChild,
     error: errorChild,
     data: dataChild,
   } = useQuery(GET_GROUP, {
     variables: { groupId: childGroup },
-    onCompleted({ getGroup }) {
-      const { users } = getGroup || {};
-      mapUserToCheckbox(users);
-    },
   });
 
+  //update current group mutation
   const [update] = useMutation(UPDATE_GROUP, {
     onCompleted({ updateGroup }) {
+      //after mutation completion set checkboxes again
       const { users } = updateGroup;
-      console.log(users);
-      mapUserToCheckbox(users);
+      mapUserToCheckbox(dataParent.getGroup.users, users);
     },
   });
 
+  //when getGroup queries for parent and child are done, set initial checkboxes
+  useEffect(() => {
+    if (dataParent && dataChild) {
+      mapUserToCheckbox(dataParent.getGroup.users, dataChild.getGroup.users);
+    }
+  }, [dataChild, dataParent]);
+
+  //handle loading and error
   if (loadingParent || loadingChild) return <Loading />;
   if (errorParrent || errorChild) {
     console.log(errorParrent || errorChild);
-    return <Errors />;
+    return <Errors errors={errorParrent || errorChild} />;
   }
 
+  //handle checkbox change
   const handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.checked;
@@ -175,6 +198,7 @@ const Group = ({ groupId, parentGroup, childGroup }) => {
     setState({ ...state, [name]: { ...state[name], checked: value } });
   };
 
+  //submit checkboxes and update group
   function handleSubmit(e) {
     e.preventDefault();
 
@@ -187,25 +211,34 @@ const Group = ({ groupId, parentGroup, childGroup }) => {
     });
   }
 
+  //destructure current group info
   const { avatar, creator } = dataChild?.getGroup || {};
+
+  //get users from parent group
+  const { users } = dataParent?.getGroup || {};
 
   return (
     <>
-      {dataChild ? (
+      {dataChild && dataParent ? (
         <GroupContainer avatar={avatar}>
           <form onSubmit={handleSubmit}>
             <Users open={edit}>
-              {users2 && (
+              {users && (
                 <>
                   <h3>Group:</h3>
-                  {users2.map((user) => {
+                  {users.map((user) => {
                     const { id, username, avatar } = user;
                     const show =
                       edit &&
                       username !== creator.username &&
                       username !== uname;
                     return (
-                      <User key={id} avatar={avatar}>
+                      <User
+                        key={id}
+                        avatar={avatar}
+                        disabled={!state[username]?.checked || false}
+                        open={edit}
+                      >
                         <span></span>
                         {username}
                         {show && (
