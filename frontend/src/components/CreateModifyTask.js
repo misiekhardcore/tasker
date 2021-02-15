@@ -38,17 +38,19 @@ const Selector = ({ status, handleStatus }) => {
               : "green",
         }}
       >
-        <option style={{ backgroundColor: "red" }} value="New"></option>
+        <option style={{ backgroundColor: "red" }} value="New">
+          New
+        </option>
         <option
           style={{ backgroundColor: "yellow" }}
           value="In progress"
-        ></option>
-        <option
-          style={{ backgroundColor: "green" }}
-          value="Finished"
-        ></option>
+        >
+          In progress
+        </option>
+        <option style={{ backgroundColor: "green" }} value="Finished">
+          Finished
+        </option>
       </select>
-      {status}
     </>
   );
 };
