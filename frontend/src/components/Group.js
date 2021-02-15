@@ -6,6 +6,7 @@ import { Button } from "./styled";
 import { AuthContext } from "../context/auth";
 import styled from "styled-components";
 import Errors from "./Errors";
+import { AiFillEdit, AiFillSave } from "react-icons/ai";
 
 const GroupContainer = styled.div`
   border: 2px solid ${(props) => `#${props.avatar}`};
@@ -36,7 +37,8 @@ const User = styled.div`
   text-decoration: ${(props) =>
     props.disabled ? "line-through #bbb" : "none"};
   color: ${(props) => props.disabled && "#bbb"};
-  display: ${(props) => (props.open || !props.disabled ? "block" : "none")};
+  display: ${(props) =>
+    props.open || !props.disabled ? "block" : "none"};
 
   span {
     content: "";
@@ -168,18 +170,15 @@ const Group = ({ groupId, parentGroup, childGroup }) => {
   });
 
   //update current group mutation
-  const [update] = useMutation(UPDATE_GROUP, {
-    onCompleted({ updateGroup }) {
-      //after mutation completion set checkboxes again
-      const { users } = updateGroup;
-      mapUserToCheckbox(dataParent.getGroup.users, users);
-    },
-  });
+  const [update] = useMutation(UPDATE_GROUP);
 
   //when getGroup queries for parent and child are done, set initial checkboxes
   useEffect(() => {
     if (dataParent && dataChild) {
-      mapUserToCheckbox(dataParent.getGroup.users, dataChild.getGroup.users);
+      mapUserToCheckbox(
+        dataParent.getGroup.users,
+        dataChild.getGroup.users
+      );
     }
   }, [dataChild, dataParent]);
 
@@ -260,14 +259,20 @@ const Group = ({ groupId, parentGroup, childGroup }) => {
                 </>
               )}
             </Users>
-            <Button
-              onClick={() => {
-                setEdit(!edit);
-              }}
-              type={edit ? "button" : "submit"}
-            >
-              {edit ? "save" : "edit"}
-            </Button>
+            {dataChild.getGroup.creator.username === uname && (
+              <Button
+                onClick={() => {
+                  setEdit(!edit);
+                }}
+                type={edit ? "button" : "submit"}
+              >
+                {edit ? (
+                  <AiFillSave data-tooltip="Save group members" />
+                ) : (
+                  <AiFillEdit data-tooltip="Edit group members" />
+                )}
+              </Button>
+            )}
           </form>
         </GroupContainer>
       ) : null}
