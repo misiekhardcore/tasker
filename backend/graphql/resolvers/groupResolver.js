@@ -5,6 +5,7 @@ const User = require("../../models/User");
 const authCheck = require("../utils/authCheck");
 const { randomChoice } = require("../utils/helpers");
 const { checkId } = require("../utils/validators");
+const { updateSubgroup } = require("./helpers");
 
 module.exports = {
   Group: {
@@ -31,7 +32,7 @@ module.exports = {
 
       checkId(groupId);
 
-      return await Group.findById(groupId) || await Team.findById(groupId);
+      return (await Group.findById(groupId)) || (await Team.findById(groupId));
     },
   },
   Mutation: {
@@ -55,9 +56,11 @@ module.exports = {
       }
     },
     updateGroup: async (_, { users, groupId }, context) => {
-      const { id } = authCheck(context);
+      authCheck(context);
 
       checkId(groupId);
+
+      await updateSubgroup(users, groupId);
 
       return await Group.findOneAndUpdate(
         { _id: groupId },
