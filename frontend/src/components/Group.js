@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { useContext, useEffect, useState } from "react";
 import Loading from "./Loading";
-import { Button } from "./styled";
+import { Button, User } from "./styled";
 import { AuthContext } from "../context/auth";
 import styled from "styled-components";
 import Errors from "./Errors";
@@ -28,25 +28,6 @@ const Users = styled.div`
   flex-direction: ${(props) => (props.open ? "column" : "row")};
   flex-grow: 1;
   flex-wrap: wrap;
-`;
-
-const User = styled.div`
-  padding: 0.2rem;
-  justify-content: flex-start;
-  align-items: baseline;
-  text-decoration: ${(props) =>
-    props.disabled ? "line-through #bbb" : "none"};
-  color: ${(props) => props.disabled && "#bbb"};
-  display: ${(props) => (props.open || !props.disabled ? "block" : "none")};
-
-  span {
-    content: "";
-    width: 10px;
-    height: 10px;
-    display: inline-block;
-    border-radius: 50%;
-    background-color: ${(props) => `#${props.avatar}`};
-  }
 `;
 
 const Checkbox = styled.label`
@@ -164,7 +145,6 @@ const Group = ({ groupId }) => {
   //handle loading and error
   if (loading) return <Loading />;
   if (error) {
-    console.log(error);
     return <Errors errors={error} />;
   }
 
@@ -203,7 +183,6 @@ const Group = ({ groupId }) => {
             <Users open={edit}>
               {users && (
                 <>
-                  <h3>Group:</h3>
                   {users.map((user) => {
                     const { id, username, avatar } = user;
                     const show =

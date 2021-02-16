@@ -215,3 +215,25 @@ export const ListItem = styled.li`
     font-size: 1.5rem;
   }
 `;
+
+export const User = styled.div`
+  justify-content: flex-start;
+  align-items: baseline;
+  text-decoration: ${(props) =>
+    props.disabled ? "line-through #bbb" : "none"};
+  color: ${(props) => props.disabled && "#bbb"};
+  display: ${(props) => (props.open || !props.disabled ? "block" : "none")};
+
+  & + & {
+    margin-left: 0.5rem;
+  }
+
+  span {
+    content: "";
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    border-radius: 50%;
+    background-color: ${(props) => `#${props.avatar}`};
+  }
+`;
