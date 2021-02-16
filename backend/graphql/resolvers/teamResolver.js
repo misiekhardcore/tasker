@@ -5,11 +5,11 @@ const { checkId } = require("../utils/validators");
 
 module.exports = {
   Team: {
-    creator: async function (parent) {
-      return await User.findById(parent.creator);
+    creator: async function ({ creator }) {
+      return await User.findById(creator);
     },
-    users: async function (parent) {
-      return User.find({ _id: { $in: parent.users } });
+    users: async function ({ users }) {
+      return User.find({ _id: { $in: users } });
     },
   },
   Query: {
