@@ -29,6 +29,7 @@
   content: attr(data-tooltip);
   position: absolute;
   opacity: 0;
+  z-index: 999;
 
   /* customizable */
   transition: all 0.4s ease;
