@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { darken } from "polished";
 
 const ErrorList = styled.ul`
   display: block;
@@ -10,7 +9,7 @@ const ErrorList = styled.ul`
   border-radius: 4px;
   color: #dd3131;
   font-size: 0.8rem;
-  background-color: ${darken(0.05, "white")};
+  background-color: #f9f9f9;
   list-style: disc;
 `;
 
