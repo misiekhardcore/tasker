@@ -5,14 +5,7 @@ import { UPDATE_TASK } from "../queries";
 import moment from "moment";
 
 import "./CreateModify.scss";
-import {
-  Button,
-  ButtonClose,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-} from "./styled";
+import { Button, ButtonClose, Form, FormGroup, Input, Label } from "./styled";
 import { ListContext } from "../context/list";
 
 import Comments from "./Comments";
@@ -41,10 +34,7 @@ const Selector = ({ status, handleStatus }) => {
         <option style={{ backgroundColor: "red" }} value="New">
           New
         </option>
-        <option
-          style={{ backgroundColor: "yellow" }}
-          value="In progress"
-        >
+        <option style={{ backgroundColor: "yellow" }} value="In progress">
           In progress
         </option>
         <option style={{ backgroundColor: "green" }} value="Finished">
@@ -122,8 +112,7 @@ const CreateModifyTask = () => {
   });
 
   //destructure query data
-  const { id, name, group, parent, creator, createdAt } =
-    data?.getTask || {};
+  const { id, name, group, parent, creator, createdAt } = data?.getTask || {};
 
   //update mutation
   const [update] = useMutation(UPDATE_TASK, {
@@ -169,8 +158,7 @@ const CreateModifyTask = () => {
         </div>
 
         <span className="folder__date">
-          {(createdAt &&
-            moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
+          {(createdAt && moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
             ""}
         </span>
         <h2 className="folder__name">
@@ -193,13 +181,7 @@ const CreateModifyTask = () => {
           <span>{(creator && creator.username) || "no creator"}</span>
         </p>
 
-        {group && (
-          <Group
-            groupId={group.id}
-            childGroup={group.id}
-            parentGroup={parent?.group?.id || creator?.team?.id}
-          />
-        )}
+        {group && <Group groupId={group.id} />}
 
         <Form onSubmit={handleSubmit}>
           <FormGroup>
@@ -219,10 +201,7 @@ const CreateModifyTask = () => {
             <Editor data={desc} state={setDesc} />
           </FormGroup>
           <FormGroup>
-            <Selector
-              status={state.status}
-              handleStatus={handleChange}
-            />
+            <Selector status={state.status} handleStatus={handleChange} />
           </FormGroup>
           <Errors errors={errors} />
           <Button type="submit" block>
