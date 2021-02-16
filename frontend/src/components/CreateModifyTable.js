@@ -6,14 +6,7 @@ import { UPDATE_FOLDER } from "../queries";
 import moment from "moment";
 
 import "./CreateModify.scss";
-import {
-  Button,
-  ButtonClose,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-} from "./styled";
+import { Button, ButtonClose, Form, FormGroup, Input, Label } from "./styled";
 
 import Errors from "./Errors";
 import Editor from "./Editor";
@@ -85,8 +78,7 @@ const CreateModifyTable = () => {
   });
 
   //destructure query data
-  const { id, name, group, parent, creator, createdAt } =
-    data?.getTable || {};
+  const { id, name, group, parent, creator, createdAt } = data?.getTable || {};
 
   //update mutation
   const [update] = useMutation(UPDATE_FOLDER, {
@@ -132,8 +124,7 @@ const CreateModifyTable = () => {
         </div>
 
         <span className="folder__date">
-          {(createdAt &&
-            moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
+          {(createdAt && moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
             ""}
         </span>
         <h2 className="folder__name">
@@ -155,13 +146,7 @@ const CreateModifyTable = () => {
           ></span>
           <span>{(creator && creator.username) || "no creator"}</span>
         </p>
-        {group && (
-          <Group
-            groupId={group.id}
-            childGroup={group.id}
-            parentGroup={parent?.group.id || creator.team.id}
-          />
-        )}
+        {group && <Group groupId={group.id} />}
 
         <Form onSubmit={handleSubmit}>
           <FormGroup>
