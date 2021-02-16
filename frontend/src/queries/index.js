@@ -215,6 +215,7 @@ export const GET_COMMENTS = gql`
       body
       creator {
         username
+        avatar
       }
       createdAt
       updatedAt
@@ -226,6 +227,13 @@ export const ADD_COMMENT = gql`
   mutation createComment($parent: ID!, $body: String!) {
     createComment(parent: $parent, body: $body) {
       id
+      body
+      creator {
+        username
+        avatar
+      }
+      createdAt
+      updatedAt
     }
   }
 `;
