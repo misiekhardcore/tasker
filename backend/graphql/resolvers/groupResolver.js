@@ -9,14 +9,14 @@ const { updateSubgroup } = require("./helpers");
 
 module.exports = {
   Group: {
-    creator: async function (parent) {
-      return await User.findById(parent.creator);
+    creator: async function ({ creator }) {
+      return await User.findById(creator);
     },
-    parent: async function (parent) {
-      return parent.group ? await Group.findById(parent.group) : null;
+    parent: async function ({ parent }) {
+      return (await Group.findById(parent)) || (await Team.findById(parent));
     },
-    users: async function (parent) {
-      return User.find({ _id: { $in: parent.users } });
+    users: async function ({ users }) {
+      return User.find({ _id: { $in: users } });
     },
   },
   Query: {
@@ -32,7 +32,7 @@ module.exports = {
 
       checkId(groupId);
 
-      return (await Group.findById(groupId)) || (await Team.findById(groupId));
+      return await Group.findById(groupId);
     },
   },
   Mutation: {
