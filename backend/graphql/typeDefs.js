@@ -21,6 +21,7 @@ module.exports = gql`
     id: ID!
     name: String!
     creator: User!
+    avatar: String!
     users: [User]!
   }
 
@@ -84,7 +85,7 @@ module.exports = gql`
     getComment(commentId: ID!): Comment
 
     getTeam(teamId: ID!): Team
-    getGroups(userId: ID!): Group
+    getGroups(userId: ID!): [Group]!
     getGroup(groupId: ID!): Group
   }
 
