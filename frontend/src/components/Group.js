@@ -1,12 +1,12 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { useContext, useEffect, useState } from "react";
 import Loading from "./Loading";
-import { GET_GROUP, UPDATE_GROUP } from "../queries";
 import { Button } from "./styled";
 import { AuthContext } from "../context/auth";
 import styled from "styled-components";
 import Errors from "./Errors";
 import { AiFillEdit, AiFillSave } from "react-icons/ai";
+import { GET_GROUP, UPDATE_GROUP } from "../queries";
 
 const GroupContainer = styled.div`
   border: 2px solid ${(props) => `#${props.avatar}`};
@@ -37,8 +37,7 @@ const User = styled.div`
   text-decoration: ${(props) =>
     props.disabled ? "line-through #bbb" : "none"};
   color: ${(props) => props.disabled && "#bbb"};
-  display: ${(props) =>
-    props.open || !props.disabled ? "block" : "none"};
+  display: ${(props) => (props.open || !props.disabled ? "block" : "none")};
 
   span {
     content: "";
@@ -112,11 +111,7 @@ const Checkbox = styled.label`
   }
 `;
 
-const Group = ({ groupId, parentGroup, childGroup }) => {
-  //for debugging purpose
-  // console.log("parent:", parentGroup);
-  // console.log("child:", childGroup);
-
+const Group = ({ groupId }) => {
   //get username from AuthContext, it's used to prevent user from
   //deleting himself from group
   const {
@@ -151,22 +146,9 @@ const Group = ({ groupId, parentGroup, childGroup }) => {
     }
   }
 
-  //get group of parent element
-  const {
-    loading: loadingParent,
-    error: errorParrent,
-    data: dataParent,
-  } = useQuery(GET_GROUP, {
-    variables: { groupId: parentGroup },
-  });
-
-  //get group of current element
-  const {
-    loading: loadingChild,
-    error: errorChild,
-    data: dataChild,
-  } = useQuery(GET_GROUP, {
-    variables: { groupId: childGroup },
+  //get group
+  const { loading, error, data } = useQuery(GET_GROUP, {
+    variables: { groupId },
   });
 
   //update current group mutation
@@ -174,19 +156,16 @@ const Group = ({ groupId, parentGroup, childGroup }) => {
 
   //when getGroup queries for parent and child are done, set initial checkboxes
   useEffect(() => {
-    if (dataParent && dataChild) {
-      mapUserToCheckbox(
-        dataParent.getGroup.users,
-        dataChild.getGroup.users
-      );
+    if (data) {
+      mapUserToCheckbox(data.getGroup.parent.users, data.getGroup.users);
     }
-  }, [dataChild, dataParent]);
+  }, [data]);
 
   //handle loading and error
-  if (loadingParent || loadingChild) return <Loading />;
-  if (errorParrent || errorChild) {
-    console.log(errorParrent || errorChild);
-    return <Errors errors={errorParrent || errorChild} />;
+  if (loading) return <Loading />;
+  if (error) {
+    console.log(error);
+    return <Errors errors={error} />;
   }
 
   //handle checkbox change
@@ -211,14 +190,14 @@ const Group = ({ groupId, parentGroup, childGroup }) => {
   }
 
   //destructure current group info
-  const { avatar, creator } = dataChild?.getGroup || {};
+  const { avatar, creator } = data.getGroup || {};
 
   //get users from parent group
-  const { users } = dataParent?.getGroup || {};
+  const { users } = data.getGroup.parent || {};
 
   return (
     <>
-      {dataChild && dataParent ? (
+      {data ? (
         <GroupContainer avatar={avatar}>
           <form onSubmit={handleSubmit}>
             <Users open={edit}>
@@ -259,7 +238,7 @@ const Group = ({ groupId, parentGroup, childGroup }) => {
                 </>
               )}
             </Users>
-            {dataChild.getGroup.creator.username === uname && (
+            {data.getGroup.creator.username === uname && (
               <Button
                 onClick={() => {
                   setEdit(!edit);

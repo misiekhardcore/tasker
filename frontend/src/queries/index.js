@@ -77,16 +77,8 @@ export const UPDATE_FOLDER = gql`
 `;
 
 export const ADD_FOLDER = gql`
-  mutation createTable(
-    $name: String!
-    $description: String
-    $parent: ID
-  ) {
-    createTable(
-      name: $name
-      description: $description
-      parent: $parent
-    ) {
+  mutation createTable($name: String!, $description: String, $parent: ID) {
+    createTable(name: $name, description: $description, parent: $parent) {
       id
       name
       description
@@ -110,7 +102,7 @@ export const GET_TASKS = gql`
       name
       description
       status
-      creator{
+      creator {
         username
       }
       group {
@@ -245,15 +237,27 @@ export const DELETE_COMMENT = gql`
 `;
 
 export const GET_GROUP = gql`
-  query getGroup($groupId: ID!) {
+  query group($groupId: ID!) {
     getGroup(groupId: $groupId) {
+      id
       avatar
       creator {
         username
       }
+      parent {
+        avatar
+        creator {
+          username
+        }
+        users {
+          id
+          username
+          avatar
+        }
+      }
       users {
-        username
         id
+        username
         avatar
       }
     }
@@ -263,13 +267,25 @@ export const GET_GROUP = gql`
 export const UPDATE_GROUP = gql`
   mutation updateGroup($groupId: ID!, $users: [ID!]!) {
     updateGroup(groupId: $groupId, users: $users) {
+      id
       avatar
       creator {
         username
       }
+      parent {
+        avatar
+        creator {
+          username
+        }
+        users {
+          id
+          username
+          avatar
+        }
+      }
       users {
-        username
         id
+        username
         avatar
       }
     }
