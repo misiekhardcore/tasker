@@ -24,7 +24,7 @@ module.exports = {
 
       checkId(parent);
 
-      return await Comment.find({ parent });
+      return await Comment.find({ parent }).sort([["updatedAt", -1]]);
     },
     getComment: async (_, { commentId }, context) => {
       const { id } = authCheck(context);
