@@ -170,10 +170,10 @@ const Group = ({ groupId }) => {
   }
 
   //destructure current group info
-  const { avatar, creator } = data.getGroup || {};
+  const { avatar, creator } = data?.getGroup || {};
 
   //get users from parent group
-  const { users } = data.getGroup.parent || {};
+  const { users } = data?.getGroup?.parent || {};
 
   return (
     <>
@@ -181,43 +181,37 @@ const Group = ({ groupId }) => {
         <GroupContainer avatar={avatar}>
           <form onSubmit={handleSubmit}>
             <Users open={edit}>
-              {users && (
-                <>
-                  {users.map((user) => {
-                    const { id, username, avatar } = user;
-                    const show =
-                      edit &&
-                      username !== creator.username &&
-                      username !== uname;
-                    return (
-                      <User
-                        key={id}
-                        avatar={avatar}
-                        disabled={!state[username]?.checked || false}
-                        open={edit}
-                      >
-                        <span></span>
-                        {username}
-                        {show && (
-                          <>
-                            <Checkbox htmlFor={username}>
-                              <input
-                                type="checkbox"
-                                checked={state[username].checked}
-                                name={username}
-                                onChange={handleChange}
-                              />
-                              <span className="span"></span>
-                            </Checkbox>
-                          </>
-                        )}
-                      </User>
-                    );
-                  })}
-                </>
-              )}
+              {users &&
+                users.map((user) => {
+                  const { id, username, avatar } = user;
+                  const show =
+                    edit &&
+                    username !== creator?.username &&
+                    username !== uname;
+                  return (
+                    <User
+                      key={id}
+                      avatar={avatar}
+                      disabled={!state[username]?.checked || false}
+                      open={edit}
+                    >
+                      {username}
+                      {show && (
+                        <Checkbox htmlFor={username}>
+                          <input
+                            type="checkbox"
+                            checked={state[username].checked}
+                            name={username}
+                            onChange={handleChange}
+                          />
+                          <span className="span"></span>
+                        </Checkbox>
+                      )}
+                    </User>
+                  );
+                })}
             </Users>
-            {data.getGroup.creator.username === uname && (
+            {data?.getGroup?.creator?.username === uname && (
               <Button
                 onClick={() => {
                   setEdit(!edit);
