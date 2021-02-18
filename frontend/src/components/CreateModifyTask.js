@@ -1,11 +1,25 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useContext, useState } from "react";
-import { AiFillSchedule, AiOutlineCloseCircle } from "react-icons/ai";
+import { AiFillSchedule } from "react-icons/ai";
 import { UPDATE_TASK } from "../queries";
 import moment from "moment";
 
-import "./CreateModify.scss";
-import { Button, ButtonClose, Form, FormGroup, Input, Label } from "./styled";
+import {
+  Button,
+  ButtonClose,
+  Creator,
+  Date,
+  Form,
+  FormGroup,
+  Header,
+  Icon,
+  Input,
+  Label,
+  Option,
+  Select,
+  Title,
+  User,
+} from "./styled";
 import { ListContext } from "../context/list";
 
 import Comments from "./Comments";
@@ -17,31 +31,11 @@ import { errorHandler } from "../utils/helpers";
 
 const Selector = ({ status, handleStatus }) => {
   return (
-    <>
-      <select
-        name="status"
-        value={status}
-        onChange={(e) => handleStatus(e)}
-        style={{
-          backgroundColor:
-            status === "New"
-              ? "red"
-              : status === "In progress"
-              ? "yellow"
-              : "green",
-        }}
-      >
-        <option style={{ backgroundColor: "red" }} value="New">
-          New
-        </option>
-        <option style={{ backgroundColor: "yellow" }} value="In progress">
-          In progress
-        </option>
-        <option style={{ backgroundColor: "green" }} value="Finished">
-          Finished
-        </option>
-      </select>
-    </>
+    <Select name="status" value={status} onChange={(e) => handleStatus(e)}>
+      <Option value="New">New</Option>
+      <Option value="In progress">In progress</Option>
+      <Option value="Finished">Finished</Option>
+    </Select>
   );
 };
 
@@ -147,47 +141,33 @@ const CreateModifyTask = () => {
   if (loading) return <Loading />;
   if (error) return <Errors errors={errors} />;
 
-  return data ? (
-    <div className="table-details">
-      <ButtonClose onClick={() => setTask()}>
-        <AiOutlineCloseCircle />
-      </ButtonClose>
-      <div className="folder__info">
-        <div className="icon">
-          <AiFillSchedule className="icon" />
-        </div>
+  return (
+    data && (
+      <div className="table-details">
+        <ButtonClose onClick={() => setTask()} />
+        <Header>
+          <Icon>
+            <AiFillSchedule />
+          </Icon>
+          <Title>
+            {parent && <span>{parent.name}</span>}
+            {name}
+          </Title>
+        </Header>
+        <Date>
+          {createdAt && moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")}
+        </Date>
 
-        <span className="folder__date">
-          {(createdAt && moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
-            ""}
-        </span>
-        <h2 className="folder__name">
-          {parent && (
-            <>
-              {parent.name}
-              {" > "}
-            </>
-          )}
-          <span>{name}</span>
-        </h2>
-        <p className="folder__creator">
-          Created by:
-          <span
-            className="avatar"
-            style={{
-              backgroundColor: `#${creator && creator.avatar}`,
-            }}
-          ></span>
-          <span>{(creator && creator.username) || "no creator"}</span>
-        </p>
+        <Creator>
+          <span>Created by:</span>
+          <User avatar={creator.avatar}>{creator.username}</User>
+        </Creator>
 
         {group && <Group groupId={group.id} />}
 
         <Form onSubmit={handleSubmit}>
           <FormGroup>
-            <Label htmlFor="name" className="form__label">
-              Table name:
-            </Label>
+            <Label htmlFor="name">Table name:</Label>
             <Input
               value={state.name}
               onChange={handleChange}
@@ -208,10 +188,10 @@ const CreateModifyTask = () => {
             Save
           </Button>
         </Form>
+        {id && <Comments taskId={id} />}
       </div>
-      {id && <Comments taskId={id} />}
-    </div>
-  ) : null;
+    )
+  );
 };
 
 export default CreateModifyTask;

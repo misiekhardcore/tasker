@@ -1,18 +1,30 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useContext, useState } from "react";
-import { AiFillFolder, AiOutlineCloseCircle } from "react-icons/ai";
 import { ListContext } from "../context/list";
 import { UPDATE_FOLDER } from "../queries";
 import moment from "moment";
 
-import "./CreateModify.scss";
-import { Button, ButtonClose, Form, FormGroup, Input, Label } from "./styled";
+import {
+  Button,
+  ButtonClose,
+  Form,
+  FormGroup,
+  Input,
+  Label,
+  User,
+  Icon,
+  Title,
+  Date,
+  Creator,
+  Header,
+} from "./styled";
 
 import Errors from "./Errors";
 import Editor from "./Editor";
 import Loading from "./Loading";
 import Group from "./Group";
 import { errorHandler } from "../utils/helpers";
+import { AiFillFolder } from "react-icons/ai";
 
 const getGroupInfo = gql`
   query getGroup($tableId: ID!) {
@@ -113,46 +125,32 @@ const CreateModifyTable = () => {
   if (error) return <Errors errors={errors} />;
 
   //if data from query is present render content otherwise return null
-  return data ? (
-    <div className="table-details">
-      <ButtonClose onClick={() => setFolder()}>
-        <AiOutlineCloseCircle />
-      </ButtonClose>
-      <div className="folder__info">
-        <div className="icon">
-          <AiFillFolder className="icon" />
-        </div>
+  return (
+    data && (
+      <div className="table-details">
+        <ButtonClose onClick={() => setFolder()} />
+        <Header>
+          <Icon>
+            <AiFillFolder />
+          </Icon>
+          <Title>
+            {parent && <span>{parent.name}</span>}
+            {name}
+          </Title>
+        </Header>
 
-        <span className="folder__date">
-          {(createdAt && moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")) ||
-            ""}
-        </span>
-        <h2 className="folder__name">
-          {parent && (
-            <>
-              {parent.name}
-              {" > "}
-            </>
-          )}
-          <span>{name}</span>
-        </h2>
-        <p className="folder__creator">
-          Created by:
-          <span
-            className="avatar"
-            style={{
-              backgroundColor: `#${creator && creator.avatar}`,
-            }}
-          ></span>
-          <span>{(creator && creator.username) || "no creator"}</span>
-        </p>
+        <Date>
+          {createdAt && moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")}
+        </Date>
+
+        <Creator>
+          <span>Created by:</span>
+          <User avatar={creator.avatar}>{creator.username}</User>
+        </Creator>
         {group && <Group groupId={group.id} />}
-
         <Form onSubmit={handleSubmit}>
           <FormGroup>
-            <Label htmlFor="name" className="form__label">
-              Table name:
-            </Label>
+            <Label htmlFor="name">Table name:</Label>
             <Input
               value={state.name}
               onChange={handleChange}
@@ -171,8 +169,8 @@ const CreateModifyTable = () => {
           </Button>
         </Form>
       </div>
-    </div>
-  ) : null;
+    )
+  );
 };
 
 export default CreateModifyTable;
