@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { ADD_COMMENT, DELETE_COMMENT, GET_COMMENTS } from "../queries";
 import { MdComment } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
@@ -12,12 +12,14 @@ import styled from "styled-components";
 import Errors from "./Errors";
 import Loading from "./Loading";
 import { errorHandler } from "../utils/helpers";
+import { lighten } from "polished";
 
 const CommentsContainer = styled.div`
   width: 100%;
   border-radius: 4px;
-  background-color: #999;
+  background-color: ${(props) => props.theme.gray};
   padding: 0.2rem;
+  margin-top: 1rem;
 `;
 
 const CommentsList = styled.ul`
@@ -28,10 +30,10 @@ const Comment = styled.li`
   display: flex;
   flex-direction: column;
   padding: 0.5rem;
-  background-color: #bbb;
+  background-color: ${(props) => props.theme.primary};
 
   &:nth-child(even) {
-    background-color: #aaa;
+    background-color: ${(props) => lighten(0.1, props.theme.primary)};
   }
 
   &:first-of-type {
@@ -48,7 +50,7 @@ const Comment = styled.li`
   }
 
   & + & {
-    border-top: solid 2px #aaa;
+    border-top: solid 2px ${(props) => props.theme.gray};
   }
   button {
     padding: 0;
@@ -68,7 +70,7 @@ const Header = styled.div`
 
   span {
     font-size: 0.7rem;
-    color: #444;
+    color: ${(props) => props.theme.gray};
   }
 `;
 const Body = styled.div`
@@ -79,7 +81,7 @@ const Body = styled.div`
     flex-grow: 1;
     padding: 0.5rem;
     border-radius: 4px;
-    background-color: white;
+    background-color: ${(props) => props.theme.white};
     margin-right: 0.5rem;
   }
 `;
@@ -146,10 +148,6 @@ const Comments = ({ taskId }) => {
       errorHandler(err, setErrors);
     },
   });
-
-  // useEffect(() => {
-  //   setToggle(false);
-  // }, [taskId]);
 
   function handleAddComment(e) {
     e.preventDefault();
