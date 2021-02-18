@@ -6,6 +6,7 @@ export const GET_FOLDERS = gql`
       id
       name
       creator {
+        id
         username
       }
       group {
@@ -31,6 +32,7 @@ export const GET_FOLDER = gql`
       }
       description
       creator {
+        id
         username
         role
         avatar
@@ -62,6 +64,7 @@ export const UPDATE_FOLDER = gql`
       name
       description
       creator {
+        id
         username
         avatar
         role
@@ -83,6 +86,7 @@ export const ADD_FOLDER = gql`
       name
       description
       creator {
+        id
         username
         avatar
         role
@@ -103,6 +107,7 @@ export const GET_TASKS = gql`
       description
       status
       creator {
+        id
         username
       }
       group {
@@ -127,6 +132,7 @@ export const GET_TASK = gql`
       }
       description
       creator {
+        id
         username
         avatar
         role
@@ -161,6 +167,7 @@ export const UPDATE_TASK = gql`
       name
       description
       creator {
+        id
         username
         avatar
         role
@@ -183,6 +190,7 @@ export const ADD_TASK = gql`
       name
       description
       creator {
+        id
         username
         avatar
         role
@@ -214,6 +222,7 @@ export const GET_COMMENTS = gql`
       id
       body
       creator {
+        id
         username
         avatar
       }
@@ -229,6 +238,7 @@ export const ADD_COMMENT = gql`
       id
       body
       creator {
+        id
         username
         avatar
       }
@@ -250,11 +260,14 @@ export const GET_GROUP = gql`
       id
       avatar
       creator {
+        id
         username
       }
       parent {
+        id
         avatar
         creator {
+          id
           username
         }
         users {
@@ -278,11 +291,13 @@ export const UPDATE_GROUP = gql`
       id
       avatar
       creator {
+        id
         username
       }
       parent {
         avatar
         creator {
+          id
           username
         }
         users {
