@@ -1,6 +1,14 @@
 import styled, { css } from "styled-components";
-import { adjustHue, darken, lighten, linearGradient } from "polished";
+import {
+  adjustHue,
+  darken,
+  lighten,
+  linearGradient,
+  rgb,
+  rgba,
+} from "polished";
 import { Link } from "react-router-dom";
+import { AiOutlineCloseCircle } from "react-icons/ai";
 
 export const Button = styled.button`
   display: flex;
@@ -12,13 +20,13 @@ export const Button = styled.button`
   text-transform: capitalize;
   border: none;
   border-radius: 4px;
-  color: white;
+  color: ${(props) => props.theme.white};
   background-color: ${(props) =>
     props.primary
-      ? darken(0.01, props.theme.primary)
+      ? darken(0.02, props.theme.primary)
       : props.transparent
       ? "transparent"
-      : "gray"};
+      : props.theme.primary};
   width: ${(props) => (props.block ? "100%" : "auto")};
   transition: all 0.2s ease-in-out;
 
@@ -27,22 +35,22 @@ export const Button = styled.button`
     cursor: pointer;
     background-color: ${(props) =>
       darken(
-        0.05,
+        0.08,
         props.primary
           ? props.theme.primary
           : props.transparent
           ? "transparent"
-          : "gray"
+          : props.theme.primary
       )};
 
     ${(props) =>
       props.transparent &&
-      `color: ${darken(0.3, "white")};
+      `color: ${darken(0.3, props.theme.white)};
     transform: scale(1.1);`}
   }
 `;
 
-export const ButtonClose = styled.button`
+const ButtonCloseStyle = styled.button`
   border-radius: 50%;
   width: 2rem;
   height: 2rem;
@@ -50,17 +58,25 @@ export const ButtonClose = styled.button`
   right: 0.5rem;
   top: 0.5rem;
   font-size: 1.5rem;
-  color: gray;
+  color: ${(props) => props.theme.primary};
   background-color: transparent;
   border: none;
   transition: all 0.2s ease-in-out;
 
   &:hover {
-    color: white;
-    background-color: gray;
+    color: ${(props) => props.theme.white};
+    background-color: ${(props) => props.theme.primary};
     cursor: pointer;
   }
 `;
+
+export const ButtonClose = (props) => {
+  return (
+    <ButtonCloseStyle {...props}>
+      <AiOutlineCloseCircle />
+    </ButtonCloseStyle>
+  );
+};
 
 export const FormGroup = styled.div`
   width: 100%;
@@ -81,19 +97,19 @@ export const Label = styled.label`
 
 const sharedInputTextarea = css`
   padding: 0.5rem 1rem;
-  border: 2px solid #aaaaaa;
+  border: 2px solid ${(props) => props.theme.primary};
   border-radius: 4px;
-  background-color: white;
-  color: ${lighten(0.3, "black")};
+  background-color: ${(props) => props.theme.white};
+  color: ${(props) => props.theme.black};
   flex-grow: 1;
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 3px 5px rgba(0, 119, 255, 0.2);
+    box-shadow: 0 0 3px 5px ${(props) => rgba(props.theme.active, 0.3)};
   }
 
   &:placeholder {
-    color: ${lighten(0.3, "black")};
+    color: ${(props) => props.theme.disabled};
   }
 `;
 
@@ -121,7 +137,7 @@ export const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin: auto;
-  background-color: #ececec;
+  background-color: ${(props) => props.theme.disabled};
 
   @media screen and (max-width: 600px) {
     width: 100%;
@@ -135,7 +151,7 @@ export const LinkStyled = styled(Link)`
   text-decoration: none;
   margin-top: 1rem;
   margin-left: auto;
-  color: black;
+  color: ${(props) => props.theme.black};
 
   &:hover {
     text-decoration: underline;
@@ -147,14 +163,14 @@ export const UnorderedList = styled.ul`
   width: 100%;
 `;
 
-const statusColor = (status) => {
+const statusColor = (status, theme) => {
   switch (status) {
     case "New":
-      return "red";
+      return theme.error;
     case "In progress":
-      return "yellow";
+      return theme.warning;
     case "Finished":
-      return "green";
+      return theme.success;
     default:
       return "orange";
   }
@@ -165,19 +181,16 @@ export const ListItem = styled.li`
   width: 100%;
   border-radius: 4px;
   display: flex;
+  color: inherit;
   align-items: center;
   transition: all 0.2s ease-in-out;
-  background: ${(props) =>
-    props.status
-      ? linearGradient({
-          colorStops: [
-            statusColor(props.status),
-            (adjustHue(10, props.theme.primary) || "transparent") + " 20%",
-          ],
-          toDirection: "to right",
-        })
-      : adjustHue(-10, props.theme.primary)};
+  background: transparent;
   margin-bottom: 0.5rem;
+
+  & > svg {
+    color: ${(props) =>
+      props.status ? statusColor(props.status, props.theme) : "inherit"};
+  }
 
   &:hover,
   &:focus {
@@ -220,15 +233,16 @@ export const User = styled.div`
   justify-content: flex-start;
   align-items: baseline;
   text-decoration: ${(props) =>
-    props.disabled ? "line-through #bbb" : "none"};
-  color: ${(props) => props.disabled && "#bbb"};
+    props.disabled ? `line-through ${props.theme.disabled}` : "none"};
+  color: ${(props) => (props.disabled ? props.theme.disabled : "inherit")};
   display: ${(props) => (props.open || !props.disabled ? "block" : "none")};
+  max-width: 200px;
 
   & + & {
-    margin-left: 0.5rem;
+    margin-left: ${(props) => (props.open ? "0" : "0.5rem")};
   }
 
-  span {
+  &:before {
     content: "";
     width: 10px;
     height: 10px;
@@ -236,4 +250,55 @@ export const User = styled.div`
     border-radius: 50%;
     background-color: ${(props) => `#${props.avatar}`};
   }
+`;
+
+export const Header = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
+export const Icon = styled.span`
+  font-size: 2rem;
+  color: ${(props) => props.theme.black};
+`;
+
+export const Date = styled.div`
+  font-size: 0.625rem;
+  color: ${(props) => props.theme.gray};
+`;
+
+export const Title = styled.h2`
+  font-size: 1.5rem;
+
+  span {
+    font-size: 1rem;
+    color: ${(props) => props.theme.gray};
+    margin-right: 0.5rem;
+
+    &:after {
+      content: ">";
+      margin-left: 0.5rem;
+    }
+  }
+`;
+
+export const Creator = styled.div`
+  display: flex;
+  align-items: baseline;
+
+  span {
+    font-size: 0.625rem;
+    color: ${(props) => props.theme.gray};
+    margin-right: 0.5rem;
+  }
+`;
+
+export const Select = styled.select`
+  background-color: ${(props) =>
+    props.value && statusColor(props.value, props.theme)};
+`;
+
+export const Option = styled.option`
+  background-color: ${(props) =>
+    props.value && statusColor(props.value, props.theme)};
 `;
