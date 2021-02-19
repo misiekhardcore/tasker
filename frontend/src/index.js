@@ -30,7 +30,33 @@ const authLink = setContext((_, { headers }) => {
 
 const client = new ApolloClient({
   link: authLink.concat(link),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Group: {
+        fields: {
+          users: {
+            merge(_, i) {
+              return i;
+            },
+          },
+        },
+      },
+      Query: {
+        fields: {
+          getTables: {
+            merge(_, i) {
+              return i;
+            },
+          },
+        },
+        getTasks: {
+          merge(_, i) {
+            return i;
+          },
+        },
+      },
+    },
+  }),
   connectToDevTools: true,
 });
 
