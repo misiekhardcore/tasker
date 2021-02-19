@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ADD_COMMENT, DELETE_COMMENT, GET_COMMENTS } from "../queries";
 import { MdComment } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
@@ -87,19 +87,38 @@ const Body = styled.div`
 `;
 
 const Comments = ({ taskId }) => {
+  //get user info from authentication
   const { user } = useContext(AuthContext);
 
+  //toggle comments list
   const [toggle, setToggle] = useState(false);
+
+  //for comment input
   const [commentBody, setCommentBody] = useState("");
+
+  //keeps errors
   const [errors, setErrors] = useState({});
 
+  //is component mounted?
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    //is mounted
+    setMounted(true);
+    return () => {
+      //is unmounted
+      setMounted(false);
+    };
+  }, []);
+
+  //gets comments
   const { loading, error, data } = useQuery(GET_COMMENTS, {
     variables: { parent: taskId },
     onError(err) {
-      errorHandler(err, setErrors);
+      mounted && errorHandler(err, setErrors);
     },
   });
 
+  //adds new comment
   const [addComment] = useMutation(ADD_COMMENT, {
     variables: {
       parent: taskId,
@@ -124,16 +143,16 @@ const Comments = ({ taskId }) => {
       }
     },
     onCompleted() {
-      setErrors({});
+      mounted && setErrors({});
     },
     onError(err) {
-      errorHandler(err, setErrors);
+      mounted && errorHandler(err, setErrors);
     },
   });
 
   const [deleteComment] = useMutation(DELETE_COMMENT, {
     onCompleted() {
-      setErrors({});
+      mounted && setErrors({});
     },
     update(cache) {
       cache.modify({
@@ -145,7 +164,7 @@ const Comments = ({ taskId }) => {
       });
     },
     onError(err) {
-      errorHandler(err, setErrors);
+      mounted && errorHandler(err, setErrors);
     },
   });
 

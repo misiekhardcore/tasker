@@ -1,5 +1,5 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ListContext } from "../context/list";
 import { UPDATE_FOLDER } from "../queries";
 import moment from "moment";
@@ -73,19 +73,32 @@ const CreateModifyTable = () => {
     description: "",
   });
 
+  //is component mounted?
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    //is mounted
+    setMounted(true);
+    return () => {
+      //is unmounted
+      setMounted(false);
+    };
+  }, []);
+
   //get folder info
   const { loading, error, data } = useQuery(getGroupInfo, {
     variables: { tableId: folder },
     onCompleted({ getTable }) {
-      setState({
-        name: getTable.name || "",
-        description: getTable.description || "",
-      });
-      setDesc(getTable.description);
-      setErrors({});
+      if (mounted) {
+        setState({
+          name: getTable.name || "",
+          description: getTable.description || "",
+        });
+        setDesc(getTable.description);
+        setErrors({});
+      }
     },
     onError(err) {
-      errorHandler(err, setErrors);
+      mounted && errorHandler(err, setErrors);
     },
   });
 
@@ -95,10 +108,10 @@ const CreateModifyTable = () => {
   //update mutation
   const [update] = useMutation(UPDATE_FOLDER, {
     onCompleted() {
-      setErrors({});
+      mounted && setErrors({});
     },
     onError(err) {
-      errorHandler(err, setErrors);
+      mounted && errorHandler(err, setErrors);
     },
   });
 

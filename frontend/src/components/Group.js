@@ -105,27 +105,16 @@ const Group = ({ groupId }) => {
   //containe state of checkboxes
   const [state, setState] = useState({});
 
-  //gets parent group's users and current group's users and sets which
-  //checkbox is checked
-  function mapUserToCheckbox(parentUsers = [], childUsers = []) {
-    if (parentUsers && childUsers) {
-      //empty object to hold checkboxes data
-      let u = {};
-
-      //first set for all usernames checkbox to false
-      parentUsers.forEach((element) => {
-        u[element.username] = { checked: false, id: element.id };
-      });
-
-      //override checkbox true for all users incurrent group
-      childUsers.forEach((element) => {
-        u[element.username] = { checked: true, id: element.id };
-      });
-
-      //set state with prepared data
-      setState(u);
-    }
-  }
+  //is component mounted?
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    //is mounted
+    setMounted(true);
+    return () => {
+      //is unmounted
+      setMounted(false);
+    };
+  }, []);
 
   //get group
   const { loading, error, data } = useQuery(GET_GROUP, {
@@ -138,9 +127,31 @@ const Group = ({ groupId }) => {
   //when getGroup queries for parent and child are done, set initial checkboxes
   useEffect(() => {
     if (data) {
+      //gets parent group's users and current group's users and sets which
+      //checkbox is checked
+      function mapUserToCheckbox(parentUsers = [], childUsers = []) {
+        if (parentUsers && childUsers && mounted) {
+          //empty object to hold checkboxes data
+          let u = {};
+
+          //first set for all usernames checkbox to false
+          parentUsers.forEach((element) => {
+            u[element.username] = { checked: false, id: element.id };
+          });
+
+          //override checkbox true for all users incurrent group
+          childUsers.forEach((element) => {
+            u[element.username] = { checked: true, id: element.id };
+          });
+
+          //set state with prepared data
+          setState(u);
+        }
+      }
+
       mapUserToCheckbox(data.getGroup.parent.users, data.getGroup.users);
     }
-  }, [data]);
+  }, [data, mounted]);
 
   //handle loading and error
   if (loading) return <Loading />;

@@ -1,5 +1,5 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AiFillSchedule } from "react-icons/ai";
 import { UPDATE_TASK } from "../queries";
 import moment from "moment";
@@ -88,20 +88,33 @@ const CreateModifyTask = () => {
     status: "New",
   });
 
+  //is component mounted?
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    //is mounted
+    setMounted(true);
+    return () => {
+      //is unmounted
+      setMounted(false);
+    };
+  }, []);
+
   //get task info
   const { loading, error, data } = useQuery(getGroupInfo, {
     variables: { taskId: task },
     onCompleted({ getTask }) {
-      setState({
-        name: getTask.name || "",
-        description: getTask.description || "",
-        status: getTask.status || "New",
-      });
-      setDesc(getTask.description);
-      setErrors({});
+      if (mounted) {
+        setState({
+          name: getTask.name || "",
+          description: getTask.description || "",
+          status: getTask.status || "New",
+        });
+        setDesc(getTask.description);
+        setErrors({});
+      }
     },
     onError(err) {
-      errorHandler(err, setErrors);
+      mounted && errorHandler(err, setErrors);
     },
   });
 
@@ -111,10 +124,10 @@ const CreateModifyTask = () => {
   //update mutation
   const [update] = useMutation(UPDATE_TASK, {
     onCompleted() {
-      setErrors({});
+      mounted && setErrors({});
     },
     onError(err) {
-      errorHandler(err, setErrors);
+      mounted && errorHandler(err, setErrors);
     },
   });
 

@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AiFillDelete, AiFillFolder } from "react-icons/ai";
 import {
   DELETE_FOLDER,
@@ -30,6 +30,17 @@ const FoldersList = ({ parent }) => {
     setBack,
   } = useContext(ListContext);
 
+    //is component mounted?
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+      //is mounted
+      setMounted(true);
+      return () => {
+        //is unmounted
+        setMounted(false);
+      };
+    }, []);
+
   const { loading, error, data } = useQuery(GET_FOLDERS, {
     variables: {
       parent,
@@ -38,7 +49,7 @@ const FoldersList = ({ parent }) => {
 
   const [deleteFolder] = useMutation(DELETE_FOLDER, {
     onError(err) {
-      console.log(err);
+      mounted && console.log(err);
     },
   });
 
@@ -124,10 +135,10 @@ const FoldersList = ({ parent }) => {
   }
 
   function handleDeleteFolder(id, name = "") {
-    const r = window.confirm(
+    const promt = window.confirm(
       `Are you sure you want to delete ${name}?`
     );
-    if (!r) return;
+    if (!promt) return;
     deleteFolder({
       variables: { parent: id },
       update(cache) {
