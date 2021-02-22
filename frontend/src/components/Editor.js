@@ -20,13 +20,14 @@ const EditorContainer = styled.div`
   }
 `;
 
-const Editor = ({ data, state }) => {
+const Editor = ({ data, state, disabled }) => {
   return (
     <EditorContainer>
       <CKEditor
         style={{ height: "500px" }}
         editor={ClassicEditor}
         data={data}
+        disabled={disabled}
         onReady={(editor) => {}}
         onChange={(event, editor) => {
           const data = editor.getData();

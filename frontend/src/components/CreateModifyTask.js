@@ -72,6 +72,11 @@ const getGroupInfo = gql`
 `;
 
 const CreateModifyTask = () => {
+  //get logged user data
+  const {
+    user: { username: uname },
+  } = useContext(AuthContext);
+
   //get current folder
   const { task, setTask } = useContext(ListContext);
 
@@ -120,6 +125,7 @@ const CreateModifyTask = () => {
 
   //destructure query data
   const { id, name, group, parent, creator, createdAt } = data?.getTask || {};
+  const isCreator = creator?.username === uname;
 
   //update mutation
   const [update] = useMutation(UPDATE_TASK, {
@@ -167,6 +173,7 @@ const CreateModifyTask = () => {
             {name}
           </Title>
         </Header>
+
         <Date>
           {createdAt && moment(+createdAt).format("YYYY-MM-DD, dddd hh:mm")}
         </Date>
@@ -187,20 +194,24 @@ const CreateModifyTask = () => {
               name="name"
               type="text"
               className={errors?.name || errors?.general ? "error" : ""}
+              disabled={!isCreator}
             />
           </FormGroup>
           <FormGroup>
             <Label htmlFor="description">Table descrition:</Label>
-            <Editor data={desc} state={setDesc} />
+            <Editor data={desc} state={setDesc} disabled={!isCreator} />
           </FormGroup>
           <FormGroup>
             <Selector status={state.status} handleStatus={handleChange} />
           </FormGroup>
           <Errors errors={errors} />
-          <Button type="submit" block>
-            Save
-          </Button>
+          {isCreator && (
+            <Button type="submit" block>
+              Save
+            </Button>
+          )}
         </Form>
+
         {id && <Comments taskId={id} />}
       </div>
     )

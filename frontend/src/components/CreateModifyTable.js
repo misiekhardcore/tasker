@@ -25,6 +25,7 @@ import Loading from "./Loading";
 import Group from "./Group";
 import { errorHandler } from "../utils/helpers";
 import { AiFillFolder } from "react-icons/ai";
+import { AuthContext } from "../context/auth";
 
 const getGroupInfo = gql`
   query getGroup($tableId: ID!) {
@@ -58,6 +59,11 @@ const getGroupInfo = gql`
 `;
 
 const CreateModifyTable = () => {
+  //get logged user data
+  const {
+    user: { username: uname },
+  } = useContext(AuthContext);
+
   //get current folder
   const { folder, setFolder } = useContext(ListContext);
 
@@ -104,6 +110,7 @@ const CreateModifyTable = () => {
 
   //destructure query data
   const { id, name, group, parent, creator, createdAt } = data?.getTable || {};
+  const isCreator = creator?.username === uname;
 
   //update mutation
   const [update] = useMutation(UPDATE_FOLDER, {
@@ -160,7 +167,9 @@ const CreateModifyTable = () => {
           <span>Created by:</span>
           <User avatar={creator.avatar}>{creator.username}</User>
         </Creator>
+
         {group && <Group groupId={group.id} />}
+
         <Form onSubmit={handleSubmit}>
           <FormGroup>
             <Label htmlFor="name">Table name:</Label>
@@ -170,16 +179,19 @@ const CreateModifyTable = () => {
               name="name"
               type="text"
               className={errors?.name || errors?.general ? "error" : ""}
+              disabled={!isCreator}
             />
           </FormGroup>
           <FormGroup>
             <Label htmlFor="description">Table descrition:</Label>
-            <Editor data={desc} state={setDesc} />
+            <Editor data={desc} state={setDesc} disabled={!isCreator} />
           </FormGroup>
           <Errors errors={errors} />
-          <Button type="submit" block>
-            Save
-          </Button>
+          {isCreator && (
+            <Button type="submit" block>
+              Save
+            </Button>
+          )}
         </Form>
       </div>
     )
