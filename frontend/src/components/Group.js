@@ -30,6 +30,12 @@ const Users = styled.div`
   flex-wrap: wrap;
 `;
 
+const UserLine = styled.div`
+  display: flex;
+  align-items: baseline;
+  max-width:250px;
+`;
+
 const Checkbox = styled.label`
   width: 1rem;
   height: 1rem;
@@ -37,6 +43,7 @@ const Checkbox = styled.label`
   position: relative;
   cursor: pointer;
   user-select: none;
+  margin-left: auto;
 
   input {
     position: absolute;
@@ -60,6 +67,7 @@ const Checkbox = styled.label`
     width: 100%;
     height: 100%;
     background-color: #c00000;
+    border-radius: 50%;
   }
 
   &:hover input ~ span {
@@ -200,13 +208,16 @@ const Group = ({ groupId }) => {
                     username !== creator?.username &&
                     username !== uname;
                   return (
-                    <User
-                      key={id}
-                      avatar={avatar}
-                      disabled={!state[username]?.checked || false}
-                      open={edit}
-                    >
-                      {username}
+                    <UserLine>
+                      <User
+                        key={id}
+                        avatar={avatar}
+                        disabled={!state[username]?.checked || false}
+                        open={edit}
+                      >
+                        {username}{" "}
+                      </User>
+
                       {show && (
                         <Checkbox htmlFor={username}>
                           <input
@@ -218,7 +229,7 @@ const Group = ({ groupId }) => {
                           <span className="span"></span>
                         </Checkbox>
                       )}
-                    </User>
+                    </UserLine>
                   );
                 })}
             </Users>
