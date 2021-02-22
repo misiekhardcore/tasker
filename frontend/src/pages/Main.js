@@ -4,6 +4,7 @@ import MenuBar from "../components/MenuBar";
 import CreateModifyTable from "../components/CreateModifyTable";
 import CreateModifyTask from "../components/CreateModifyTask";
 import { ListContext } from "../context/list";
+import Notifications from "../components/Notifications";
 
 const Main = () => {
   const { column2, folder, task } = useContext(ListContext);
@@ -22,6 +23,7 @@ const Main = () => {
           {folder && <CreateModifyTable />}
           {task && <CreateModifyTask />}
         </section>
+        <Notifications />
       </main>
     </>
   );
