@@ -1,8 +1,5 @@
 import styled, { css } from "styled-components";
-import {
-  darken,
-  rgba,
-} from "polished";
+import { darken, rgba } from "polished";
 import { Link } from "react-router-dom";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 
@@ -233,10 +230,7 @@ export const User = styled.div`
   color: ${(props) => (props.disabled ? props.theme.disabled : "inherit")};
   display: ${(props) => (props.open || !props.disabled ? "block" : "none")};
   max-width: 200px;
-
-  & + & {
-    margin-left: ${(props) => (props.open ? "0" : "0.5rem")};
-  }
+  margin-left: 0.5rem;
 
   &:before {
     content: "";
