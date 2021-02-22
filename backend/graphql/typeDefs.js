@@ -89,6 +89,11 @@ module.exports = gql`
     getGroup(groupId: ID!): Group
   }
 
+  type Subscription {
+    tableCreated: Table
+    taskCreated: Task
+  }
+
   type Mutation {
     login(email: String!, password: String!): AuthPayload!
     register(

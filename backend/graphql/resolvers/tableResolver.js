@@ -64,7 +64,8 @@ module.exports = {
   Mutation: {
     createTable: async (_, { parent, name, description }, context) => {
       //check if user sent auth token and it is valid
-      const { id, team } = authCheck(context);
+      const { id } = authCheck(context);
+      const { pubsub } = context;
 
       //check id
       checkId(parent);
@@ -98,7 +99,10 @@ module.exports = {
           parent: parent || undefined,
           group: group._id,
         });
-        return await Table.findById(table.id);
+
+        const tableFinished = await Table.findById(table.id);
+        pubsub.publish("TABLE_CREATED", { tableCreated: tableFinished });
+        return tableFinished;
       } catch (error) {
         console.log(error);
       }
@@ -106,7 +110,7 @@ module.exports = {
       //prepare data to send query
     },
     updateTable: async (_, { tableId, name, description, parent }, context) => {
-      const { id } = authCheck(context);
+      authCheck(context);
 
       checkId(tableId);
       checkId(parent);
@@ -137,6 +141,11 @@ module.exports = {
       }
 
       return true;
+    },
+  },
+  Subscription: {
+    tableCreated: {
+      subscribe: (_, __, { pubsub }) => pubsub.asyncIterator(["TABLE_CREATED"]),
     },
   },
 };

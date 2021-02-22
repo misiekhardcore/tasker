@@ -59,6 +59,7 @@ module.exports = {
     createTask: async (_, { parent, name, description, status }, context) => {
       //check if user sent auth token and it is valid
       const { id } = authCheck(context);
+      const { pubsub } = context;
 
       //check ids
       checkId(parent);
@@ -92,8 +93,9 @@ module.exports = {
           group: group._id,
           comments: [],
         });
-
-        return await Task.findById(task._id);
+        const taskFinished = await Task.findById(task._id);
+        pubsub.publish("TASK_CREATED", { taskCreated: taskFinished });
+        return taskFinished;
       } catch (error) {
         console.log(error);
       }
@@ -137,6 +139,11 @@ module.exports = {
       }
 
       return true;
+    },
+  },
+  Subscription: {
+    taskCreated: {
+      subscribe: (_, __, { pubsub }) => pubsub.asyncIterator(["TASK_CREATED"]),
     },
   },
 };
