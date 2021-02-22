@@ -6,15 +6,17 @@ require("dotenv").config();
 const MONGODB = process.env.MONGODB;
 
 //GRAPHQL
+const { PubSub } = require("apollo-server");
 const typeDefs = require("./graphql/typeDefs");
 const resolvers = require("./graphql/resolvers");
 
-//Apollo server
+const pubsub = new PubSub();
 
+//Apollo server
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req }) => ({ req }),
+  context: ({ req }) => ({ req, pubsub }),
 });
 
 //Connect to database and start server
