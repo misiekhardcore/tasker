@@ -28,6 +28,7 @@ import Editor from "./Editor";
 import Loading from "./Loading";
 import Group from "./Group";
 import { errorHandler } from "../utils/helpers";
+import { AuthContext } from "../context/auth";
 
 const Selector = ({ status, handleStatus }) => {
   return (
