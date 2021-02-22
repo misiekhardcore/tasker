@@ -9,14 +9,39 @@ import {
   createHttpLink,
   InMemoryCache,
   ApolloProvider,
+  split,
 } from "@apollo/client";
 
+import { WebSocketLink } from "@apollo/client/link/ws";
+
 import { setContext } from "@apollo/client/link/context";
+import { getMainDefinition } from "@apollo/client/utilities";
+
+const urlBase = "//tasker-task.herokuapp.com/";
 
 const link = createHttpLink({
-  uri: "https://tasker-task.herokuapp.com/",
+  uri: `https:${urlBase}`,
   credentials: "same-origin",
 });
+
+const wsLink = new WebSocketLink({
+  uri: `ws:${urlBase}graphql`,
+  options: {
+    reconnect: true,
+  },
+});
+
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === "OperationDefinition" &&
+      definition.operation === "subscription"
+    );
+  },
+  wsLink,
+  link
+);
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("jwtToken");
@@ -29,7 +54,7 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const client = new ApolloClient({
-  link: authLink.concat(link),
+  link: authLink.concat(splitLink),
   cache: new InMemoryCache({
     typePolicies: {
       Group: {
