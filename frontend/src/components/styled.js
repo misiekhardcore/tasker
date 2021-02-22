@@ -1,10 +1,6 @@
 import styled, { css } from "styled-components";
 import {
-  adjustHue,
   darken,
-  lighten,
-  linearGradient,
-  rgb,
   rgba,
 } from "polished";
 import { Link } from "react-router-dom";
