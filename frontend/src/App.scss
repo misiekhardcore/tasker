@@ -17,6 +17,7 @@
 }
 
 .main__container {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(5, minmax(10px, 1fr));
   width: 100%;
