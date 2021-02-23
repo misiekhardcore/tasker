@@ -8,7 +8,7 @@ import AuthRoute from "./utils/AuthRoute";
 import "./App.scss";
 import { ListProvider } from "./context/list";
 import { ThemeProvider } from "styled-components";
-import { rgb } from "polished";
+import { darken, lighten, rgb } from "polished";
 
 const theme = {
   primary: rgb(167, 162, 162),
@@ -19,8 +19,11 @@ const theme = {
   white: rgb(253, 246, 246),
   black: rgb(22, 22, 27),
   gray: rgb(119, 119, 136),
-  disabled: rgb(204, 204, 187),
+  disabled: rgb(207, 212, 214),
 };
+
+theme.light = lighten(0.3, theme.primary);
+theme.dark = darken(0.3, theme.primary);
 
 function App() {
   return (

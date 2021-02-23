@@ -16,9 +16,6 @@ const pubsub = new PubSub();
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  subscriptions:{
-    path:'/subs'
-  },
   context: ({ req }) => ({ req, pubsub }),
 });
 
