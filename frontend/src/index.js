@@ -17,15 +17,15 @@ import { WebSocketLink } from "@apollo/client/link/ws";
 import { setContext } from "@apollo/client/link/context";
 import { getMainDefinition } from "@apollo/client/utilities";
 
-const urlBase = "//tasker-task.herokuapp.com/";
+const urlBase = "tasker-task.herokuapp.com";
 
 const link = createHttpLink({
-  uri: `https:${urlBase}`,
+  uri: `https://${urlBase}`,
   credentials: "same-origin",
 });
 
 const wsLink = new WebSocketLink({
-  uri: `ws:${urlBase}graphql`,
+  uri: `wss://${urlBase}/subs`,
   options: {
     reconnect: true,
   },
