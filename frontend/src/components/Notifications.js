@@ -29,6 +29,7 @@ const Notification = styled.li`
 
   p {
     margin-left: 0.2rem;
+    margin-right:0.5rem;
     color: ${(props) => props.theme.gray};
 
     b {
@@ -37,7 +38,7 @@ const Notification = styled.li`
   }
 
   button {
-    margin-left: 0.5rem;
+    margin-left: auto;
     color: ${(props) => props.theme.white};
     width: 16px;
     height: 16px;
@@ -105,17 +106,24 @@ const Notifications = () => {
   const { data: data1 } = useSubscription(SUB_TABLE);
   const { data: data2 } = useSubscription(SUB_TASK);
 
+  function addNotification(data) {
+    if (data) {
+      const dataDestr = data[Object.keys(data)[0]];
+      if (dataDestr?.creator?.username !== uname) {
+        const type = dataDestr?.__typename === "Table" ? "folder" : "task";
+        setState((state) => [...state, { ...dataDestr, type }]);
+      }
+    }
+  }
+
   //add new notification on data change
   useEffect(() => {
-    //check user creator names to compare with current user
-    const user1 = data1?.tableCreated?.creator?.username || "";
-    const user2 = data2?.taskCreated?.creator?.username || "";
-    
-    if (data1 && user1 !== uname)
-      setState((state) => [...state, { ...data1.tableCreated, type: "table" }]);
-    if (data2 && user2 !== uname)
-      setState((state) => [...state, { ...data2.taskCreated, type: "task" }]);
-  }, [data1, data2, uname]);
+    addNotification(data1);
+  }, [data1]);
+
+  useEffect(() => {
+    addNotification(data2);
+  }, [data2]);
 
   //remove selected notification
   const handleRemove = (id) => {
@@ -127,7 +135,6 @@ const Notifications = () => {
     <NotificationContainer>
       {state &&
         state.map((line) => {
-          console.log(line);
           const { id, creator, name, parent } = line || {};
 
           return (
