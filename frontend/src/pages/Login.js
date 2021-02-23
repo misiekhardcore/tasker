@@ -60,7 +60,7 @@ function Login() {
             <Input
               name="email"
               type="email"
-              className={errors.email || errors.general ? "error" : ""}
+              className={errors?.email || errors?.general ? "error" : ""}
               placeholder="Enter your email..."
               value={state.email}
               onChange={handleChange}
