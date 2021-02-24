@@ -130,7 +130,7 @@ export const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin: auto;
-  background-color: ${(props) => props.theme.disabled};
+  background-color: ${(props) => props.theme.light};
 
   @media screen and (max-width: 600px) {
     width: 100%;
