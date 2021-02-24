@@ -1,7 +1,12 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { useContext, useEffect, useState } from "react";
 import { AiFillDelete, AiFillSchedule } from "react-icons/ai";
-import { DELETE_TASK, GET_TASKS } from "../queries";
+import {
+  DELETE_TASK,
+  GET_GROUP,
+  GET_TASK,
+  GET_TASKS,
+} from "../queries";
 import { Button, ListItem, UnorderedList } from "./styled";
 import { ListContext } from "../context/list";
 import Loading from "./Loading";
@@ -62,9 +67,38 @@ const TasksList = ({ parent }) => {
     setFolder();
   }
 
-  function handleDeleteTask(id) {
+  function handleDeleteTask(id, name = "") {
+    const prompt = window.confirm(
+      `Are you sure you want to delete ${name}`
+    );
+    if (!prompt) return;
     deleteTask({
       variables: { taskId: id },
+      update(cache) {
+        try {
+          const { getTask } =
+            cache.readQuery({
+              query: GET_TASK,
+              variables: { taskId: id },
+            }) || {};
+          cache.writeQuery({
+            query: GET_TASK,
+            data: { getTask: null },
+            variables: {
+              taskId: id,
+            },
+          });
+
+          if (getTask)
+            cache.writeQuery({
+              query: GET_GROUP,
+              data: { getGroup: null },
+              variables: { groupId: getTask.group.id },
+            });
+        } catch (e) {
+          console.log(e);
+        }
+      },
     });
     setTask();
   }
@@ -78,11 +112,18 @@ const TasksList = ({ parent }) => {
     <UnorderedList>
       {getTasks &&
         getTasks.map((task) => (
-          <ListItem status={task.status} data-tooltip={task.name} key={task.id}>
+          <ListItem
+            status={task.status}
+            data-tooltip={task.name}
+            key={task.id}
+          >
             <AiFillSchedule />
             <p onClick={() => handleSetTask(task.id)}>{task.name}</p>
             {task.creator.username === uname && (
-              <Button transparent onClick={() => handleDeleteTask(task.id)}>
+              <Button
+                transparent
+                onClick={() => handleDeleteTask(task.id, task.name)}
+              >
                 <AiFillDelete />
               </Button>
             )}
