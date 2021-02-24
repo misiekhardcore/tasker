@@ -29,7 +29,7 @@ const Notification = styled.li`
 
   p {
     margin-left: 0.2rem;
-    margin-right:0.5rem;
+    margin-right: 0.5rem;
     color: ${(props) => props.theme.gray};
 
     b {
@@ -106,24 +106,22 @@ const Notifications = () => {
   const { data: data1 } = useSubscription(SUB_TABLE);
   const { data: data2 } = useSubscription(SUB_TASK);
 
-  function addNotification(data) {
-    if (data) {
-      const dataDestr = data[Object.keys(data)[0]];
-      if (dataDestr?.creator?.username !== uname) {
-        const type = dataDestr?.__typename === "Table" ? "folder" : "task";
-        setState((state) => [...state, { ...dataDestr, type }]);
-      }
-    }
-  }
-
   //add new notification on data change
   useEffect(() => {
-    addNotification(data1);
-  }, [data1]);
+    function addNotification(data) {
+      if (data) {
+        const dataDestr = data[Object.keys(data)[0]];
+        // if (dataDestr?.creator?.username !== uname) {
+          const type =
+            dataDestr?.__typename === "Table" ? "folder" : "task";
+          setState((state) => [...state, { ...dataDestr, type }]);
+        // }
+      }
+    }
 
-  useEffect(() => {
+    addNotification(data1);
     addNotification(data2);
-  }, [data2]);
+  }, [data1, data2, uname]);
 
   //remove selected notification
   const handleRemove = (id) => {
