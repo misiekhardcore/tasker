@@ -111,11 +111,11 @@ const Notifications = () => {
     function addNotification(data) {
       if (data) {
         const dataDestr = data[Object.keys(data)[0]];
-        // if (dataDestr?.creator?.username !== uname) {
+        if (dataDestr?.creator?.username !== uname) {
           const type =
             dataDestr?.__typename === "Table" ? "folder" : "task";
           setState((state) => [...state, { ...dataDestr, type }]);
-        // }
+        }
       }
     }
 
