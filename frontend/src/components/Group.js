@@ -208,9 +208,9 @@ const Group = ({ groupId }) => {
                     username !== creator?.username &&
                     username !== uname;
                   return (
-                    <UserLine>
+                    <UserLine key={id}>
                       <User
-                        key={id}
+                        
                         avatar={avatar}
                         disabled={!state[username]?.checked || false}
                         open={edit}
