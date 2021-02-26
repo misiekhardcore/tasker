@@ -9,6 +9,7 @@ import {
   GET_GROUP,
   GET_TASK,
   GET_TASKS,
+  SUB_TABLE_ADD,
 } from "../queries";
 import { Button, ListItem, UnorderedList } from "./styled";
 import { ListContext } from "../context/list";
@@ -18,33 +19,50 @@ import { AuthContext } from "../context/auth";
 
 const FoldersList = ({ parent }) => {
   const {
-    user: { username: uname },
+    user: { username: uname, role },
   } = useContext(AuthContext);
 
-  const {
-    back,
-    column2,
-    setColumn2,
-    setTask,
-    setFolder,
-    setBack,
-  } = useContext(ListContext);
+  const { back, column2, setColumn2, setTask, setFolder, setBack } = useContext(
+    ListContext
+  );
 
-    //is component mounted?
-    const [mounted, setMounted] = useState(false);
-    useEffect(() => {
-      //is mounted
-      setMounted(true);
-      return () => {
-        //is unmounted
-        setMounted(false);
-      };
-    }, []);
+  //is component mounted?
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    //is mounted
+    setMounted(true);
+    return () => {
+      //is unmounted
+      setMounted(false);
+    };
+  }, []);
 
-  const { loading, error, data } = useQuery(GET_FOLDERS, {
+  const { loading, error, data, subscribeToMore } = useQuery(GET_FOLDERS, {
     variables: {
       parent,
     },
+  });
+
+  const stm = () =>
+    subscribeToMore({
+      document: SUB_TABLE_ADD,
+      variables: { parent },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData) return prev;
+
+        const newTable = subscriptionData.data.tableCreated;
+        const exists = prev.getTables.find(({ id }) => id === newTable.id);
+        console.log({ prev, newTable });
+        if (exists) return prev;
+
+        return Object.assign({}, prev, {
+          getTables: [...prev.getTables, newTable],
+        });
+      },
+    });
+
+  useEffect(() => {
+    stm();
   });
 
   const [deleteFolder] = useMutation(DELETE_FOLDER, {
@@ -135,9 +153,7 @@ const FoldersList = ({ parent }) => {
   }
 
   function handleDeleteFolder(id, name = "") {
-    const promt = window.confirm(
-      `Are you sure you want to delete ${name}?`
-    );
+    const promt = window.confirm(`Are you sure you want to delete ${name}?`);
     if (!promt) return;
     deleteFolder({
       variables: { parent: id },
@@ -208,7 +224,7 @@ const FoldersList = ({ parent }) => {
             >
               {table.name}
             </p>
-            {table.creator.username === uname && (
+            {(table.creator.username === uname || role === "Admin") && (
               <Button
                 transparent
                 onClick={() => handleDeleteFolder(table.id, table.name)}

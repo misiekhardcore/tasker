@@ -6,6 +6,7 @@ import {
   GET_GROUP,
   GET_TASK,
   GET_TASKS,
+  SUB_TASK_ADD,
 } from "../queries";
 import { Button, ListItem, UnorderedList } from "./styled";
 import { ListContext } from "../context/list";
@@ -15,7 +16,7 @@ import { AuthContext } from "../context/auth";
 
 const TasksList = ({ parent }) => {
   const {
-    user: { username: uname },
+    user: { username: uname, role },
   } = useContext(AuthContext);
 
   const { setTask, setFolder } = useContext(ListContext);
@@ -31,10 +32,30 @@ const TasksList = ({ parent }) => {
     };
   }, []);
 
-  const { loading, error, data } = useQuery(GET_TASKS, {
+  const { loading, error, data, subscribeToMore } = useQuery(GET_TASKS, {
     variables: {
       parent,
     },
+  });
+
+  const stm = subscribeToMore({
+    document: SUB_TASK_ADD,
+    updateQuery: (prev, { subscriptionData }) => {
+      if (!subscriptionData) return prev;
+
+      const newTask = subscriptionData.data.taskCreated;
+      const exists = prev.getTasks.find(({ id }) => id === newTask.id);
+      console.log({ prev, newTask });
+      if (exists) return prev;
+
+      return Object.assign({}, prev, {
+        getTasks: [...prev.getTasks, newTask],
+      });
+    },
+  });
+  
+  useEffect(() => {
+    stm();
   });
 
   const [deleteTask] = useMutation(DELETE_TASK, {
@@ -68,9 +89,7 @@ const TasksList = ({ parent }) => {
   }
 
   function handleDeleteTask(id, name = "") {
-    const prompt = window.confirm(
-      `Are you sure you want to delete ${name}`
-    );
+    const prompt = window.confirm(`Are you sure you want to delete ${name}`);
     if (!prompt) return;
     deleteTask({
       variables: { taskId: id },
@@ -112,14 +131,10 @@ const TasksList = ({ parent }) => {
     <UnorderedList>
       {getTasks &&
         getTasks.map((task) => (
-          <ListItem
-            status={task.status}
-            data-tooltip={task.name}
-            key={task.id}
-          >
+          <ListItem status={task.status} data-tooltip={task.name} key={task.id}>
             <AiFillSchedule />
             <p onClick={() => handleSetTask(task.id)}>{task.name}</p>
-            {task.creator.username === uname && (
+            {(task.creator.username === uname || role === "Admin") && (
               <Button
                 transparent
                 onClick={() => handleDeleteTask(task.id, task.name)}
