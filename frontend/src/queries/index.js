@@ -314,3 +314,48 @@ export const UPDATE_GROUP = gql`
     }
   }
 `;
+
+export const SUB_TABLE_ADD = gql`
+  subscription tableCreated {
+    tableCreated {
+      id
+      name
+      creator {
+        id
+        username
+      }
+      group {
+        id
+      }
+      parent {
+        id
+        name
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const SUB_TASK_ADD = gql`
+  subscription taskCreated {
+    taskCreated {
+      id
+      name
+      description
+      status
+      creator {
+        id
+        username
+      }
+      group {
+        id
+      }
+      parent {
+        id
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
