@@ -16,7 +16,7 @@ const pubsub = new PubSub();
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  cors: { origin: false },
+  cors: { origin: 'https://tasker-task.netlify.app/' },
   subscriptions: {
     path: "/subs",
   },
