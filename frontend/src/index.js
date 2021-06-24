@@ -29,7 +29,7 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-const urlBase = "tasker-task.netlify.app";
+const urlBase = "tasker-task.herokuapp.com";
 
 const link = createHttpLink({
   uri: `https://${urlBase}`,
