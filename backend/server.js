@@ -16,6 +16,7 @@ const pubsub = new PubSub();
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  cors: { origin: false },
   subscriptions: {
     path: "/subs",
   },
