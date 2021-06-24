@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "engines": {
-    "node": "12.18.1",
-    "yarn": "1.22.5"
+    "node": ">12.18.1",
+    "yarn": ">1.22.5"
   },
   "license": "MIT",
   "dependencies": {

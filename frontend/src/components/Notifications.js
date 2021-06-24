@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { gql, useSubscription } from "@apollo/client";
+import { useSubscription } from "@apollo/client";
 import styled from "styled-components";
 import { User } from "./styled";
 import { IoIosClose } from "react-icons/io";
 import { AuthContext } from "../context/auth";
+import { SUB_TABLE_ADD, SUB_TASK_ADD } from "../queries";
 
 const NotificationContainer = styled.ul`
   position: absolute;
@@ -58,41 +59,6 @@ const Notification = styled.li`
   }
 `;
 
-const SUB_TABLE = gql`
-  subscription tableCreated {
-    tableCreated {
-      id
-      name
-      creator {
-        id
-        username
-        avatar
-      }
-      parent {
-        id
-      }
-    }
-  }
-`;
-
-const SUB_TASK = gql`
-  subscription taskCreated {
-    taskCreated {
-      id
-      name
-      creator {
-        id
-        username
-        avatar
-      }
-      parent {
-        id
-        name
-      }
-    }
-  }
-`;
-
 const Notifications = () => {
   //collect notifications in state
   const [state, setState] = useState([]);
@@ -103,8 +69,8 @@ const Notifications = () => {
   } = useContext(AuthContext);
 
   //get create notifications
-  const { data: data1 } = useSubscription(SUB_TABLE);
-  const { data: data2 } = useSubscription(SUB_TASK);
+  const { data: data1 } = useSubscription(SUB_TABLE_ADD);
+  const { data: data2 } = useSubscription(SUB_TASK_ADD);
 
   //add new notification on data change
   useEffect(() => {
@@ -112,8 +78,7 @@ const Notifications = () => {
       if (data) {
         const dataDestr = data[Object.keys(data)[0]];
         if (dataDestr?.creator?.username !== uname) {
-          const type =
-            dataDestr?.__typename === "Table" ? "folder" : "task";
+          const type = dataDestr?.__typename === "Table" ? "folder" : "task";
           setState((state) => [...state, { ...dataDestr, type }]);
         }
       }
