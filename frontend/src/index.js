@@ -33,7 +33,7 @@ const urlBase = "tasker-task.herokuapp.com";
 
 const link = createHttpLink({
   uri: `https://${urlBase}`,
-  credentials: "same-origin",
+  credentials: "include",
 });
 
 const wsLink = new WebSocketLink({
