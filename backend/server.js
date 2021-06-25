@@ -17,8 +17,8 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   cors: {
-    origin: "https://tasker-task.netlify.app/",
-    credentials: true,
+    origin: "*",
+    credentials: false,
   },
   subscriptions: {
     path: "/subs",
