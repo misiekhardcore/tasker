@@ -12,6 +12,7 @@ const resolvers = require("./graphql/resolvers");
 
 const pubsub = new PubSub();
 
+//changed cors
 //Apollo server
 const server = new ApolloServer({
   typeDefs,
