@@ -29,15 +29,15 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-const urlBase = "tasker-task.herokuapp.com";
+// const urlBase = "tasker-task.herokuapp.com";
 
 const link = createHttpLink({
-  uri: `https://${urlBase}`,
+  uri: `https://tasker-task.herokuapp.com/`,
   credentials: "include",
 });
 
 const wsLink = new WebSocketLink({
-  uri: `wss://${urlBase}/subs`,
+  uri: `ws://tasker-task.herokuapp.com/`,
   options: {
     reconnect: true,
     connectionParams: {
