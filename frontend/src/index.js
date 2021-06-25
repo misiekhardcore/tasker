@@ -32,17 +32,18 @@ const authLink = setContext((_, { headers }) => {
 // const urlBase = "tasker-task.herokuapp.com";
 
 const link = createHttpLink({
-  uri: `https://tasker-task.herokuapp.com/`,
+  uri: `https://tasker-task.herokuapp.com/graphql`,
   credentials: "include",
 });
 
 const wsLink = new WebSocketLink({
-  uri: `wss://tasker-task.herokuapp.com/`,
+  uri: `wss://tasker-task.herokuapp.com/graphql`,
   options: {
     reconnect: true,
     connectionParams: {
       authToken: token,
     },
+
   },
 });
 
