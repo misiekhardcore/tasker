@@ -37,7 +37,7 @@ const link = createHttpLink({
 });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://tasker-task.herokuapp.com/`,
+  uri: `wss://tasker-task.herokuapp.com/`,
   options: {
     reconnect: true,
     connectionParams: {
