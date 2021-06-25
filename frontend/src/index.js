@@ -37,7 +37,7 @@ const link = createHttpLink({
 });
 
 const wsLink = new WebSocketLink({
-  uri: `wss://tasker-task.herokuapp.com/graphql`,
+  uri: `wss://tasker-task.herokuapp.com/subs`,
   options: {
     reconnect: true,
     connectionParams: {
