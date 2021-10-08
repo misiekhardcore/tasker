@@ -12,11 +12,15 @@ const resolvers = require("./graphql/resolvers");
 
 const pubsub = new PubSub();
 
+//changed cors
 //Apollo server
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  cors:{origin:false},
+  cors: {
+    origin: "https://tasker-task.netlify.app",
+    credentials: true,
+  },
   subscriptions: {
     path: "/subs",
   },

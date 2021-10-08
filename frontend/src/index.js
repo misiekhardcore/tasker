@@ -29,20 +29,21 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-const urlBase = "tasker-task.herokuapp.com";
+// const urlBase = "tasker-task.herokuapp.com";
 
 const link = createHttpLink({
-  uri: `https://${urlBase}`,
-  credentials: "same-origin",
+  uri: `https://tasker-task.herokuapp.com/graphql`,
+  credentials: "include",
 });
 
 const wsLink = new WebSocketLink({
-  uri: `wss://${urlBase}/subs`,
+  uri: `wss://tasker-task.herokuapp.com/subs`,
   options: {
     reconnect: true,
     connectionParams: {
       authToken: token,
     },
+
   },
 });
 
@@ -60,6 +61,9 @@ const splitLink = split(
 
 const client = new ApolloClient({
   link: splitLink,
+  fetchOptions:{
+  mode: 'no-cors'
+  },
   cache: new InMemoryCache({
     typePolicies: {
       Group: {
